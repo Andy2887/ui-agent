@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "max_picks": 1,
+  "styles": [
+    {
+      "id": "minimal",
+      "name": "Minimal",
+      "hint": "Lots of white space, few colors, nothing extra. The content does the talking.",
+      "guidance": "Restraint above all: generous whitespace, a near-monochrome palette with one accent used sparingly, thin 1px rules instead of boxes, no gradients, no decorative shadows. Typography carries the hierarchy.",
+      "sample": { "bg": "#FFFFFF", "text": "#111111", "muted": "#6B6B6B", "primary": "#111111", "onPrimary": "#FFFFFF", "accent": "#2563EB", "headingFont": "Inter", "bodyFont": "Inter", "headingWeight": 600, "radius": "6px", "border": "1px solid #E5E5E5", "shadow": "none", "deco": "line", "uppercase": false }
+    },
+    {
+      "id": "modern-saas",
+      "name": "Modern SaaS",
+      "hint": "Clean product look with soft gradients, cards and a product screenshot. Familiar and polished.",
+      "guidance": "Polished product marketing: a soft gradient or glow behind the hero, a framed product screenshot, rounded cards with subtle shadows, a clear primary CTA plus a secondary ghost button, logo strip for social proof.",
+      "sample": { "bg": "#F7F8FC", "text": "#0F172A", "muted": "#64748B", "primary": "#4F46E5", "onPrimary": "#FFFFFF", "accent": "#06B6D4", "headingFont": "Inter", "bodyFont": "Inter", "headingWeight": 700, "radius": "12px", "border": "1px solid #E2E8F0", "shadow": "0 8px 24px rgba(15,23,42,.08)", "deco": "glow", "uppercase": false }
+    },
+    {
+      "id": "editorial",
+      "name": "Editorial",
+      "hint": "Feels like a well-designed magazine: big serif headlines, strong columns, confident type.",
+      "guidance": "Magazine layout: large expressive serif display type, asymmetric columns, pull quotes, small-caps labels, hairline rules, generous measure control (60–75ch). Color is mostly paper and ink with one accent.",
+      "sample": { "bg": "#FAF7F2", "text": "#1A1A1A", "muted": "#5C5650", "primary": "#1A1A1A", "onPrimary": "#FAF7F2", "accent": "#B4381F", "headingFont": "Playfair Display", "bodyFont": "Source Sans 3", "headingWeight": 700, "radius": "0px", "border": "1px solid #1A1A1A", "shadow": "none", "deco": "rule", "uppercase": false }
+    },
+    {
+      "id": "playful",
+      "name": "Playful",
+      "hint": "Bright, rounded and friendly, with fun shapes. Makes a product feel approachable.",
+      "guidance": "Friendly and bouncy: rounded shapes, blob or squiggle decorations, two cheerful accent colors, chunky rounded buttons, slight rotations on stickers/badges, warm conversational copy.",
+      "sample": { "bg": "#FFF8EC", "text": "#2B2140", "muted": "#6B5F80", "primary": "#7C3AED", "onPrimary": "#FFFFFF", "accent": "#F59E0B", "headingFont": "Nunito", "bodyFont": "Nunito", "headingWeight": 800, "radius": "999px", "border": "2px solid #2B2140", "shadow": "4px 4px 0 #2B2140", "deco": "blob", "uppercase": false }
+    },
+    {
+      "id": "brutalist",
+      "name": "Bold / Brutalist",
+      "hint": "Raw and loud: thick borders, hard shadows, huge type. Memorable and opinionated.",
+      "guidance": "Neo-brutalist: thick black borders, hard offset shadows (no blur), oversized uppercase type, flat saturated blocks of color, visible grid, no rounded corners, deliberately blunt.",
+      "sample": { "bg": "#FFFDF0", "text": "#000000", "muted": "#333333", "primary": "#FF4D00", "onPrimary": "#000000", "accent": "#2B59FF", "headingFont": "Space Grotesk", "bodyFont": "Space Grotesk", "headingWeight": 700, "radius": "0px", "border": "3px solid #000000", "shadow": "6px 6px 0 #000000", "deco": "block", "uppercase": true }
+    },
+    {
+      "id": "corporate",
+      "name": "Corporate / Trustworthy",
+      "hint": "Conservative and reassuring. Good for finance, B2B, healthcare and legal.",
+      "guidance": "Reassuring and orderly: a structured 12-column grid, navy or deep-blue primary, restrained imagery, trust markers (logos, certifications, numbers), modest radii, clear secondary navigation.",
+      "sample": { "bg": "#FFFFFF", "text": "#0B1F3A", "muted": "#4A5B74", "primary": "#0F4C81", "onPrimary": "#FFFFFF", "accent": "#0E7490", "headingFont": "IBM Plex Sans", "bodyFont": "IBM Plex Sans", "headingWeight": 600, "radius": "4px", "border": "1px solid #D5DEEA", "shadow": "0 1px 2px rgba(11,31,58,.08)", "deco": "bars", "uppercase": false }
+    },
+    {
+      "id": "luxury",
+      "name": "Luxury",
+      "hint": "Dark, elegant and spacious, with refined serif type. Premium and unhurried.",
+      "guidance": "Premium and quiet: deep backgrounds or ivory, thin elegant serif display, wide letter-spacing on small caps labels, gold/champagne accent used sparingly, lots of breathing room, slow subtle motion.",
+      "sample": { "bg": "#14110F", "text": "#F3EDE4", "muted": "#B5AA9C", "primary": "#C9A96E", "onPrimary": "#14110F", "accent": "#C9A96E", "headingFont": "Cormorant Garamond", "bodyFont": "Jost", "headingWeight": 500, "radius": "0px", "border": "1px solid #3A332C", "shadow": "none", "deco": "frame", "uppercase": false }
+    },
+    {
+      "id": "technical",
+      "name": "Technical / Dev-tool",
+      "hint": "Dark UI, monospace accents and code snippets. Speaks the language of developers.",
+      "guidance": "Developer-native: dark surfaces, monospace labels and code blocks, terminal motifs, grid/dot backgrounds, crisp 1px borders, keyboard-shortcut chips, precise data and changelog-style details.",
+      "sample": { "bg": "#0D1117", "text": "#E6EDF3", "muted": "#9DA7B3", "primary": "#3FB950", "onPrimary": "#0D1117", "accent": "#58A6FF", "headingFont": "JetBrains Mono", "bodyFont": "Inter", "headingWeight": 700, "radius": "6px", "border": "1px solid #30363D", "shadow": "none", "deco": "terminal", "uppercase": false }
+    }
+  ]
+}

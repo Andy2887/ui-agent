@@ -1,0 +1,81 @@
+version: 1
+
+pass:
+  weighted_average: 4.0
+  min_criterion: 3
+  allow_open_high: false
+
+layer_a:
+  - {id: A1, name: Accessibility violations, pass: "0 serious/critical axe violations (excluding color-contrast, which is A2)"}
+  - {id: A2, name: Text contrast, pass: ">= 4.5:1 body text, >= 3:1 large text"}
+  - {id: A3, name: Horizontal overflow, pass: "no horizontal scroll at any viewport"}
+  - {id: A4, name: Tap target size, pass: "every interactive element >= 24x24 px on mobile (44x44 recommended)"}
+  - {id: A5, name: Font size floor, pass: "body >= 16px on mobile; nothing < 12px"}
+  - {id: A6, name: Console errors, pass: "0 console errors or page errors"}
+  - {id: A7, name: Focus visibility, pass: "every keyboard-focusable element has a visible focus style"}
+  - {id: A8, name: Integrability, pass: "no inline style=; >= 90% of color/font/spacing values use var(--*); every top-level section has data-component; no requests outside the allowlist"}
+
+layer_b:
+  - id: B1
+    name: Visual hierarchy and scannability
+    weight: 1.5
+    anchors:
+      1: "No clear focal point; everything competes; primary action is hard to find."
+      3: "Main focal point is clear in the hero, but some sections are flat or have competing emphasis."
+      5: "Every section has one obvious focal point; the primary CTA is unmistakable on every viewport; skimming headings alone tells the story."
+  - id: B2
+    name: Layout, spacing rhythm and alignment
+    weight: 1.25
+    anchors:
+      1: "Arbitrary spacing, misaligned edges, cramped or floating elements."
+      3: "Mostly consistent spacing with a few odd gaps or alignment breaks."
+      5: "A clear spacing scale applied consistently; strong shared alignment lines; section rhythm feels deliberate."
+  - id: B3
+    name: Typography
+    weight: 1.0
+    anchors:
+      1: "Too many sizes/weights, long or cramped lines, poor leading, clashing fonts."
+      3: "Readable with a sensible scale, but measure or leading is off somewhere."
+      5: "Clear modular scale, 45–75ch measure for body, comfortable leading, pairing reinforces the direction."
+  - id: B4
+    name: Color
+    weight: 1.0
+    anchors:
+      1: "Muddy or clashing; color used randomly; roles unclear."
+      3: "Pleasant palette but roles drift (e.g. accent used for unrelated things)."
+      5: "Purposeful palette with consistent roles; accent reserved for meaning; surfaces separated clearly."
+  - id: B5
+    name: Responsive quality
+    weight: 1.25
+    anchors:
+      1: "Mobile is a squeezed desktop: tiny text, broken grids, CTA lost."
+      3: "Mobile works but some sections are awkward (overlong stacks, oversized media, lost hierarchy)."
+      5: "Each viewport feels designed for itself: reordered priorities, good tap targets, readable type, CTA in first screen."
+  - id: B6
+    name: Component consistency
+    weight: 1.0
+    anchors:
+      1: "Buttons, cards and inputs look like they come from different products."
+      3: "Mostly consistent with a few one-offs."
+      5: "One visual language: shared radii, borders, shadows, padding and states across all components."
+  - id: B7
+    name: Prompt fit and content
+    weight: 1.25
+    anchors:
+      1: "Missing requested sections, lorem ipsum, generic copy unrelated to the product."
+      3: "Covers the sections with plausible but generic copy."
+      5: "All requested sections present with specific, realistic copy that sells this product to this audience."
+  - id: B8
+    name: Interaction states
+    weight: 0.75
+    anchors:
+      1: "No hover/focus/active states."
+      3: "Hover and focus exist for main buttons only."
+      5: "Hover, focus-visible, active and disabled defined for every interactive element, consistent with the style."
+  - id: B9
+    name: Fidelity to StyleSpec and chosen preferences
+    weight: 1.5
+    anchors:
+      1: "No longer recognizably the chosen direction; locked preferences ignored."
+      3: "Recognizable, but some character has been sanded off or a locked preference drifted."
+      5: "Clearly the direction the user picked, signature element intact, every locked preference respected."

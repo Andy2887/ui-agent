@@ -1,0 +1,43 @@
+# Role -> model/effort mapping (plan §10). Any role can move to claude-opus-5-5 without code changes.
+models:
+  intake:     {model: claude-sonnet-5-5, effort: low,    max_tokens: 8000}
+  planner:    {model: claude-sonnet-5-5, effort: high,   max_tokens: 32000}
+  generator:  {model: claude-sonnet-5-5, effort: medium, max_tokens: 64000}
+  style_lock: {model: claude-sonnet-5-5, effort: medium, max_tokens: 8000}
+  reviewer:   {model: claude-sonnet-5-5, effort: high,   max_tokens: 32000}
+  executor:   {model: claude-sonnet-5-5, effort: high,   max_tokens: 32000}
+  handoff:    {model: claude-sonnet-5-5, effort: medium, max_tokens: 32000}
+
+# Server-side refusal fallback (Claude API only). Set to null to disable.
+fallbacks: default
+
+# USD per million tokens, used for the per-run budget cap and cost display.
+pricing:
+  claude-sonnet-5-5: {input: 2.0, output: 10.0, cache_read: 0.20, cache_write: 2.5}
+  claude-opus-5-5:   {input: 4.0, output: 20.0, cache_read: 0.20, cache_write: 5.0}
+
+budget_usd_per_run: 20
+max_parallel_generations: 5
+executor_max_tool_calls: 30
+
+viewports:
+  mobile:  [375, 812]
+  tablet:  [768, 1024]
+  desktop: [1440, 900]
+max_tiles:  {mobile: 4, tablet: 2, desktop: 4}
+
+refine:
+  max_iterations: 5
+  change_request_max_iterations: 2
+  pass_threshold: 4.0
+  min_criterion: 3
+  plateau_delta: 0.1
+  plateau_window: 2
+  regression_delta: 0.2
+  top_issues: 5
+
+final_approval: true
+export_pdf: true
+runs_dir: runs
+data_dir: data
+allowed_hosts: [fonts.googleapis.com, fonts.gstatic.com]

@@ -1,0 +1,97 @@
+"""Planner composition, gate decisions, sandboxed editor, color repair, tokens export."""
+
+from pathlib import Path
+
+from ui_agent import mock
+from ui_agent.color import check_palette, repair_palette
+from ui_agent.nodes.gate import gate
+from ui_agent.nodes.handoff import w3c_tokens
+from ui_agent.nodes.planner import diversity_problems, layouts_for, slots_for
+from ui_agent.nodes.reviewer import merge_issues
+from ui_agent.tools.text_editor import TextEditor
+
+
+def test_slots_composition():
+    assert slots_for(1, False) == ["neutral"]
+    assert slots_for(2, True) == ["taste", "neutral"]
+    s = slots_for(5, True)
+    assert s.count("wildcard") == 1 and s.count("taste") == 2
+    assert slots_for(3, False) == ["neutral", "neutral", "wildcard"]
+    assert slots_for(10, True).count("taste") == 4
+
+
+def test_layouts_spread_across_candidates():
+    assert layouts_for(4, ["split-hero", "bento"]) == ["split-hero", "bento", "split-hero", "bento"]
+    assert layouts_for(2, []) == [None, None]
+
+
+def test_diversity_check_flags_identical_briefs():
+    b = mock.plan(2, {"theme": "light"}, ["neutral", "neutral"], [None, None]).briefs
+    assert not diversity_problems(b, {})
+    b[1] = b[0].model_copy(update={"id": "b"})
+    assert diversity_problems(b, {})
+
+
+def test_color_repair_keeps_hue_and_reaches_aa():
+    pal = {"bg": "#FFFFFF", "surface": "#FFFFFF", "text": "#999999", "muted": "#AAAAAA", "primary": "#FFB020",
+           "on_primary": "#FFFFFF", "accent": "#FFE680", "border": "#EEEEEE"}
+    fixed, notes = repair_palette(pal)
+    assert not check_palette(fixed) and notes
+
+
+def test_text_editor_is_sandboxed(tmp_path: Path):
+    f = tmp_path / "v2.html"
+    f.write_text("<p>a</p>\n<p>a</p>\n<p>b</p>")
+    ed = TextEditor(f)
+    assert not ed.handle({"command": "view", "path": "../../etc/passwd"})[0]
+    assert not ed.handle({"command": "create", "path": "index.html", "file_text": "x"})[0]
+    assert not ed.handle({"command": "str_replace", "path": "index.html", "old_str": "<p>a</p>", "new_str": "x"})[0]
+    assert ed.handle({"command": "str_replace", "path": "index.html", "old_str": "<p>b</p>", "new_str": "<p>c</p>"})[0]
+    assert "<p>c</p>" in f.read_text()
+
+
+def _design(v, score, passed=True, scores=4):
+    return {"version": v, "html_path": f"refine/v{v}.html", "score": score,
+            "audit": {"passed": passed, "checks": [{"id": "A1", "passed": passed}]},
+            "review": {"scores": [{"criterion": c, "score": scores} for c in ("B1", "B2")]}}
+
+
+def test_gate_pass_revert_plateau_max():
+    st = {"current": _design(1, 4.3), "iteration": 1, "iteration_cap": 5, "issues": [], "usage": {}}
+    assert gate(st)["gate_decision"] == "pass"
+    st = {"current": _design(1, 3.5, passed=False), "iteration": 1, "iteration_cap": 5, "issues": [], "usage": {}}
+    assert gate(st)["gate_decision"] == "continue"
+    st = {"current": _design(3, 3.0, False), "best": _design(2, 3.6, False), "iteration": 3, "iteration_cap": 5,
+          "issues": [], "usage": {}, "best_scores": [3.6, 3.6]}
+    out = gate(st)
+    assert out["gate_decision"] == "revert" and out["current"]["version"] == 2
+    st = {"current": _design(4, 3.62, False), "best": _design(3, 3.6, False), "iteration": 4, "iteration_cap": 5,
+          "issues": [], "usage": {}, "best_scores": [3.55, 3.58, 3.6]}
+    assert gate(st)["gate_decision"] == "plateau"
+    st = {"current": _design(5, 3.9, False), "best": _design(4, 3.5, False), "iteration": 5, "iteration_cap": 5,
+          "issues": [], "usage": {}, "best_scores": [3.0, 3.5]}
+    out = gate(st)
+    assert out["gate_decision"] == "max_iters" and out["stop_reason"] == "max_iters"
+
+
+def test_open_high_issue_blocks_pass():
+    issues = [{"id": "x", "severity": "high", "status": "open"}]
+    st = {"current": _design(1, 4.6), "iteration": 1, "iteration_cap": 5, "issues": issues, "usage": {}}
+    assert gate(st)["gate_decision"] == "continue"
+
+
+def test_merge_issues_detects_regression_and_covers_audit():
+    prev = [{"id": "iss_a", "criterion": "B1", "severity": "high", "selector": "s", "viewport": "all",
+             "evidence": "e", "suggested_fix": "f", "explanation": "x", "status": "resolved"}]
+    new = [{**prev[0], "status": "open"}]
+    audit = {"checks": [{"id": "A3", "name": "Horizontal overflow", "passed": False, "details": "d", "items": []}]}
+    merged = {i["id"]: i for i in merge_issues(prev, new, audit)}
+    assert merged["iss_a"]["status"] == "regressed"
+    assert merged["iss_audit_a3"]["status"] == "open"
+
+
+def test_w3c_tokens():
+    t = w3c_tokens({"--color-bg": "#fff", "--font-heading": '"Inter", sans-serif', "--space-4": "16px", "--radius-md": "8px"})
+    assert t["color"]["bg"] == {"$type": "color", "$value": "#fff"}
+    assert t["fontFamily"]["heading"]["$type"] == "fontFamily"
+    assert t["spacing"]["4"]["$value"] == "16px"

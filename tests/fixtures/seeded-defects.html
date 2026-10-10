@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shipfast — Quiet Precision</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+  <style>
+:root {
+  /* Color roles */
+  --color-bg: #F7F9FC;
+  --color-surface: #FFFFFF;
+  --color-text: #0F172A;
+  --color-muted: #475569;
+  --color-primary: #1D4ED8;
+  --color-on-primary: #FFFFFF;
+  --color-accent: #0E7490;
+  --color-border: #DCE3EE;
+  /* Typography */
+  --font-heading: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --text-sm: 0.875rem; --text-base: 1rem; --text-lg: 1.25rem;
+  --text-xl: clamp(1.5rem, 1.2rem + 1vw, 2rem); --text-display: clamp(2.25rem, 1.6rem + 3vw, 4rem);
+  /* Spacing (density: airy) */
+  --space-1: 5px;
+  --space-2: 11px;
+  --space-3: 16px;
+  --space-4: 22px;
+  --space-5: 27px;
+  --space-6: 32px;
+  --space-8: 43px;
+  --space-12: 65px;
+  --space-16: 86px;
+  /* Shape: soft */
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-button: 8px;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.06);
+  /* Motion: subtle */
+  --duration: 200ms; --easing: cubic-bezier(.2,.7,.2,1);
+  /* Breakpoints (documented): 768px, 1024px, 1280px */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-body); font-size: var(--text-base); line-height: 1.6; color: var(--color-text); background: var(--color-bg); }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; margin: 0; }
+a { color: var(--color-primary); }
+/* defect:no-focus */
+a, button { outline: none; }
+/* /defect */
+.site-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--color-border); }
+.logo { font-family: var(--font-heading); font-weight: 700; font-size: var(--text-lg); color: var(--color-text); text-decoration: none; }
+.nav { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+/* defect:small-targets */
+.nav__link { display: inline-block; padding: 0 var(--space-1); font-size: var(--text-sm); line-height: 1.2; }
+/* /defect */
+.nav__link { color: var(--color-text); text-decoration: none; }
+.nav__link:hover { color: var(--color-primary); }
+main { display: block; }
+section { padding: var(--space-16) var(--space-6); }
+.hero { display: grid; gap: var(--space-8); text-align: center; justify-items: center; }
+.hero--split { text-align: left; justify-items: start; }
+.eyebrow { font-size: var(--text-sm); color: var(--color-muted); margin: 0 0 var(--space-3); }
+.hero__title { font-size: var(--text-display); max-width: 18ch; }
+.hero__accent { color: var(--color-primary); }
+.hero__lead { font-size: var(--text-lg); color: var(--color-muted); max-width: 52ch; margin: var(--space-4) 0 var(--space-6); }
+.hero__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: inherit; }
+.hero__visual { width: 100%; max-width: 960px; aspect-ratio: 16 / 10; border-radius: var(--radius-lg); border: 1px solid var(--color-border);
+  background: linear-gradient(135deg, var(--color-surface), var(--color-bg)), var(--color-surface); box-shadow: var(--shadow); }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 var(--space-6); border-radius: var(--radius-button);
+  border: 2px solid var(--color-border); font-weight: 600; text-decoration: none; transition: transform var(--duration) var(--easing), background var(--duration) var(--easing); }
+.btn--ghost { color: var(--color-text); background: transparent; }
+.btn--ghost:hover { border-color: var(--color-text); }
+/* defect:weak-cta */
+.btn--primary { background: transparent; color: var(--color-text); border-color: var(--color-border); font-weight: 500; }
+/* /defect */
+.btn--primary:hover { transform: translateY(-1px); }
+.section__title { font-size: var(--text-xl); text-align: center; margin-bottom: var(--space-8); }
+.features__grid, .testimonials__grid { display: grid; gap: var(--space-5); max-width: 1120px; margin: 0 auto; }
+/* defect:literal-values */
+.card { background: #ffffff; border: 1px solid #e5e7eb; padding: 28px; border-radius: 10px; }
+/* /defect */
+.card__icon { width: 28px; height: 28px; color: var(--color-accent); }
+.card__title { font-size: var(--text-lg); margin: var(--space-3) 0 var(--space-2); }
+.card__body { color: var(--color-muted); margin: 0; }
+.quote { margin: 0; padding: var(--space-6); border-left: 3px solid var(--color-accent); background: var(--color-surface); border-radius: var(--radius-md); }
+.quote blockquote { margin: 0 0 var(--space-3); font-size: var(--text-lg); }
+.quote figcaption { color: var(--color-muted); font-size: var(--text-sm); }
+.cta { text-align: center; background: var(--color-surface); border-block: 1px solid var(--color-border); }
+.cta__text { color: var(--color-muted); margin: 0 0 var(--space-6); }
+.site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-4); padding: var(--space-8) var(--space-6); border-top: 1px solid var(--color-border); }
+/* defect:tiny-text */
+.footer__legal { font-size: 11px; color: var(--color-muted); }
+/* /defect */
+@media (min-width: 768px) {
+  .features__grid { grid-template-columns: repeat(3, 1fr); }
+  .testimonials__grid { grid-template-columns: repeat(2, 1fr); }
+  .hero--split { grid-template-columns: 1.1fr 1fr; align-items: center; }
+}
+@media (min-width: 1024px) { section { padding-inline: var(--space-16); } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+  <header class="site-header" data-component="site-header">
+    <a class="logo" href="#">Shipfast</a>
+    <nav class="nav" aria-label="Main">
+      <a class="nav__link" href="#features">Product</a>
+      <a class="nav__link" href="#pricing">Pricing</a>
+      <a class="nav__link" href="#docs">Docs</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero" data-component="hero" aria-labelledby="hero-title">
+      <div class="hero__copy">
+        <p class="eyebrow">New · Shipfast 2.0</p>
+        <h1 id="hero-title" class="hero__title">Ship with confidence, <span class="hero__accent">every single day</span></h1>
+        <p class="hero__lead">The fastest way to ship reliable software, without the busywork.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#get-started">Start free trial</a>
+          <a class="btn btn--ghost" href="#demo">Book a demo</a>
+        </div>
+      </div>
+      <div class="hero__visual" role="img" aria-label="Product screenshot placeholder" data-placeholder="hero-image 1200x800, product dashboard screenshot"></div>
+    </section>
+    <section class="generic" data-component="logos" aria-labelledby="logos-title">
+      <h2 id="logos-title" class="section__title">Logo strip</h2>
+      <div class="features__grid">
+        <article class="card"><h3 class="card__title">Logo strip one</h3><p class="card__body">Realistic content for this block will come from your copy.</p></article>
+        <article class="card"><h3 class="card__title">Logo strip two</h3><p class="card__body">Each item explains one concrete benefit in a sentence.</p></article>
+      </div>
+    </section>
+    <section class="features" data-component="features" aria-labelledby="features-title">
+      <h2 id="features-title" class="section__title">Everything you need to move fast</h2>
+      <div class="features__grid">
+        <article class="card">
+          <svg class="card__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <h3 class="card__title">Instant previews</h3>
+          <p class="card__body">Every pull request gets a live preview link your whole team can review.</p>
+        </article>
+        <article class="card">
+          <svg class="card__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <h3 class="card__title">Guardrails built in</h3>
+          <p class="card__body">Policies catch risky changes before they reach production.</p>
+        </article>
+        <article class="card">
+          <svg class="card__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <h3 class="card__title">Insights that matter</h3>
+          <p class="card__body">See deploy frequency and failure rate without building a dashboard.</p>
+        </article>
+      </div>
+    </section>
+    <section class="testimonials" data-component="testimonials" aria-labelledby="testimonials-title">
+      <h2 id="testimonials-title" class="section__title">Teams ship more, and sleep better</h2>
+      <div class="testimonials__grid">
+        <figure class="quote"><blockquote>“We cut our release time from a day to twenty minutes.”</blockquote><figcaption>Priya N., Staff Engineer</figcaption></figure>
+        <figure class="quote"><blockquote>“The previews alone paid for it in the first week.”</blockquote><figcaption>Marco L., CTO</figcaption></figure>
+      </div>
+    </section>
+    <section class="cta" data-component="cta" aria-labelledby="cta-title">
+      <h2 id="cta-title" class="section__title">Ready when you are</h2>
+      <p class="cta__text">Free for 14 days. No credit card required.</p>
+      <a class="btn btn--primary" id="get-started" href="#signup">Get started</a>
+    </section>
+  </main>
+  <footer class="site-footer" data-component="site-footer">
+    <span class="logo">Shipfast</span>
+    <p class="footer__legal">© 2026 Shipfast, Inc. All rights reserved.</p>
+  </footer>
+</body>
+</html>

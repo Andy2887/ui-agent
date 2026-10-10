@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "roles": ["bg", "surface", "text", "muted", "primary", "on_primary", "accent", "border"],
+  "directions": [
+    {
+      "id": "cool-blues",
+      "name": "Cool blues",
+      "hint": "Calm, trustworthy and technical. The safe choice for SaaS and developer tools.",
+      "swatches": ["#0B1F3A", "#1D4ED8", "#3B82F6", "#93C5FD", "#0891B2", "#F1F5FB"],
+      "ranges": { "primary_hue": [[230, 275]], "accent_hue": [[190, 300]], "chroma": [0.08, 0.25], "neutral": "cool", "accents": 1 },
+      "examples": [
+        {
+          "light": { "bg": "#F7F9FC", "surface": "#FFFFFF", "text": "#0F172A", "muted": "#475569", "primary": "#1D4ED8", "on_primary": "#FFFFFF", "accent": "#0E7490", "border": "#DCE3EE" },
+          "dark": { "bg": "#0B1220", "surface": "#121B2E", "text": "#E6ECF5", "muted": "#9AA8BF", "primary": "#60A5FA", "on_primary": "#0B1220", "accent": "#22D3EE", "border": "#22304A" }
+        },
+        {
+          "light": { "bg": "#FFFFFF", "surface": "#F1F5FB", "text": "#0B1B33", "muted": "#4A5B74", "primary": "#0F4C81", "on_primary": "#FFFFFF", "accent": "#6D5DD3", "border": "#D5DEEA" },
+          "dark": { "bg": "#08111F", "surface": "#0F1B30", "text": "#E3EAF4", "muted": "#93A3BB", "primary": "#7FB2F0", "on_primary": "#08111F", "accent": "#A79BF2", "border": "#1E2C44" }
+        },
+        {
+          "light": { "bg": "#F4F7FB", "surface": "#FFFFFF", "text": "#111827", "muted": "#4B5563", "primary": "#2563EB", "on_primary": "#FFFFFF", "accent": "#0369A1", "border": "#E2E8F0" },
+          "dark": { "bg": "#0D1117", "surface": "#161B22", "text": "#E6EDF3", "muted": "#9DA7B3", "primary": "#58A6FF", "on_primary": "#0D1117", "accent": "#79C0FF", "border": "#30363D" }
+        }
+      ]
+    },
+    {
+      "id": "fresh-greens",
+      "name": "Fresh greens",
+      "hint": "Growth, health, money and sustainability. Feels optimistic without shouting.",
+      "swatches": ["#0B2E22", "#047857", "#10B981", "#A7F3D0", "#65A30D", "#F3FAF6"],
+      "ranges": { "primary_hue": [[135, 180]], "accent_hue": [[100, 200]], "chroma": [0.08, 0.22], "neutral": "neutral", "accents": 1 },
+      "examples": [
+        {
+          "light": { "bg": "#F6FAF7", "surface": "#FFFFFF", "text": "#0F1F17", "muted": "#4B5E54", "primary": "#047857", "on_primary": "#FFFFFF", "accent": "#4D7C0F", "border": "#DCE7E0" },
+          "dark": { "bg": "#0B1410", "surface": "#122019", "text": "#E4F0E9", "muted": "#98AFA2", "primary": "#34D399", "on_primary": "#0B1410", "accent": "#A3E635", "border": "#1F3329" }
+        },
+        {
+          "light": { "bg": "#FFFFFF", "surface": "#F0F7F3", "text": "#132A20", "muted": "#4F6358", "primary": "#166534", "on_primary": "#FFFFFF", "accent": "#0F766E", "border": "#D3E4DA" },
+          "dark": { "bg": "#0A1310", "surface": "#11211B", "text": "#E2EEE7", "muted": "#94ABA0", "primary": "#4ADE80", "on_primary": "#0A1310", "accent": "#2DD4BF", "border": "#1D3329" }
+        }
+      ]
+    },
+    {
+      "id": "warm-earth",
+      "name": "Warm earth",
+      "hint": "Terracotta, sand and olive. Human, crafted and grounded — good for food, travel and lifestyle.",
+      "swatches": ["#2B1D14", "#9A3412", "#C2410C", "#E7D7C1", "#6B7A2E", "#FAF6F0"],
+      "ranges": { "primary_hue": [[25, 75]], "accent_hue": [[60, 140]], "chroma": [0.06, 0.18], "neutral": "warm", "accents": 1 },
+      "examples": [
+        {
+          "light": { "bg": "#FAF6F0", "surface": "#FFFDF9", "text": "#2B1D14", "muted": "#6B5646", "primary": "#9A3412", "on_primary": "#FFFFFF", "accent": "#5F6B23", "border": "#E8DCCB" },
+          "dark": { "bg": "#17110C", "surface": "#221A13", "text": "#F1E7DA", "muted": "#BCA893", "primary": "#F0A06B", "on_primary": "#17110C", "accent": "#C3CC7A", "border": "#3A2D22" }
+        },
+        {
+          "light": { "bg": "#F7F1E8", "surface": "#FFFFFF", "text": "#33261C", "muted": "#6E5B4C", "primary": "#8A4B2A", "on_primary": "#FFFFFF", "accent": "#A15C07", "border": "#E5D8C6" },
+          "dark": { "bg": "#15100B", "surface": "#201811", "text": "#EFE4D6", "muted": "#B9A58F", "primary": "#E0A47E", "on_primary": "#15100B", "accent": "#E9B44C", "border": "#382B20" }
+        }
+      ]
+    },
+    {
+      "id": "sunset",
+      "name": "Sunset (orange / coral)",
+      "hint": "Warm, energetic and friendly. Draws the eye to calls to action.",
+      "swatches": ["#2A1410", "#C2410C", "#F97316", "#FB7185", "#FDBA74", "#FFF7F2"],
+      "ranges": { "primary_hue": [[15, 60]], "accent_hue": [[340, 30], [40, 100]], "chroma": [0.12, 0.24], "neutral": "warm", "accents": 1 },
+      "examples": [
+        {
+          "light": { "bg": "#FFF8F3", "surface": "#FFFFFF", "text": "#26150F", "muted": "#6B4F45", "primary": "#C2410C", "on_primary": "#FFFFFF", "accent": "#BE123C", "border": "#F1DED3" },
+          "dark": { "bg": "#1A0F0B", "surface": "#251612", "text": "#F8E8E0", "muted": "#C4A497", "primary": "#FB923C", "on_primary": "#1A0F0B", "accent": "#FB7185", "border": "#3D2620" }
+        },
+        {
+          "light": { "bg": "#FFFFFF", "surface": "#FFF4EE", "text": "#2A1712", "muted": "#6D5047", "primary": "#B4381F", "on_primary": "#FFFFFF", "accent": "#B45309", "border": "#F0DCD1" },
+          "dark": { "bg": "#180E0B", "surface": "#24150F", "text": "#F6E6DD", "muted": "#C2A193", "primary": "#FF8A65", "on_primary": "#180E0B", "accent": "#FCD34D", "border": "#3B241C" }
+        }
+      ]
+    },
+    {
+      "id": "mono-accent",
+      "name": "Monochrome + one accent",
+      "hint": "Black, white and grays with a single bold color. Focused and modern; the accent always means 'act here'.",
+      "swatches": ["#0A0A0A", "#404040", "#A3A3A3", "#F5F5F5", "#FFFFFF", "#E11D48"],
+      "ranges": { "primary_hue": [[0, 360]], "accent_hue": [[0, 360]], "chroma": [0.0, 0.26], "neutral": "neutral", "accents": 1, "allow_neutral_primary": true },
+      "examples": [
+        {
+          "light": { "bg": "#FFFFFF", "surface": "#F5F5F5", "text": "#0A0A0A", "muted": "#525252", "primary": "#0A0A0A", "on_primary": "#FFFFFF", "accent": "#E11D48", "border": "#E5E5E5" },
+          "dark": { "bg": "#0A0A0A", "surface": "#171717", "text": "#FAFAFA", "muted": "#A3A3A3", "primary": "#FAFAFA", "on_primary": "#0A0A0A", "accent": "#FB7185", "border": "#262626" }
+        },
+        {
+          "light": { "bg": "#FAFAF9", "surface": "#FFFFFF", "text": "#1C1917", "muted": "#57534E", "primary": "#4338CA", "on_primary": "#FFFFFF", "accent": "#4338CA", "border": "#E7E5E4" },
+          "dark": { "bg": "#0C0A09", "surface": "#1C1917", "text": "#F5F5F4", "muted": "#A8A29E", "primary": "#A5B4FC", "on_primary": "#0C0A09", "accent": "#A5B4FC", "border": "#292524" }
+        }
+      ]
+    },
+    {
+      "id": "soft-pastels",
+      "name": "Soft pastels",
+      "hint": "Gentle, approachable and light. Good for consumer, wellness and creative products.",
+      "swatches": ["#3B2F4A", "#7C5CBF", "#C4B5FD", "#FBCFE8", "#BBF7D0", "#FDFBFF"],
+      "ranges": { "primary_hue": [[270, 355]], "accent_hue": [[330, 30], [140, 200]], "chroma": [0.05, 0.18], "neutral": "warm", "accents": 2 },
+      "examples": [
+        {
+          "light": { "bg": "#FDFBFF", "surface": "#F6F0FF", "text": "#2E2440", "muted": "#615575", "primary": "#6D4FB5", "on_primary": "#FFFFFF", "accent": "#B3407A", "border": "#E9E0F5" },
+          "dark": { "bg": "#17131F", "surface": "#211B2C", "text": "#EFE9F8", "muted": "#B3A8C4", "primary": "#C4B5FD", "on_primary": "#17131F", "accent": "#F9A8D4", "border": "#342B43" }
+        },
+        {
+          "light": { "bg": "#FFFBFD", "surface": "#FFF0F6", "text": "#3A2433", "muted": "#6E5465", "primary": "#A23A74", "on_primary": "#FFFFFF", "accent": "#2F7D63", "border": "#F3DDE8" },
+          "dark": { "bg": "#1A1218", "surface": "#251A22", "text": "#F7E9F1", "muted": "#C3A9B8", "primary": "#F5A3CB", "on_primary": "#1A1218", "accent": "#86EFAC", "border": "#3A2A35" }
+        }
+      ]
+    },
+    {
+      "id": "vivid",
+      "name": "Vivid",
+      "hint": "Saturated and high-energy. Stands out for launches, consumer apps and youth brands.",
+      "swatches": ["#120B2E", "#7C3AED", "#DB2777", "#F59E0B", "#06B6D4", "#FFFFFF"],
+      "ranges": { "primary_hue": [[280, 360], [0, 20]], "accent_hue": [[0, 360]], "chroma": [0.12, 0.32], "neutral": "cool", "accents": 2 },
+      "examples": [
+        {
+          "light": { "bg": "#FFFFFF", "surface": "#F7F3FF", "text": "#140D2B", "muted": "#514A66", "primary": "#6D28D9", "on_primary": "#FFFFFF", "accent": "#BE185D", "border": "#E7E0F7" },
+          "dark": { "bg": "#0F0A24", "surface": "#1A1238", "text": "#F3EEFF", "muted": "#B2A8D1", "primary": "#A78BFA", "on_primary": "#0F0A24", "accent": "#F472B6", "border": "#2E2457" }
+        },
+        {
+          "light": { "bg": "#FFFDF7", "surface": "#FFFFFF", "text": "#1A1033", "muted": "#584D6E", "primary": "#C2185B", "on_primary": "#FFFFFF", "accent": "#5B21B6", "border": "#EDE5F2" },
+          "dark": { "bg": "#120A1F", "surface": "#1D1230", "text": "#F7EEFF", "muted": "#BBA9D3", "primary": "#FF6FAE", "on_primary": "#120A1F", "accent": "#22D3EE", "border": "#33224D" }
+        }
+      ]
+    },
+    {
+      "id": "dark-neon",
+      "name": "Dark neon",
+      "hint": "Near-black with glowing accents. Feels technical, gaming or AI-native. Best with the dark theme.",
+      "swatches": ["#05060A", "#111522", "#22D3EE", "#A3E635", "#E879F9", "#E6EDF7"],
+      "ranges": { "primary_hue": [[175, 230], [110, 140], [300, 330]], "accent_hue": [[100, 340]], "chroma": [0.08, 0.3], "neutral": "cool", "accents": 1 },
+      "examples": [
+        {
+          "light": { "bg": "#F7F8FB", "surface": "#FFFFFF", "text": "#0B0E17", "muted": "#4A5163", "primary": "#0E7490", "on_primary": "#FFFFFF", "accent": "#A21CAF", "border": "#DDE1EA" },
+          "dark": { "bg": "#05060A", "surface": "#0E111A", "text": "#E6EDF7", "muted": "#8E99AE", "primary": "#22D3EE", "on_primary": "#05060A", "accent": "#E879F9", "border": "#1D2333" }
+        },
+        {
+          "light": { "bg": "#FAFBF7", "surface": "#FFFFFF", "text": "#0C0F0A", "muted": "#4D5546", "primary": "#3F6212", "on_primary": "#FFFFFF", "accent": "#0E7490", "border": "#E0E4D8" },
+          "dark": { "bg": "#060807", "surface": "#0F1310", "text": "#E9F2E6", "muted": "#93A08F", "primary": "#A3E635", "on_primary": "#060807", "accent": "#22D3EE", "border": "#1E261F" }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "font_allowlist_hosts": ["fonts.googleapis.com", "fonts.gstatic.com"],
+  "pairings": [
+    {
+      "id": "clean-sans",
+      "name": "Clean sans",
+      "hint": "Neutral and highly readable. Works for almost anything.",
+      "heading": { "family": "Inter", "weights": [600, 700], "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif", "letter_spacing": "-0.02em" },
+      "body": { "family": "Inter", "weights": [400, 500], "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif" },
+      "scale_ratio": 1.25,
+      "google": "family=Inter:wght@400;500;600;700"
+    },
+    {
+      "id": "geometric",
+      "name": "Geometric",
+      "hint": "Circles and straight lines. Modern, confident and a little techy.",
+      "heading": { "family": "Outfit", "weights": [600, 700], "fallback": "system-ui, sans-serif", "letter_spacing": "-0.02em" },
+      "body": { "family": "DM Sans", "weights": [400, 500], "fallback": "system-ui, sans-serif" },
+      "scale_ratio": 1.333,
+      "google": "family=Outfit:wght@600;700&family=DM+Sans:wght@400;500"
+    },
+    {
+      "id": "friendly",
+      "name": "Friendly / rounded",
+      "hint": "Soft, rounded letters. Warm and approachable.",
+      "heading": { "family": "Nunito", "weights": [700, 800], "fallback": "ui-rounded, system-ui, sans-serif", "letter_spacing": "-0.01em" },
+      "body": { "family": "Nunito Sans", "weights": [400, 600], "fallback": "system-ui, sans-serif" },
+      "scale_ratio": 1.25,
+      "google": "family=Nunito:wght@700;800&family=Nunito+Sans:wght@400;600"
+    },
+    {
+      "id": "elegant-serif",
+      "name": "Elegant serif",
+      "hint": "Classic serif headlines with a clean body font. Editorial and premium.",
+      "heading": { "family": "Playfair Display", "weights": [600, 700], "fallback": "Georgia, 'Times New Roman', serif", "letter_spacing": "-0.01em" },
+      "body": { "family": "Source Sans 3", "weights": [400, 600], "fallback": "system-ui, sans-serif" },
+      "scale_ratio": 1.333,
+      "google": "family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "technical-mono",
+      "name": "Technical mono",
+      "hint": "Monospace headings like a code editor. Precise and developer-flavored.",
+      "heading": { "family": "JetBrains Mono", "weights": [600, 700], "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace", "letter_spacing": "-0.03em" },
+      "body": { "family": "IBM Plex Sans", "weights": [400, 500], "fallback": "system-ui, sans-serif" },
+      "scale_ratio": 1.2,
+      "google": "family=JetBrains+Mono:wght@600;700&family=IBM+Plex+Sans:wght@400;500"
+    }
+  ]
+}
