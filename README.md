@@ -2,6 +2,13 @@
 
 You brief it like a PM briefs a UI/UX designer: the problem and the users, never the colors, fonts or layout. The designer agent may ask a few kickoff questions, then sketches N low-fidelity directions (default 3), each a different bet on solving the problem with a proposed visual mood. You pick one; it is designed in full, then a reviewer/executor loop refines it against a rubric, and you get a handoff package (`index.html`, `tokens.json`, `HANDOFF.md`, screenshots, PDF) for a coding agent. See `plan.md` for the full design.
 
+## Why not just use Claude Design?
+
+Claude Design turns a prompt into a design. This project adds two things it doesn't do:
+
+1. **It follows the real PM → designer workflow.** You describe the problem and the users, not the visuals. The designer agent asks kickoff questions the way a designer would at a kickoff meeting, then offers several competing directions for you to choose from before anything is designed in full. This gets you closer to what a PM actually needs than writing one detailed visual prompt and iterating on whatever comes back.
+2. **It critiques its own work against a fixed UI/UX rubric.** Each version is rendered and scored against `rubric/rubric.yaml`. Layer A runs automated pass/fail checks: accessibility, contrast, overflow, tap-target size, font-size floor, console errors, focus visibility, and design-token use. Layer B scores the page against anchored criteria for UI/UX design principles: hierarchy, layout and spacing, typography, color, responsiveness, component consistency, fit with the brief, interaction states, and fidelity to the chosen direction. A reviewer/executor loop fixes what fails, and a gate keeps the best version. The result is held to an explicit standard instead of depending on how good a single generation happens to be.
+
 ## Run it
 
 Requirements: Python ≥ 3.11, Node ≥ 20.
