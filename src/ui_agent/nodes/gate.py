@@ -24,6 +24,20 @@ def passes(d: dict, issues: list[dict]) -> bool:
         and bool(scores) and min(scores) >= cfg["min_criterion"] and not open_high
 
 
+def issues_after_revert(best: dict, issues: list[dict]) -> list[dict]:
+    """Issue list matching the reverted-to version.
+
+    Statuses written after `best` was reviewed describe the rejected edits, which are gone.
+    Keeping them would mark fixes the revert discarded as "resolved", so the next review would
+    flag them as regressions and the gate would revert again, forever. Issues `best` knew keep
+    its statuses; issues raised later are open, since nothing in `best` fixed them."""
+    known = {i["id"]: i for i in (best.get("review") or {}).get("issues") or []}
+    if not known:
+        return issues
+    out = [known.get(i["id"]) or {**i, "status": "open"} for i in issues]
+    return out + [i for iid, i in known.items() if iid not in {o["id"] for o in out}]
+
+
 def gate(state: AgentState) -> dict:
     cfg = settings.config()["refine"]
     cur, best = state["current"], state.get("best")
@@ -42,7 +56,8 @@ def gate(state: AgentState) -> dict:
         note = (f"Score fell from {best.get('score')} to {cur.get('score')}" if not reopened_high
                 else f"Previously fixed high-severity issue(s) came back: {', '.join(reopened_high)}") + \
                f". v{cur['version']} was reverted to v{best['version']}."
-        update.update({"current": best, "regression_note": note, "best": best})
+        update.update({"current": best, "regression_note": note, "best": best,
+                       "issues": issues_after_revert(best, issues)})
         update["best_scores"][-1] = best.get("score") or 0
         decision = "max_iters" if iteration >= cap else "revert"
     elif len(best_scores) > cfg["plateau_window"] and \

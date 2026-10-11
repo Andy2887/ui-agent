@@ -94,6 +94,26 @@ def test_merge_issues_detects_regression_and_covers_audit():
     assert merged["iss_audit_a3"]["status"] == "open"
 
 
+def test_revert_restores_issue_statuses_of_best():
+    # v2 fixes iss_a but scores lower and is reverted to v1. v3 is built on v1, so iss_a is
+    # still there: that is "open", not a regression of a fix v1 never had.
+    iss = {"id": "iss_a", "criterion": "B5", "severity": "high", "selector": "s", "viewport": "all",
+           "evidence": "e", "suggested_fix": "f", "explanation": "x", "status": "open"}
+    v1 = {**_design(1, 3.8, False), "review": {"scores": [], "issues": [iss]}}
+    later = {**iss, "id": "iss_b", "status": "resolved"}
+    st = {"current": _design(2, 3.3, False), "best": v1, "iteration": 2, "iteration_cap": 5,
+          "issues": [{**iss, "status": "resolved"}, later], "usage": {}, "best_scores": [3.8]}
+    out = gate(st)
+    assert out["gate_decision"] == "revert"
+    restored = {i["id"]: i["status"] for i in out["issues"]}
+    assert restored == {"iss_a": "open", "iss_b": "open"}
+    merged = {i["id"]: i for i in merge_issues(out["issues"], [{**iss, "status": "open"}], {"checks": []})}
+    assert merged["iss_a"]["status"] == "open"
+    st = {"current": _design(3, 3.75, False), "best": v1, "iteration": 3, "iteration_cap": 5,
+          "issues": list(merged.values()), "usage": {}, "best_scores": [3.8]}
+    assert gate(st)["gate_decision"] == "continue"
+
+
 def test_w3c_tokens():
     t = w3c_tokens({"--color-bg": "#fff", "--font-heading": '"Inter", sans-serif', "--space-4": "16px", "--radius-md": "8px"})
     assert t["color"]["bg"] == {"$type": "color", "$value": "#fff"}
