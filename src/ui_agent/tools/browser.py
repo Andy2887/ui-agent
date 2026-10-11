@@ -71,7 +71,8 @@ FACTS_JS = r"""
     .map((el) => ({ selector: sel(el), size: parseFloat(getComputedStyle(el).fontSize) }))
     .filter((x) => x.size < 16);
 
-  const inlineStyles = [...document.querySelectorAll('[style]')].map(sel);
+  // Playwright's full-page screenshot leaves an empty style="" on inputs; only count real declarations.
+  const inlineStyles = [...document.querySelectorAll('[style]')].filter((el) => el.getAttribute('style').trim()).map(sel);
   const topLevel = [...document.querySelectorAll('body > header, body > nav, body > footer, body > section, body > aside, main > *, body > div > header, body > div > main > *, body > div > footer')]
     .filter((el) => !['SCRIPT', 'STYLE', 'TEMPLATE'].includes(el.tagName));
   const missingComponent = topLevel.filter((el) => !el.hasAttribute('data-component')).map(sel);

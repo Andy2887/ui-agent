@@ -29,6 +29,9 @@ FIXTURES = {
     "A6": (_inject(CLEAN, body="<script>undefinedFunction()</script>"), "A6"),
     "A7": (mock.html_for(BRIEF, INTAKE, defects=["no-focus"]), "A7"),
     "A8": (CLEAN.replace('<section class="cta"', '<section style="padding: 12px" class="cta"', 1), "A8"),
+    # Playwright's full-page screenshot leaves an empty style="" on text inputs; that is not a design defect.
+    "input": (_inject(CLEAN, body='<section data-component="signup"><label for="email">Email</label>'
+                                  '<input id="email" type="email" name="email"></section>'), None),
 }
 
 
@@ -55,11 +58,16 @@ def test_clean_fixture_passes(results):
     assert not failing, failing
 
 
-@pytest.mark.parametrize("name", [k for k in FIXTURES if k != "clean"])
+@pytest.mark.parametrize("name", [k for k, (_, expected) in FIXTURES.items() if expected])
 def test_seeded_defect_is_caught(results, name):
     expected = FIXTURES[name][1]
     check = next(c for c in results[name].checks if c.id == expected)
     assert not check.passed, f"{expected} did not catch its defect"
+
+
+def test_empty_style_attribute_is_not_an_inline_style(results):
+    a8 = next(c for c in results["input"].checks if c.id == "A8")
+    assert a8.passed, a8.items
 
 
 def test_token_usage_counts_literals():
