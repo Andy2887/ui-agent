@@ -52,6 +52,12 @@ def role_config(role: str) -> RoleConfig:
 
 def cost_usd(model: str, usage: dict) -> float:
     prices = settings.config()["pricing"].get(model) or settings.config()["pricing"]["claude-sonnet-5-5"]
+    long_ctx = prices.get("long_context")
+    if long_ctx:  # e.g. Haiku 5.5: higher rates once the whole prompt exceeds the threshold
+        prompt_tokens = (usage.get("input_tokens", 0) + usage.get("cache_read_input_tokens", 0)
+                         + usage.get("cache_creation_input_tokens", 0))
+        if prompt_tokens > long_ctx["threshold"]:
+            prices = long_ctx
     return (
         usage.get("input_tokens", 0) * prices["input"]
         + usage.get("output_tokens", 0) * prices["output"]
@@ -111,7 +117,8 @@ class LLM:
             "thinking": {"type": "adaptive"},
             "output_config": {"effort": rc.effort},
         }
-        if settings.config().get("fallbacks"):
+        # Haiku 5.5 has no server-side refusal fallback; refusals still surface as LLMRefusal.
+        if settings.config().get("fallbacks") and not rc.model.startswith("claude-haiku"):
             kwargs["betas"] = [FALLBACK_BETA]
             kwargs["fallbacks"] = settings.config()["fallbacks"]
         return kwargs
