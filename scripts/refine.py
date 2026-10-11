@@ -1,6 +1,6 @@
 """Internal dev tool (M1): run only the refine loop on an existing HTML file.
 
-    python scripts/refine.py page.html --prompt "Landing page for ..." [--max-iters 5]
+    python scripts/refine.py page.html --problem "Freelancers lose receipts" --audience "Solo freelancers" [--max-iters 5]
 
 Writes everything under runs/<run_id>/refine/ and prints the score trajectory.
 Set UI_AGENT_MOCK=1 to exercise the loop without API calls."""
@@ -23,7 +23,8 @@ from ui_agent.tools.browser import get_browser  # noqa: E402
 async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("html")
-    ap.add_argument("--prompt", required=True)
+    ap.add_argument("--problem", required=True)
+    ap.add_argument("--audience", required=True)
     ap.add_argument("--max-iters", type=int, default=settings.config()["refine"]["max_iterations"])
     a = ap.parse_args()
     run_id = "refine-" + time.strftime("%Y%m%d-%H%M%S")
@@ -32,10 +33,11 @@ async def main() -> None:
     shutil.copyfile(a.html, root / "refine" / "v1.html")
     html = Path(a.html).read_text()
     state = {
-        "run_id": run_id, "user_id": "dev", "prompt": a.prompt, "preferences": {}, "candidate_count": 1,
-        "intake": {"page_type": "landing", "sections": [], "product_name": "", "audience": "", "assumptions": []},
+        "run_id": run_id, "user_id": "dev", "brief": {"problem": a.problem, "audience": a.audience}, "candidate_count": 1,
+        "intake": {"page_type": "landing", "sections": [], "product_name": "", "problem": a.problem, "audience": a.audience,
+                   "user_needs": [], "primary_action": "", "assumptions": [], "questions": []},
         "style_lock": {"direction_id": "given", "tokens": root_tokens(html), "character": "As given.",
-                       "signature_elements": [], "must_keep": [], "user_notes": "", "locked_preferences": {}},
+                       "signature_elements": [], "must_keep": [], "user_notes": ""},
         "current": {"direction_id": "given", "version": 1, "html_path": "refine/v1.html"},
         "best": None, "iteration": 0, "iteration_cap": a.max_iters, "issues": [], "history": [], "usage": {},
     }

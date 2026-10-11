@@ -59,12 +59,12 @@ layer_b:
       3: "Mostly consistent with a few one-offs."
       5: "One visual language: shared radii, borders, shadows, padding and states across all components."
   - id: B7
-    name: Prompt fit and content
+    name: Brief fit and content
     weight: 1.25
     anchors:
-      1: "Missing requested sections, lorem ipsum, generic copy unrelated to the product."
-      3: "Covers the sections with plausible but generic copy."
-      5: "All requested sections present with specific, realistic copy that sells this product to this audience."
+      1: "Doesn't address the stated problem or users; missing sections, lorem ipsum, generic copy unrelated to the product."
+      3: "Covers the sections with plausible but generic copy; the primary action is present but not what the page is built around."
+      5: "Clearly built for these users and this problem: every section serves a stated user need, the primary action is the page's center of gravity, and the copy is specific and realistic."
   - id: B8
     name: Interaction states
     weight: 0.75
@@ -73,9 +73,9 @@ layer_b:
       3: "Hover and focus exist for main buttons only."
       5: "Hover, focus-visible, active and disabled defined for every interactive element, consistent with the style."
   - id: B9
-    name: Fidelity to StyleSpec and chosen preferences
+    name: Fidelity to the chosen direction
     weight: 1.5
     anchors:
-      1: "No longer recognizably the chosen direction; locked preferences ignored."
-      3: "Recognizable, but some character has been sanded off or a locked preference drifted."
-      5: "Clearly the direction the user picked, signature element intact, every locked preference respected."
+      1: "No longer recognizably the sketch and direction the PM picked; their notes ignored."
+      3: "Recognizable, but some character has been sanded off, the sketch's structure drifted, or a note was only partly applied."
+      5: "Clearly the direction the PM picked: the sketch's structure and concept, the StyleSpec's signature elements, and every PM note intact."

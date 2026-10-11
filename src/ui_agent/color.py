@@ -1,4 +1,4 @@
-"""Color math: hex <-> OKLCH, WCAG contrast, palette checks and repair (plan §4.3, §5.2)."""
+"""Color math: hex <-> OKLCH, WCAG contrast, palette checks and repair (plan §4.4, §5.4)."""
 
 from __future__ import annotations
 
@@ -164,34 +164,3 @@ def palette_matches_direction(palette: dict[str, str], direction: dict) -> list[
             problems.append(f"{role} {palette[role]} chroma {C:.2f} is outside {cmin}–{cmax}")
     return problems
 
-
-def palette_from_brand(hex_color: str, theme: str = "light") -> dict[str, str]:
-    """Build a full palette around one brand color (mirrors the frontend generator)."""
-    L, C, H = hex_to_oklch(hex_color)
-    neutral_c = min(C * 0.12, 0.015)
-    if theme == "dark":
-        pal = {
-            "bg": oklch_to_hex(0.17, neutral_c, H),
-            "surface": oklch_to_hex(0.22, neutral_c, H),
-            "text": oklch_to_hex(0.95, neutral_c * 0.6, H),
-            "muted": oklch_to_hex(0.75, neutral_c, H),
-            "primary": oklch_to_hex(max(L, 0.68), C, H),
-            "on_primary": oklch_to_hex(0.18, neutral_c, H),
-            "accent": oklch_to_hex(0.78, C * 0.8, (H + 40) % 360),
-            "border": oklch_to_hex(0.32, neutral_c, H),
-        }
-    else:
-        pal = {
-            "bg": oklch_to_hex(0.985, neutral_c * 0.5, H),
-            "surface": "#FFFFFF",
-            "text": oklch_to_hex(0.22, neutral_c, H),
-            "muted": oklch_to_hex(0.46, neutral_c, H),
-            "primary": hex_color.upper(),
-            "on_primary": "#FFFFFF",
-            "accent": oklch_to_hex(0.55, C * 0.9, (H + 40) % 360),
-            "border": oklch_to_hex(0.9, neutral_c, H),
-        }
-        if contrast_ratio("#FFFFFF", pal["primary"]) < 4.5 and contrast_ratio(oklch_to_hex(0.2, neutral_c, H), pal["primary"]) >= 4.5:
-            pal["on_primary"] = oklch_to_hex(0.2, neutral_c, H)
-    repaired, _ = repair_palette(pal)
-    return repaired

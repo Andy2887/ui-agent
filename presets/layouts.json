@@ -1,174 +1,57 @@
 {
   "version": 1,
-  "grid_columns": 12,
   "page_types": [
-    { "id": "landing", "name": "Landing page", "default_sections": ["hero", "logos", "features", "testimonials", "cta", "footer"], "recommended": { "density": "airy" } },
-    { "id": "dashboard", "name": "Dashboard", "default_sections": ["kpis", "chart", "table", "activity"], "recommended": { "density": "compact" } },
-    { "id": "pricing", "name": "Pricing page", "default_sections": ["hero", "plans", "comparison", "faq", "cta", "footer"], "recommended": { "density": "balanced" } },
-    { "id": "auth", "name": "Sign up / log in", "default_sections": ["form"], "recommended": { "density": "balanced" } },
-    { "id": "blog", "name": "Blog article", "default_sections": ["article", "author", "related", "footer"], "recommended": { "density": "airy" } },
-    { "id": "portfolio", "name": "Portfolio", "default_sections": ["hero", "projects", "about", "contact", "footer"], "recommended": { "density": "airy" } }
+    { "id": "landing", "name": "Landing page", "default_sections": ["hero", "logos", "features", "testimonials", "cta", "footer"] },
+    { "id": "dashboard", "name": "Dashboard", "default_sections": ["kpis", "chart", "table", "activity"] },
+    { "id": "pricing", "name": "Pricing page", "default_sections": ["hero", "plans", "comparison", "faq", "cta", "footer"] },
+    { "id": "auth", "name": "Sign up / log in", "default_sections": ["form"] },
+    { "id": "blog", "name": "Blog article", "default_sections": ["article", "author", "related", "footer"] },
+    { "id": "portfolio", "name": "Portfolio", "default_sections": ["hero", "projects", "about", "contact", "footer"] }
   ],
   "sections": [
-    { "id": "hero", "name": "Hero", "page_types": ["landing", "pricing", "portfolio"], "rows": [] },
-    { "id": "logos", "name": "Logo strip", "page_types": ["landing", "pricing"], "rows": [{ "h": 4, "cols": [{ "span": 12, "k": "logos" }] }] },
-    { "id": "features", "name": "Features", "page_types": ["landing"], "rows": [{ "h": 3, "cols": [{ "span": 6, "offset": 3, "k": "title" }] }, { "h": 11, "cols": [{ "span": 4, "k": "card" }, { "span": 4, "k": "card" }, { "span": 4, "k": "card" }] }] },
-    { "id": "how-it-works", "name": "How it works", "page_types": ["landing"], "rows": [{ "h": 3, "cols": [{ "span": 6, "offset": 3, "k": "title" }] }, { "h": 7, "cols": [{ "span": 4, "k": "step" }, { "span": 4, "k": "step" }, { "span": 4, "k": "step" }] }] },
-    { "id": "stats", "name": "Stats / numbers", "page_types": ["landing", "portfolio"], "rows": [{ "h": 6, "cols": [{ "span": 3, "k": "stat" }, { "span": 3, "k": "stat" }, { "span": 3, "k": "stat" }, { "span": 3, "k": "stat" }] }] },
-    { "id": "testimonials", "name": "Testimonials", "page_types": ["landing", "pricing", "portfolio"], "rows": [{ "h": 3, "cols": [{ "span": 6, "offset": 3, "k": "title" }] }, { "h": 9, "cols": [{ "span": 6, "k": "quote" }, { "span": 6, "k": "quote" }] }] },
-    { "id": "pricing", "name": "Pricing", "page_types": ["landing"], "rows": [{ "h": 3, "cols": [{ "span": 6, "offset": 3, "k": "title" }] }, { "h": 14, "cols": [{ "span": 4, "k": "price" }, { "span": 4, "k": "price" }, { "span": 4, "k": "price" }] }] },
-    { "id": "faq", "name": "FAQ", "page_types": ["landing", "pricing"], "rows": [{ "h": 3, "cols": [{ "span": 6, "offset": 3, "k": "title" }] }, { "h": 10, "cols": [{ "span": 8, "offset": 2, "k": "faq" }] }] },
-    { "id": "cta", "name": "Call to action", "page_types": ["landing", "pricing", "portfolio"], "rows": [{ "h": 8, "cols": [{ "span": 12, "k": "cta" }] }] },
-    { "id": "footer", "name": "Footer", "page_types": ["landing", "pricing", "blog", "portfolio"], "rows": [{ "h": 6, "cols": [{ "span": 12, "k": "footer" }] }] },
-    { "id": "kpis", "name": "KPI cards", "page_types": ["dashboard"], "rows": [{ "h": 5, "cols": [{ "span": 3, "k": "stat" }, { "span": 3, "k": "stat" }, { "span": 3, "k": "stat" }, { "span": 3, "k": "stat" }] }] },
-    { "id": "chart", "name": "Chart", "page_types": ["dashboard"], "rows": [{ "h": 12, "cols": [{ "span": 8, "k": "chart" }, { "span": 4, "k": "card" }] }] },
-    { "id": "table", "name": "Data table", "page_types": ["dashboard"], "rows": [{ "h": 12, "cols": [{ "span": 12, "k": "table" }] }] },
-    { "id": "activity", "name": "Activity feed", "page_types": ["dashboard"], "rows": [{ "h": 8, "cols": [{ "span": 12, "k": "list" }] }] },
-    { "id": "filters", "name": "Filters bar", "page_types": ["dashboard"], "rows": [{ "h": 3, "cols": [{ "span": 12, "k": "filters" }] }] },
-    { "id": "plans", "name": "Plan cards", "page_types": ["pricing"], "rows": [{ "h": 16, "cols": [{ "span": 4, "k": "price" }, { "span": 4, "k": "price" }, { "span": 4, "k": "price" }] }] },
-    { "id": "comparison", "name": "Comparison table", "page_types": ["pricing"], "rows": [{ "h": 12, "cols": [{ "span": 12, "k": "table" }] }] },
-    { "id": "form", "name": "Sign-up form", "page_types": ["auth"], "rows": [{ "h": 22, "cols": [{ "span": 6, "offset": 3, "k": "form" }] }] },
-    { "id": "social-proof", "name": "Social proof", "page_types": ["auth"], "rows": [{ "h": 4, "cols": [{ "span": 12, "k": "logos" }] }] },
-    { "id": "article", "name": "Article body", "page_types": ["blog"], "rows": [{ "h": 6, "cols": [{ "span": 8, "offset": 2, "k": "title" }] }, { "h": 24, "cols": [{ "span": 8, "offset": 2, "k": "prose" }] }] },
-    { "id": "author", "name": "Author box", "page_types": ["blog"], "rows": [{ "h": 4, "cols": [{ "span": 8, "offset": 2, "k": "author" }] }] },
-    { "id": "related", "name": "Related posts", "page_types": ["blog"], "rows": [{ "h": 10, "cols": [{ "span": 4, "k": "card" }, { "span": 4, "k": "card" }, { "span": 4, "k": "card" }] }] },
-    { "id": "newsletter", "name": "Newsletter signup", "page_types": ["blog", "landing"], "rows": [{ "h": 6, "cols": [{ "span": 8, "offset": 2, "k": "cta" }] }] },
-    { "id": "projects", "name": "Projects", "page_types": ["portfolio"], "rows": [{ "h": 12, "cols": [{ "span": 6, "k": "media" }, { "span": 6, "k": "media" }] }, { "h": 12, "cols": [{ "span": 6, "k": "media" }, { "span": 6, "k": "media" }] }] },
-    { "id": "about", "name": "About", "page_types": ["portfolio"], "rows": [{ "h": 10, "cols": [{ "span": 5, "k": "media" }, { "span": 7, "k": "copy" }] }] },
-    { "id": "contact", "name": "Contact", "page_types": ["portfolio"], "rows": [{ "h": 10, "cols": [{ "span": 6, "offset": 3, "k": "form" }] }] }
+    { "id": "hero", "name": "Hero", "page_types": ["landing", "pricing", "portfolio"] },
+    { "id": "logos", "name": "Logo strip", "page_types": ["landing", "pricing"] },
+    { "id": "features", "name": "Features", "page_types": ["landing"] },
+    { "id": "how-it-works", "name": "How it works", "page_types": ["landing"] },
+    { "id": "stats", "name": "Stats / numbers", "page_types": ["landing", "portfolio"] },
+    { "id": "testimonials", "name": "Testimonials", "page_types": ["landing", "pricing", "portfolio"] },
+    { "id": "pricing", "name": "Pricing", "page_types": ["landing"] },
+    { "id": "faq", "name": "FAQ", "page_types": ["landing", "pricing"] },
+    { "id": "cta", "name": "Call to action", "page_types": ["landing", "pricing", "portfolio"] },
+    { "id": "footer", "name": "Footer", "page_types": ["landing", "pricing", "blog", "portfolio"] },
+    { "id": "kpis", "name": "KPI cards", "page_types": ["dashboard"] },
+    { "id": "chart", "name": "Chart", "page_types": ["dashboard"] },
+    { "id": "table", "name": "Data table", "page_types": ["dashboard"] },
+    { "id": "activity", "name": "Activity feed", "page_types": ["dashboard"] },
+    { "id": "filters", "name": "Filters bar", "page_types": ["dashboard"] },
+    { "id": "plans", "name": "Plan cards", "page_types": ["pricing"] },
+    { "id": "comparison", "name": "Comparison table", "page_types": ["pricing"] },
+    { "id": "form", "name": "Sign-up form", "page_types": ["auth"] },
+    { "id": "social-proof", "name": "Social proof", "page_types": ["auth"] },
+    { "id": "article", "name": "Article body", "page_types": ["blog"] },
+    { "id": "author", "name": "Author box", "page_types": ["blog"] },
+    { "id": "related", "name": "Related posts", "page_types": ["blog"] },
+    { "id": "newsletter", "name": "Newsletter signup", "page_types": ["blog", "landing"] },
+    { "id": "projects", "name": "Projects", "page_types": ["portfolio"] },
+    { "id": "about", "name": "About", "page_types": ["portfolio"] },
+    { "id": "contact", "name": "Contact", "page_types": ["portfolio"] }
   ],
   "layouts": [
-    {
-      "id": "centered-hero", "page_type": "landing", "name": "Centered hero",
-      "hint": "Headline and button centered at the top. Simple and focused.",
-      "brief": "Centered hero: headline, sub-text and CTA stacked and centered, a wide visual below; sections follow in a symmetric, centered rhythm.",
-      "shell": "page",
-      "hero": [{ "h": 14, "cols": [{ "span": 8, "offset": 2, "k": "copy-center" }] }, { "h": 12, "cols": [{ "span": 10, "offset": 1, "k": "media" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "split-hero", "page_type": "landing", "name": "Split hero (text + visual)",
-      "hint": "Text on one side, an image or product on the other. The most common landing layout.",
-      "brief": "Split hero: copy and CTAs in the left ~half, a product visual on the right; sections alternate between full-width grids and left/right splits.",
-      "shell": "page",
-      "hero": [{ "h": 18, "cols": [{ "span": 6, "k": "copy" }, { "span": 6, "k": "media" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "screenshot-led", "page_type": "landing", "name": "Product-screenshot-led",
-      "hint": "A short headline, then a big product screenshot. Shows the product immediately.",
-      "brief": "Product-screenshot-led: compact centered headline and CTA, then a very large framed product screenshot that dominates the first screen; features reference parts of the screenshot.",
-      "shell": "page",
-      "hero": [{ "h": 9, "cols": [{ "span": 8, "offset": 2, "k": "copy-center" }] }, { "h": 22, "cols": [{ "span": 12, "k": "media" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "bento", "page_type": "landing", "name": "Bento grid",
-      "hint": "Features arranged as a mosaic of different-sized tiles. Modern and scannable.",
-      "brief": "Bento grid: a split or centered hero, then features shown as a mosaic of unequal tiles (one large hero tile, mixed 2x1 and 1x1 tiles) with visuals inside the tiles.",
-      "shell": "page",
-      "hero": [{ "h": 14, "cols": [{ "span": 7, "k": "copy" }, { "span": 5, "k": "media" }] }],
-      "overrides": {
-        "features": [{ "h": 3, "cols": [{ "span": 6, "offset": 3, "k": "title" }] }, { "h": 12, "cols": [{ "span": 7, "k": "card" }, { "span": 5, "k": "card" }] }, { "h": 9, "cols": [{ "span": 4, "k": "card" }, { "span": 4, "k": "card" }, { "span": 4, "k": "card" }] }]
-      }
-    },
-    {
-      "id": "long-form", "page_type": "landing", "name": "Long-form story",
-      "hint": "A scrolling story: each section explains one idea with text and a picture side by side.",
-      "brief": "Long-form story: a strong narrative hero, then features as alternating full-width text/visual rows (zig-zag), each telling one step of the story; generous vertical rhythm.",
-      "shell": "page",
-      "hero": [{ "h": 16, "cols": [{ "span": 8, "k": "copy" }, { "span": 4, "k": "empty" }] }],
-      "overrides": {
-        "features": [{ "h": 12, "cols": [{ "span": 6, "k": "copy" }, { "span": 6, "k": "media" }] }, { "h": 12, "cols": [{ "span": 6, "k": "media" }, { "span": 6, "k": "copy" }] }, { "h": 12, "cols": [{ "span": 6, "k": "copy" }, { "span": 6, "k": "media" }] }]
-      }
-    },
-    {
-      "id": "sidebar-cards", "page_type": "dashboard", "name": "Sidebar + card grid",
-      "hint": "Navigation on the left, information in cards on the right. The classic app dashboard.",
-      "brief": "App shell with a persistent left sidebar navigation and a top bar; the main area is a responsive grid of cards (KPIs, chart, table). Sidebar collapses to a drawer on mobile.",
-      "shell": "sidebar",
-      "hero": [{ "h": 4, "cols": [{ "span": 12, "k": "pagehead" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "topnav-tables", "page_type": "dashboard", "name": "Top nav + wide tables",
-      "hint": "Navigation across the top and full-width tables. Best when there's a lot of data to compare.",
-      "brief": "Top navigation bar with tabs, a filter bar, then wide full-width data tables and charts; optimized for scanning rows of data.",
-      "shell": "page",
-      "hero": [{ "h": 4, "cols": [{ "span": 12, "k": "pagehead" }] }, { "h": 3, "cols": [{ "span": 12, "k": "filters" }] }],
-      "overrides": { "chart": [{ "h": 10, "cols": [{ "span": 12, "k": "chart" }] }] }
-    },
-    {
-      "id": "list-detail", "page_type": "dashboard", "name": "List / detail split",
-      "hint": "A list on the left; clicking an item shows its details on the right. Like an email app.",
-      "brief": "Two-pane list/detail: a scrollable list of items on the left (~1/3), the selected item's details, KPIs and chart on the right (~2/3). On mobile the panes stack.",
-      "shell": "split-list",
-      "hero": [{ "h": 4, "cols": [{ "span": 12, "k": "pagehead" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "three-tier", "page_type": "pricing", "name": "Three-tier cards",
-      "hint": "Three plan cards side by side with the recommended one highlighted.",
-      "brief": "Three plan cards in a row with the middle plan visually emphasized, a monthly/yearly toggle above, then a detailed comparison table and FAQ.",
-      "shell": "page",
-      "hero": [{ "h": 9, "cols": [{ "span": 8, "offset": 2, "k": "copy-center" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "comparison-led", "page_type": "pricing", "name": "Comparison-table-led",
-      "hint": "A big feature-by-feature table. Best when plans differ in many details.",
-      "brief": "Compact plan summary row followed by a large sticky-header comparison table grouped by feature category.",
-      "shell": "page",
-      "hero": [{ "h": 7, "cols": [{ "span": 6, "k": "copy" }, { "span": 6, "k": "empty" }] }],
-      "overrides": { "plans": [{ "h": 8, "cols": [{ "span": 4, "k": "price" }, { "span": 4, "k": "price" }, { "span": 4, "k": "price" }] }], "comparison": [{ "h": 20, "cols": [{ "span": 12, "k": "table" }] }] }
-    },
-    {
-      "id": "centered-card", "page_type": "auth", "name": "Centered card",
-      "hint": "A single form card in the middle of the page. Focused and familiar.",
-      "brief": "A single centered auth card with logo, heading, social sign-in buttons, divider, email/password fields and a primary button.",
-      "shell": "page",
-      "hero": [],
-      "overrides": {}
-    },
-    {
-      "id": "split-brand", "page_type": "auth", "name": "Split: form + brand panel",
-      "hint": "Form on one side, a branded panel with a quote or visual on the other.",
-      "brief": "Two-column auth page: form on the left half, a branded panel on the right with a testimonial or product visual; the panel hides on mobile.",
-      "shell": "page",
-      "hero": [],
-      "overrides": { "form": [{ "h": 26, "cols": [{ "span": 6, "k": "form" }, { "span": 6, "k": "media" }] }] }
-    },
-    {
-      "id": "classic-column", "page_type": "blog", "name": "Classic reading column",
-      "hint": "One comfortable column of text, like a good book.",
-      "brief": "Single centered reading column (~68ch) with a large title, byline, lead image, well-set prose, pull quotes and code blocks.",
-      "shell": "page",
-      "hero": [{ "h": 4, "cols": [{ "span": 12, "k": "pagehead" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "toc-sidebar", "page_type": "blog", "name": "Article + table of contents",
-      "hint": "Text with a sticky table of contents on the side. Good for long technical posts.",
-      "brief": "Article body with a sticky table of contents in a side column on desktop; the TOC collapses into a disclosure on mobile.",
-      "shell": "page",
-      "hero": [{ "h": 4, "cols": [{ "span": 12, "k": "pagehead" }] }],
-      "overrides": { "article": [{ "h": 6, "cols": [{ "span": 8, "k": "title" }, { "span": 4, "k": "empty" }] }, { "h": 24, "cols": [{ "span": 8, "k": "prose" }, { "span": 4, "k": "list" }] }] }
-    },
-    {
-      "id": "grid-gallery", "page_type": "portfolio", "name": "Grid gallery",
-      "hint": "Work shown as a grid of images first, words second.",
-      "brief": "Short intro, then a dense image grid of projects with hover captions; about and contact below.",
-      "shell": "page",
-      "hero": [{ "h": 8, "cols": [{ "span": 7, "k": "copy" }, { "span": 5, "k": "empty" }] }],
-      "overrides": {}
-    },
-    {
-      "id": "intro-led", "page_type": "portfolio", "name": "Big intro",
-      "hint": "A large personal statement up top, then selected work.",
-      "brief": "Oversized typographic personal statement filling the first screen, then a list of case studies with large thumbnails.",
-      "shell": "page",
-      "hero": [{ "h": 18, "cols": [{ "span": 12, "k": "copy" }] }],
-      "overrides": { "projects": [{ "h": 12, "cols": [{ "span": 8, "k": "media" }, { "span": 4, "k": "copy" }] }, { "h": 12, "cols": [{ "span": 4, "k": "copy" }, { "span": 8, "k": "media" }] }] }
-    }
+    { "id": "centered-hero", "page_type": "landing", "name": "Centered hero", "hint": "Headline and button centered at the top. Simple and focused.", "brief": "Centered hero: headline, sub-text and CTA stacked and centered, a wide visual below; sections follow in a symmetric, centered rhythm." },
+    { "id": "split-hero", "page_type": "landing", "name": "Split hero (text + visual)", "hint": "Text on one side, an image or product on the other. The most common landing layout.", "brief": "Split hero: copy and CTAs in the left ~half, a product visual on the right; sections alternate between full-width grids and left/right splits." },
+    { "id": "screenshot-led", "page_type": "landing", "name": "Product-screenshot-led", "hint": "A short headline, then a big product screenshot. Shows the product immediately.", "brief": "Product-screenshot-led: compact centered headline and CTA, then a very large framed product screenshot that dominates the first screen; features reference parts of the screenshot." },
+    { "id": "bento", "page_type": "landing", "name": "Bento grid", "hint": "Features arranged as a mosaic of different-sized tiles. Modern and scannable.", "brief": "Bento grid: a split or centered hero, then features shown as a mosaic of unequal tiles (one large hero tile, mixed 2x1 and 1x1 tiles) with visuals inside the tiles." },
+    { "id": "long-form", "page_type": "landing", "name": "Long-form story", "hint": "A scrolling story: each section explains one idea with text and a picture side by side.", "brief": "Long-form story: a strong narrative hero, then features as alternating full-width text/visual rows (zig-zag), each telling one step of the story; generous vertical rhythm." },
+    { "id": "sidebar-cards", "page_type": "dashboard", "name": "Sidebar + card grid", "hint": "Navigation on the left, information in cards on the right. The classic app dashboard.", "brief": "App shell with a persistent left sidebar navigation and a top bar; the main area is a responsive grid of cards (KPIs, chart, table). Sidebar collapses to a drawer on mobile." },
+    { "id": "topnav-tables", "page_type": "dashboard", "name": "Top nav + wide tables", "hint": "Navigation across the top and full-width tables. Best when there's a lot of data to compare.", "brief": "Top navigation bar with tabs, a filter bar, then wide full-width data tables and charts; optimized for scanning rows of data." },
+    { "id": "list-detail", "page_type": "dashboard", "name": "List / detail split", "hint": "A list on the left; clicking an item shows its details on the right. Like an email app.", "brief": "Two-pane list/detail: a scrollable list of items on the left (~1/3), the selected item's details, KPIs and chart on the right (~2/3). On mobile the panes stack." },
+    { "id": "three-tier", "page_type": "pricing", "name": "Three-tier cards", "hint": "Three plan cards side by side with the recommended one highlighted.", "brief": "Three plan cards in a row with the middle plan visually emphasized, a monthly/yearly toggle above, then a detailed comparison table and FAQ." },
+    { "id": "comparison-led", "page_type": "pricing", "name": "Comparison-table-led", "hint": "A big feature-by-feature table. Best when plans differ in many details.", "brief": "Compact plan summary row followed by a large sticky-header comparison table grouped by feature category." },
+    { "id": "centered-card", "page_type": "auth", "name": "Centered card", "hint": "A single form card in the middle of the page. Focused and familiar.", "brief": "A single centered auth card with logo, heading, social sign-in buttons, divider, email/password fields and a primary button." },
+    { "id": "split-brand", "page_type": "auth", "name": "Split: form + brand panel", "hint": "Form on one side, a branded panel with a quote or visual on the other.", "brief": "Two-column auth page: form on the left half, a branded panel on the right with a testimonial or product visual; the panel hides on mobile." },
+    { "id": "classic-column", "page_type": "blog", "name": "Classic reading column", "hint": "One comfortable column of text, like a good book.", "brief": "Single centered reading column (~68ch) with a large title, byline, lead image, well-set prose, pull quotes and code blocks." },
+    { "id": "toc-sidebar", "page_type": "blog", "name": "Article + table of contents", "hint": "Text with a sticky table of contents on the side. Good for long technical posts.", "brief": "Article body with a sticky table of contents in a side column on desktop; the TOC collapses into a disclosure on mobile." },
+    { "id": "grid-gallery", "page_type": "portfolio", "name": "Grid gallery", "hint": "Work shown as a grid of images first, words second.", "brief": "Short intro, then a dense image grid of projects with hover captions; about and contact below." },
+    { "id": "intro-led", "page_type": "portfolio", "name": "Big intro", "hint": "A large personal statement up top, then selected work.", "brief": "Oversized typographic personal statement filling the first screen, then a list of case studies with large thumbnails." }
   ]
 }

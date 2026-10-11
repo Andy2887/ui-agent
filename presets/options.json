@@ -1,10 +1,5 @@
 {
   "version": 1,
-  "themes": [
-    { "id": "light", "name": "Light", "hint": "Dark text on a light background. The default for most products." },
-    { "id": "dark", "name": "Dark", "hint": "Light text on a dark background. Feels modern and technical; easy on the eyes at night." },
-    { "id": "both", "name": "Both", "hint": "Light by default, with a dark version that follows the visitor's system setting." }
-  ],
   "density": [
     { "id": "airy", "name": "Airy", "hint": "Lots of space around everything. Calm and premium; good for landing pages.", "space_multiplier": 1.35, "base_space": "8px" },
     { "id": "balanced", "name": "Balanced", "hint": "A comfortable middle ground that works for most pages.", "space_multiplier": 1.0, "base_space": "8px" },
@@ -25,20 +20,5 @@
     { "id": "photos", "name": "Photo placeholders", "hint": "Spaces for real photos you will add later. Feels human and concrete." },
     { "id": "abstract", "name": "Abstract shapes / gradients", "hint": "Shapes and color instead of pictures. Modern and needs no assets." },
     { "id": "none", "name": "None", "hint": "Type and layout only. Clean and fast." }
-  ],
-  "tones": [
-    { "id": "professional", "name": "Professional", "example": "Ship reliable software, faster.", "hint": "Clear, confident and businesslike." },
-    { "id": "friendly", "name": "Friendly", "example": "Shipping software should feel good. Let's make it easy.", "hint": "Warm and conversational." },
-    { "id": "playful", "name": "Playful", "example": "Bugs hate us. Your users won't.", "hint": "Witty and full of personality." }
-  ],
-  "candidate_count": { "default": 3, "min": 1, "max": 10 },
-  "clash_rules": [
-    { "when": { "styles": "luxury", "density": "compact" }, "reason": "Luxury looks rely on generous space; compact spacing makes them feel cramped and cheap." },
-    { "when": { "styles": "brutalist", "shape": "rounded" }, "reason": "Brutalist design depends on hard edges; pill shapes soften it into something generic." },
-    { "when": { "styles": "technical", "typography": "elegant-serif" }, "reason": "Elegant serifs read as editorial/premium, which works against a dev-tool feel." },
-    { "when": { "layouts": "long-form", "density": "compact" }, "reason": "A long-form story needs room to breathe between chapters; compact spacing makes it a wall of content." },
-    { "when": { "color": "soft-pastels", "theme": "dark" }, "reason": "Pastels lose their softness on dark backgrounds and can look washed out." },
-    { "when": { "styles": "luxury", "color": "vivid" }, "reason": "Luxury usually means restrained color; highly saturated palettes read as mass-market." },
-    { "when": { "styles": "minimal", "motion": "expressive" }, "reason": "Expressive motion draws attention to itself, which fights a minimal look." }
   ]
 }

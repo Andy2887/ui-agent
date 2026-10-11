@@ -1,7 +1,8 @@
 """Offline stand-ins for every LLM role (UI_AGENT_MOCK=1).
 
-They exercise the real pipeline end to end: briefs go through the same diversity and
-palette checks, generated HTML is rendered and audited for real, the reviewer's issues
+They exercise the real pipeline end to end: the intake asks a kickoff question when the
+brief has no goal, briefs go through the same diversity and contrast checks, sketches and
+designs are rendered (and designs audited) for real, the reviewer's issues
 come from the real audit, and the executor fixes them through the sandboxed
 text-editor handler. Seeded defects are wrapped in `/* defect:<key> */ ... /* /defect */`
 markers so the mock executor can repair them with targeted str_replace edits."""
@@ -12,12 +13,12 @@ import html as html_lib
 import re
 
 from . import settings
-from .color import palette_from_brand
 from .state import (
     CriterionScore,
     DirectionBrief,
     IntakeResult,
     Issue,
+    KickoffQuestion,
     Palette,
     PlanResult,
     ReviewResult,
@@ -57,53 +58,141 @@ SEEDED = ["no-focus", "small-targets", "literal-values", "tiny-text", "weak-cta"
 
 
 # --------------------------------------------------------------------------- intake
-def intake(prompt: str, prefs: dict) -> IntakeResult:
-    p = prompt.lower()
-    page_type = prefs.get("page_type") or next(
+def intake(brief: dict, answers: list[dict]) -> IntakeResult:
+    text = f"{brief.get('problem', '')} {brief.get('audience', '')} {brief.get('context') or ''}".lower()
+    page_type = next(
         (pt for pt, kws in {"dashboard": ["dashboard", "admin", "analytics"], "pricing": ["pricing"],
                             "auth": ["sign up", "signup", "login", "log in"], "blog": ["blog", "article"],
-                            "portfolio": ["portfolio"]}.items() if any(k in p for k in kws)), "landing")
-    sections = prefs.get("sections") or settings.page_type(page_type)["default_sections"]
-    name = prefs.get("product_name") or (re.findall(r"\b[A-Z][a-zA-Z]{2,}\b", prompt) or ["Acme"])[0]
-    return IntakeResult(page_type=page_type, audience="developers and small teams", product_name=name,
-                        sections=sections, assumptions=["Audience inferred as developers and small teams (mock)."])
+                            "portfolio": ["portfolio"]}.items() if any(k in text for k in kws)), "landing")
+    name = brief.get("product_name") or (re.findall(r"\b[A-Z][a-zA-Z]{2,}\b", brief.get("problem", "")) or ["Acme"])[0]
+    answered = {a["id"]: a["answer"] for a in answers}
+    action = brief.get("goal") or answered.get("q_primary_action") or "Start a free trial"
+    questions = [] if answers or brief.get("goal") else [KickoffQuestion(
+        id="q_primary_action", question="What's the one thing a visitor should do on this page?",
+        why="The whole page is arranged to lead to that action, so it decides what goes first.",
+        suggestions=["Start a free trial", "Book a demo", "Join the waitlist"])]
+    return IntakeResult(
+        product_name=name, page_type=page_type,
+        problem=brief.get("problem", ""), audience=brief.get("audience", ""),
+        user_needs=["Understand what the product does in one glance", "Believe it works for someone like them",
+                    "Know exactly what to do next"],
+        primary_action=action, sections=settings.page_type(page_type)["default_sections"],
+        assumptions=["Visitors arrive from search or a friend's link and skim on a phone first (mock)."]
+                    + ([] if brief.get("goal") or answers else [f"Primary action assumed to be '{action}'."]),
+        questions=questions)
 
 
 # ---------------------------------------------------------------------------- plan
-def plan(n: int, prefs: dict, slots: list[str], layouts_for_slots: list[str | None], attempt: int = 0) -> PlanResult:
+CONCEPTS = [
+    ("Show it working", "Lead with the product doing the job in the first screen, so users see the outcome before reading a word."),
+    ("Name the pain", "Open on the cost of the problem in the users' own words, then present the product as the relief."),
+    ("Proof first", "Let people like the users carry the argument: numbers and quotes up top, features after."),
+    ("Guided path", "Walk users through three steps from problem to result, each with one clear next step."),
+    ("Straight answer", "A short, direct page for skeptical users: what it is, what it costs, how to start."),
+]
+SIGNATURES = ["oversized numeral section markers", "gradient glow behind the product frame", "hairline grid overlay",
+              "hand-drawn underline on the headline", "terminal-style code card", "sticky progress rail",
+              "ticker of live stats", "torn-paper section edges", "giant outlined wordmark", "stacked polaroid frames"]
+MOODS = [["calm", "trustworthy"], ["bold", "urgent"], ["warm", "human"], ["precise", "technical"], ["light", "playful"]]
+
+
+def _sections_for(base: list[str], shift: int) -> list[str]:
+    """Same sections, different order: the middle of the page rotates per direction."""
+    head = [s for s in base if s == "hero"]
+    tail = [s for s in base if s in ("cta", "footer")]
+    middle = [s for s in base if s not in head + tail]
+    k = shift % len(middle) if middle else 0
+    return head + middle[k:] + middle[:k] + tail
+
+
+def plan(n: int, intake_d: dict, slots: list[str], attempt: int = 0) -> PlanResult:
     briefs = []
     directions = settings.presets()["colors"]["directions"]
-    color = prefs.get("color") or None
     for i in range(n):
         shift = i + attempt * 3
-        if color and color["kind"] == "brand":
-            light, dark = palette_from_brand(color["value"], "light"), palette_from_brand(color["value"], "dark")
-        else:
-            d = settings.color_direction(color["value"]) if color else directions[shift % len(directions)]
-            ex = d["examples"][i % len(d["examples"])]
-            light, dark = ex["light"], ex["dark"]
-        typo = settings.typography(prefs["typography"]) if prefs.get("typography") else None
-        hf, bf = (typo["heading"]["family"], typo["body"]["family"]) if typo else FALLBACK_FONTS[shift % len(FALLBACK_FONTS)]
-        layout_id = layouts_for_slots[i]
-        lay = settings.layout(layout_id) if layout_id else None
-        ref = prefs["styles"][0] if prefs.get("styles") else REFS[shift % len(REFS)]
+        theme = "dark" if slots[i] == "wildcard" else "light"
+        d = directions[shift % len(directions)]
+        pal = d["examples"][i % len(d["examples"])][theme]
+        hf, bf = FALLBACK_FONTS[shift % len(FALLBACK_FONTS)]
+        ref = REFS[shift % len(REFS)]
+        archetype = ["centered hero + 3-up feature grid", "split hero + alternating rows", "screenshot-led hero + bento grid"][shift % 3]
+        title, concept = CONCEPTS[shift % len(CONCEPTS)]
         briefs.append(DirectionBrief(
             id=chr(ord("a") + i), name=NAMES[shift % len(NAMES)],
-            description=f"A {ref.replace('-', ' ')} take: {(lay['name'] if lay else ('split' if i % 2 else 'centered') + ' hero').lower()}, {(prefs.get('density') or ['airy', 'balanced', 'compact'][shift % 3])} spacing.",
-            slot=slots[i], reference_style=ref,
-            layout_archetype=lay["brief"] if lay else ["centered hero + 3-up feature grid", "split hero + alternating rows", "screenshot-led hero + bento grid"][shift % 3],
-            layout_id=layout_id, heading_font=hf, body_font=bf,
-            palette=Palette(**light), dark_palette=Palette(**dark),
-            density=prefs.get("density") or ["airy", "balanced", "compact"][shift % 3],
-            shape=prefs.get("shape") or ["soft", "sharp", "rounded"][shift % 3],
-            motion=prefs.get("motion") or "subtle",
-            imagery=prefs.get("imagery") or ["abstract", "illustrations", "photos", "none"][shift % 4],
-            signature_element=["oversized numeral section markers", "gradient glow behind the product frame",
-                               "hairline grid overlay", "hand-drawn underline on the headline",
-                               "terminal-style code card"][shift % 5],
+            description=f"{title}: {archetype}, {' and '.join(MOODS[shift % len(MOODS)])}.",
+            slot=slots[i], concept=f"{concept} Built as a {archetype} in a {ref.replace('-', ' ')} voice.",
+            tradeoff=["Less room for detail.", "Asks users to read more.", "Depends on having real proof.",
+                      "Takes longer to reach the action.", "Feels less distinctive."][shift % 5],
+            sections=_sections_for(intake_d.get("sections") or ["hero", "features", "cta", "footer"], shift),
+            layout_archetype=archetype, layout_id=None, reference_style=ref,
+            mood=MOODS[shift % len(MOODS)], theme=theme, heading_font=hf, body_font=bf, palette=Palette(**pal),
+            density=["airy", "balanced", "compact"][shift % 3], shape=["soft", "sharp", "rounded"][shift % 3],
+            motion="subtle", imagery=["abstract", "illustrations", "photos", "none"][shift % 4],
+            signature_element=SIGNATURES[shift % len(SIGNATURES)],
             avoid=["stock-photo clichés", "more than one accent color"],
         ))
     return PlanResult(briefs=briefs)
+
+
+# -------------------------------------------------------------------------- sketch
+def sketch_for(d: DirectionBrief, intake_d: dict) -> str:
+    name = html_lib.escape(intake_d.get("product_name") or "Acme")
+    action = html_lib.escape(intake_d.get("primary_action") or "Get started")
+    split = "split" in d.layout_archetype
+    blocks = []
+    for s in d.sections:
+        if s == "hero":
+            visual = '<div class="sk-img sk-img--tall">Product in action</div>'
+            blocks.append(f"""
+    <section class="sk-section hero{' hero--split' if split else ''}" data-section="hero">
+      <div class="sk-stack">
+        <p class="sk-eyebrow">{html_lib.escape(d.name)}</p>
+        <h1>{html_lib.escape(intake_d.get('problem') or 'Solve the problem')[:90]}</h1>
+        <span class="sk-line"></span><span class="sk-line sk-line--short"></span>
+        <div class="sk-row"><a class="sk-btn sk-btn--primary" href="#">{action}</a><a class="sk-btn" href="#">See how it works</a></div>
+        <p class="sk-note">{html_lib.escape(d.concept.split('.')[0])}.</p>
+      </div>
+      {visual}
+    </section>""")
+        elif s == "footer":
+            continue
+        elif s in ("cta", "newsletter"):
+            blocks.append(f"""
+    <section class="sk-section" data-section="{s}">
+      <div class="sk-stack">
+        <h2>Ready when you are</h2>
+        <span class="sk-line sk-line--short"></span>
+        <div class="sk-row"><a class="sk-btn sk-btn--primary" href="#">{action}</a></div>
+      </div>
+    </section>""")
+        else:
+            title = html_lib.escape((settings.section(s) or {"name": s.replace("-", " ").title()})["name"])
+            cards = "".join('\n        <div class="sk-box"><span class="sk-icon"></span><h3>Benefit</h3><span class="sk-line"></span><span class="sk-line sk-line--short"></span></div>' for _ in range(3))
+            blocks.append(f"""
+    <section class="sk-section" data-section="{s}">
+      <h2>{title}</h2>
+      <div class="sk-grid">{cards}
+      </div>
+    </section>""")
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{name}: {html_lib.escape(d.name)} (sketch)</title>
+  <style>
+    .hero {{ display: grid; gap: 32px; }}
+    @media (min-width: 768px) {{ .hero--split {{ grid-template-columns: 1.1fr 1fr; align-items: center; }} }}
+  </style>
+</head>
+<body>
+  <header class="sk-nav"><span class="sk-logo">{name}</span><nav class="sk-row sk-small"><a href="#">Product</a><a href="#">Pricing</a><a class="sk-btn" href="#">{action}</a></nav></header>
+  <main>{''.join(blocks)}
+  </main>
+  <footer class="sk-footer">© 2026 {name}</footer>
+</body>
+</html>
+"""
 
 
 # ---------------------------------------------------------------------------- html
@@ -131,22 +220,20 @@ def _palette_css(p: dict) -> str:
     return "\n".join(f"  --color-{k.replace('_', '-')}: {v};" for k, v in p.items())
 
 
-def html_for(brief: DirectionBrief, prefs: dict, intake_d: dict, defects: list[str] | None = None) -> str:
+def html_for(brief: DirectionBrief, intake_d: dict, notes: str = "", defects: list[str] | None = None) -> str:
     defects = SEEDED if defects is None else defects
     b = brief
-    theme = prefs.get("theme", "light")
-    pal = (b.dark_palette or b.palette).model_dump() if theme == "dark" else b.palette.model_dump()
-    dark_block = ""
-    if theme == "both" and b.dark_palette:
-        dark_block = "@media (prefers-color-scheme: dark) {\n  :root {\n" + _palette_css(b.dark_palette.model_dump()) + "\n  }\n}"
+    pal = b.palette.model_dump()
+    # The designer applies the PM's pick notes up front; the mock reviewer looks for this marker.
+    applied_notes = "/* change:chg_gallery_notes */" if notes else ""
     shape = settings.option("shapes", b.shape)
     density = settings.option("density", b.density)
     motion = settings.option("motion", b.motion)
     m = density["space_multiplier"]
     space = {i: round(4 * i * m) for i in (1, 2, 3, 4, 5, 6, 8, 12, 16)}
     name = html_lib.escape(intake_d.get("product_name") or "Acme")
-    desc = html_lib.escape(prefs.get("product_description") or "The fastest way to ship reliable software, without the busywork.")
-    sections = intake_d.get("sections") or ["hero", "features", "cta", "footer"]
+    desc = html_lib.escape(intake_d.get("problem") or "The fastest way to ship reliable software, without the busywork.")
+    sections = b.sections or intake_d.get("sections") or ["hero", "features", "cta", "footer"]
     split = (b.layout_id or "").startswith("split") or "split" in b.layout_archetype.lower()
     fonts_q = "&".join(sorted({f"family={f.replace(' ', '+')}:wght@400;600;700" for f in (b.heading_font, b.body_font)}))
 
@@ -228,7 +315,7 @@ def html_for(brief: DirectionBrief, prefs: dict, intake_d: dict, defects: list[s
   --duration: {motion['duration_base']}; --easing: {motion['easing']};
   /* Breakpoints (documented): 768px, 1024px, 1280px */
 }}
-{dark_block}
+{applied_notes}
 *, *::before, *::after {{ box-sizing: border-box; }}
 body {{ margin: 0; font-family: var(--font-body); font-size: var(--text-base); line-height: 1.6; color: var(--color-text); background: var(--color-bg); }}
 h1, h2, h3 {{ font-family: var(--font-heading); line-height: 1.15; margin: 0; }}

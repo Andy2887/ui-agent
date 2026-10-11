@@ -2,6 +2,7 @@
 models:
   intake:     {model: claude-sonnet-5-5, effort: low,    max_tokens: 8000}
   planner:    {model: claude-sonnet-5-5, effort: high,   max_tokens: 32000}
+  sketcher:   {model: claude-sonnet-5-5, effort: low,    max_tokens: 24000}
   generator:  {model: claude-sonnet-5-5, effort: medium, max_tokens: 64000}
   style_lock: {model: claude-sonnet-5-5, effort: medium, max_tokens: 8000}
   reviewer:   {model: claude-sonnet-5-5, effort: high,   max_tokens: 32000}

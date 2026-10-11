@@ -5,12 +5,13 @@ from __future__ import annotations
 from langgraph.graph import END, START, StateGraph
 
 from .nodes.final_approval import final_approval
-from .nodes.gallery import gallery, render_and_audit_all
-from .nodes.generator import generate_design
+from .nodes.gallery import gallery
+from .nodes.generator import design
 from .nodes.handoff import build_handoff, export
-from .nodes.intake import intake
+from .nodes.intake import intake, kickoff
 from .nodes.memory_nodes import load_memory, update_memory
 from .nodes.planner import fan_out, plan_directions
+from .nodes.sketch import sketch_direction
 from .nodes.style_lock import lock_style
 from .refine_graph import refine
 from .state import AgentState
@@ -19,11 +20,12 @@ from .state import AgentState
 def build_graph(checkpointer=None, store=None):
     g = StateGraph(AgentState)
     g.add_node("intake", intake)
+    g.add_node("kickoff", kickoff)
     g.add_node("load_memory", load_memory)
     g.add_node("plan_directions", plan_directions)
-    g.add_node("generate_design", generate_design)
-    g.add_node("render_and_audit_all", render_and_audit_all)
+    g.add_node("sketch_direction", sketch_direction)
     g.add_node("gallery", gallery)
+    g.add_node("design", design)
     g.add_node("lock_style", lock_style)
     g.add_node("refine", refine)
     g.add_node("final_approval", final_approval)
@@ -32,12 +34,13 @@ def build_graph(checkpointer=None, store=None):
     g.add_node("update_memory", update_memory)
 
     g.add_edge(START, "intake")
-    g.add_edge("intake", "load_memory")
+    g.add_edge("intake", "kickoff")
+    # kickoff → intake (answers given) | load_memory (Command)
     g.add_edge("load_memory", "plan_directions")
-    g.add_conditional_edges("plan_directions", fan_out, ["generate_design"])
-    g.add_edge("generate_design", "render_and_audit_all")
-    g.add_edge("render_and_audit_all", "gallery")
-    # gallery → lock_style | plan_directions (Command)
+    g.add_conditional_edges("plan_directions", fan_out, ["sketch_direction"])
+    g.add_edge("sketch_direction", "gallery")
+    # gallery → design | plan_directions (Command)
+    g.add_edge("design", "lock_style")
     g.add_edge("lock_style", "refine")
     g.add_edge("refine", "final_approval")
     # final_approval → build_handoff | refine (Command)

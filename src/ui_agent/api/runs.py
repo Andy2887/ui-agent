@@ -20,11 +20,14 @@ from .. import settings
 
 log = logging.getLogger("ui_agent.runs")
 
+# interrupt kind -> run status while it waits for the PM
+WAITING = {"kickoff": "waiting_kickoff", "gallery": "waiting_gallery", "final_approval": "waiting_approval"}
+
 
 @dataclass
 class RunHandle:
     run_id: str
-    status: str = "running"  # running | waiting_gallery | waiting_approval | done | error
+    status: str = "running"  # running | waiting_kickoff | waiting_gallery | waiting_approval | done | error
     task: asyncio.Task | None = None
     subscribers: set[asyncio.Queue] = field(default_factory=set)
     events: list[dict] = field(default_factory=list)
@@ -74,8 +77,8 @@ class RunManager:
         self.runs[run_id] = h
         self.set_status(h, "running", request=request, mock=settings.mock_mode())
         initial = {
-            "run_id": run_id, "user_id": user_id, "prompt": request["prompt"],
-            "preferences": request["preferences"], "candidate_count": request["candidate_count"], "usage": {},
+            "run_id": run_id, "user_id": user_id, "brief": request["brief"],
+            "candidate_count": request["candidate_count"], "usage": {},
         }
         h.task = asyncio.create_task(self._drive(h, initial))
         return run_id
@@ -84,7 +87,7 @@ class RunManager:
         h = self.get(run_id)
         if h is None:
             raise KeyError(run_id)
-        if h.status not in ("waiting_gallery", "waiting_approval"):
+        if h.status not in WAITING.values():
             raise ValueError(f"run is {h.status}, not waiting for input")
         self.publish(h, {"type": "resume", "answer": answer})
         self.set_status(h, "running")
@@ -107,7 +110,7 @@ class RunManager:
                                              "usage": (upd or {}).get("usage") if isinstance(upd, dict) else None})
             if interrupted:
                 self.publish(h, {"type": "interrupt", "kind": interrupted["kind"], "payload": interrupted})
-                self.set_status(h, "waiting_gallery" if interrupted["kind"] == "gallery" else "waiting_approval")
+                self.set_status(h, WAITING[interrupted["kind"]])
             else:
                 state = (await self.graph.aget_state(cfg)).values
                 self.set_status(h, "done", stop_reason=state.get("stop_reason"),
@@ -122,5 +125,7 @@ class RunManager:
             rid = p.parent.name
             h = self.get(rid)
             req = json.loads(p.read_text())
-            out.append({"run_id": rid, "prompt": req.get("prompt", "")[:140], "status": h.status if h else "unknown"})
+            brief = req.get("brief") or {}
+            title = " · ".join(filter(None, [brief.get("product_name"), brief.get("problem")])) or req.get("prompt", "")
+            out.append({"run_id": rid, "prompt": title[:140], "status": h.status if h else "unknown"})
         return out

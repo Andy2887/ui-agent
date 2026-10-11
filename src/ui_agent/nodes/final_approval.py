@@ -1,4 +1,4 @@
-"""4.9 final_approval (interrupt #2, optional)."""
+"""4.10 final_approval (interrupt #3, optional)."""
 
 from __future__ import annotations
 
@@ -15,10 +15,12 @@ async def final_approval(state: AgentState) -> Command[Literal["build_handoff", 
     if not settings.config().get("final_approval", True):
         return Command(goto="build_handoff", update={"approved": True})
     best = state["best"]
-    chosen = next(d for d in state["candidates"] if d["direction_id"] == state["selection"]["id"])
+    first = state["design"]
+    sketch = next(d for d in state["candidates"] if d["direction_id"] == state["selection"]["id"])
     payload = {
         "kind": "final_approval",
-        "v1": {"version": 1, "html_path": chosen["html_path"], "screenshots": chosen.get("screenshots", {})},
+        "sketch": {"html_path": sketch["html_path"], "screenshots": sketch.get("screenshots", {})},
+        "v1": {"version": 1, "html_path": first["html_path"], "screenshots": first.get("screenshots", {})},
         "final": design_snapshot(best),
         "trajectory": [{"version": h["version"], "score": h["score"],
                         "open_issues": sum(1 for i in h["issues"] if i["status"] in ("open", "regressed"))}
@@ -31,7 +33,7 @@ async def final_approval(state: AgentState) -> Command[Literal["build_handoff", 
     if answer.get("action") == "request_changes" and (answer.get("feedback") or "").strip():
         n = len(state.get("change_requests") or []) + 1
         cr = {"id": f"chg_{n}", "criterion": "B9", "severity": "high", "selector": "body", "viewport": "all",
-              "evidence": f"Developer requested: {answer['feedback'].strip()}", "suggested_fix": answer["feedback"].strip(),
+              "evidence": f"PM requested: {answer['feedback'].strip()}", "suggested_fix": answer["feedback"].strip(),
               "explanation": "You asked for this change at final review.", "status": "open"}
         cap = state.get("iteration", 0) + int(settings.config()["refine"]["change_request_max_iterations"])
         emit("changes_requested", request=cr)

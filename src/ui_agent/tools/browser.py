@@ -160,6 +160,9 @@ class BrowserSession:
         if self._pw:
             await self._pw.stop()
         self._browser = self._pw = None
+        # Asyncio primitives bind to the loop that first waits on them; start fresh for the next loop.
+        self._lock = asyncio.Lock()
+        self._sem = asyncio.Semaphore(4)
 
     async def render(self, html_path: Path, out_dir: Path, *, tiles: bool = True, deep_checks: bool = True) -> dict:
         """Render one HTML file at every viewport. Returns paths (relative to out_dir's run root

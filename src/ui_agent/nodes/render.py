@@ -1,4 +1,4 @@
-"""Rendering + Layer-A audit shared by generation and the refine loop (plan §4.5, §4.8)."""
+"""Rendering: sketches (screenshots only), and full designs with the Layer-A audit (plan §4.5, §4.8)."""
 
 from __future__ import annotations
 
@@ -34,3 +34,14 @@ async def render_design(run_id: str, design: dict, out_subdir: str) -> tuple[dic
         "audit": audit.model_dump(),
     }
     return design, render
+
+
+async def render_sketch(run_id: str, sketch: dict, out_subdir: str) -> dict:
+    """Screenshots only: a low-fi sketch is judged by the person, not by the audit."""
+    root = run_dir(run_id)
+    render = await get_browser().render(root / sketch["html_path"], root / out_subdir, deep_checks=False)
+    return {
+        **sketch,
+        "screenshots": {vp: rel(run_id, p) for vp, p in render["screenshots"].items()},
+        "tiles": {vp: [rel(run_id, p) for p in ps] for vp, ps in render["tiles"].items()},
+    }

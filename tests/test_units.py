@@ -1,4 +1,4 @@
-"""Planner composition, gate decisions, sandboxed editor, color repair, tokens export."""
+"""Planner composition and diversity, sketch kit, gate decisions, sandboxed editor, color repair, tokens export."""
 
 from pathlib import Path
 
@@ -6,7 +6,8 @@ from ui_agent import mock
 from ui_agent.color import check_palette, repair_palette
 from ui_agent.nodes.gate import gate
 from ui_agent.nodes.handoff import w3c_tokens
-from ui_agent.nodes.planner import diversity_problems, layouts_for, slots_for
+from ui_agent.nodes.planner import diversity_problems, slots_for
+from ui_agent.nodes.sketch import with_kit
 from ui_agent.nodes.reviewer import merge_issues
 from ui_agent.tools.text_editor import TextEditor
 
@@ -20,16 +21,19 @@ def test_slots_composition():
     assert slots_for(10, True).count("taste") == 4
 
 
-def test_layouts_spread_across_candidates():
-    assert layouts_for(4, ["split-hero", "bento"]) == ["split-hero", "bento", "split-hero", "bento"]
-    assert layouts_for(2, []) == [None, None]
-
-
 def test_diversity_check_flags_identical_briefs():
-    b = mock.plan(2, {"theme": "light"}, ["neutral", "neutral"], [None, None]).briefs
-    assert not diversity_problems(b, {})
+    intake = {"sections": ["hero", "features", "testimonials", "cta", "footer"]}
+    b = mock.plan(3, intake, ["neutral", "neutral", "wildcard"]).briefs
+    assert not diversity_problems(b)
     b[1] = b[0].model_copy(update={"id": "b"})
-    assert diversity_problems(b, {})
+    assert diversity_problems(b)
+
+
+def test_sketch_kit_is_injected_once():
+    html = "<!doctype html><html><head><title>x</title></head><body></body></html>"
+    once = with_kit(html)
+    assert once.count("data-sketch-kit") == 1 and once.index("data-sketch-kit") < once.index("<title>")
+    assert with_kit(once).count("data-sketch-kit") == 1
 
 
 def test_color_repair_keeps_hue_and_reaches_aa():

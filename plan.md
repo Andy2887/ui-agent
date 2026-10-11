@@ -1,14 +1,16 @@
 # UI Agent — Project Plan
 
-An agent that turns a prompt into a production-ready **web page UI** (HTML/CSS), built for **developers**. It explores several design directions, lets the user pick one, then refines it through a reviewer ↔ executor loop until it meets a quality bar. The output is a **handoff package** that another coding agent (e.g. Claude Code) uses as the source of truth to build the real project. The design is created **before any codebase exists**.
+An agent that works like a UI/UX designer briefed by a PM. The user states **the problem and who has it**, never the look; the agent owns every "how" decision. It may ask a few kickoff questions, sketches several low-fidelity directions, lets the user pick one, designs it in full as a production-ready **web page UI** (HTML/CSS), then refines it through a reviewer ↔ executor loop until it meets a quality bar. The output is a **handoff package** that another coding agent (e.g. Claude Code) uses as the source of truth to build the real project. The design is created **before any codebase exists**.
 
 ---
 
 ## 1. Goals and non-goals
 
 **Goals**
-- Generate visually distinct directions from one prompt, in parallel. The user chooses how many (default 3, range 1–10).
-- Let the user choose a direction (plus optional notes).
+- Take a PM-style brief: the problem, the target users, and optionally a product name, the goal, and free-form context. Never ask the user to choose colors, fonts, layout, theme or style.
+- Ask clarifying questions at kickoff only when the answer would change the design.
+- Sketch genuinely different directions (different bets on solving the problem, each with a proposed visual mood) as low-fidelity wireframes, in parallel. The user chooses how many (default 3, range 1–10).
+- Let the user pick a sketch (plus optional notes); design only that one in full.
 - Automatically refine the chosen design against an explicit UI/UX rubric, with screenshots, until it passes a threshold.
 - Output HTML that is easy for a coding agent to integrate: semantic markup, tokenized CSS, labeled components, and a written handoff spec.
 - Learn the user's taste and the system's recurring mistakes across runs (long-term memory).
@@ -16,7 +18,7 @@ An agent that turns a prompt into a production-ready **web page UI** (HTML/CSS),
 **Non-goals (v1)**
 - Multi-page apps or flows. One page per run.
 - Framework output (React/Vue/Tailwind). The coding agent translates; we give it clean, framework-agnostic input.
-- Matching an existing codebase or design system. This tool makes the *initial* design, before any code exists. (Explicit brand constraints the user types in, like colors or fonts, are still supported.)
+- Matching an existing codebase or design system. This tool makes the *initial* design, before any code exists. (Brand constraints the user mentions in the brief's context are respected by the designer.)
 - Real imagery or brand assets. We use annotated placeholders.
 - A hosted multi-user SaaS. v1 is a single-user web app (frontend + Python backend) run locally.
 
@@ -33,8 +35,9 @@ An agent that turns a prompt into a production-ready **web page UI** (HTML/CSS),
 | Output format | Single-file HTML + CSS custom properties + `data-component` labels + `HANDOFF.md` + `tokens.json` | The consumer is a coding agent. Structure and a written spec matter more than pixel-perfect files. |
 | Styling | **Plain CSS** (no Tailwind or other CSS framework) | Keeps the most design detail: exact values, complex selectors, pseudo-elements, layered gradients, keyframes, `clamp()` type scales, and named tokens. Utility classes compress or hide this, and arbitrary values get messy. The downstream agent can always convert plain CSS to Tailwind later; converting the other way loses information. |
 | Starting point | **Greenfield**: no existing codebase | The design comes first and the codebase is built from it, so there's no repo to read or match. |
-| Interface | **Web frontend** (Next.js + TypeScript) talking to a Python backend | The users are developers without design training. Choices have to be *shown*, not named, so every option gets a live sample next to it. The gallery, refinement progress and before/after comparison are visual too. An MCP server comes later. |
-| Design preferences | **Curated presets with live samples**, all optional | Developers choose the look; the agent handles the craft (§5). |
+| Interface | **Web frontend** (Next.js + TypeScript) talking to a Python backend | Sketches, refinement progress and the before/after comparison are visual. An MCP server comes later. |
+| Who decides what | **The user states the problem; the agent owns the "how"** | Users think like a PM: problem and users in, no visual pickers. Colors, type, layout, theme and style are design decisions, and they're made for the stated users (§5). |
+| Exploration | **Low-fi sketches first, one hi-fi design** | Sketches are cheap and make the *idea* easy to judge; only the picked direction is designed in full (§4.5, §4.7). |
 | Review | **Two layers**: deterministic audits (code) + rubric judgment (vision LLM) | Objective checks can't be argued with or hallucinated, and the LLM focuses on what needs judgment. |
 | PDF | Optional visual snapshot only | Developers integrate the HTML; a PDF is just for sharing or sign-off. |
 
@@ -46,14 +49,16 @@ An agent that turns a prompt into a production-ready **web page UI** (HTML/CSS),
 
 ```mermaid
 flowchart TD
-    A[intake] --> B[load_memory]
+    A[intake] --> Q{{kickoff: interrupt — questions, only if needed}}
+    Q -->|answers| A
+    Q -->|no questions / skipped| B[load_memory]
     B --> C[plan_directions]
-    C -->|Send ×N| D[generate_design]
-    D --> E[render_and_audit_all]
-    E --> F{{gallery: interrupt — user picks}}
+    C -->|Send ×N| D[sketch_direction]
+    D --> F{{gallery: interrupt — user picks a sketch}}
     F -->|regenerate| C
-    F -->|pick + notes| G[lock_style]
-    G --> H
+    F -->|pick + notes| G[design — hi-fi from the sketch]
+    G --> S[lock_style]
+    S --> H
 
     subgraph R[refine loop subgraph]
         H[render] --> I[audit — deterministic]
@@ -73,36 +78,41 @@ flowchart TD
 ### 3.2 State (sketch)
 
 ```python
-class DirectionBrief(BaseModel):
-    id: str
-    name: str                    # e.g. "Editorial Calm"
-    reference_style: str         # Swiss / editorial / brutalist / playful / dense-dashboard ...
-    layout_archetype: str        # LayoutId if the user picked layouts (§5.2), else planner's choice, e.g. "asymmetric split hero + bento grid"
-    type_pairing: tuple[str, str]
-    palette: dict[str, str]      # role -> hex, composed by the planner within the chosen color direction (§5.2)
-    density: Literal["airy", "balanced", "dense"]
-    signature_element: str       # the one memorable thing
-    avoid: list[str]
+class ProductBrief(BaseModel):     # what the PM says (§5.1)
+    problem: str
+    audience: str
+    product_name: str | None
+    goal: str | None
+    context: str | None
 
-class Design(BaseModel):
-    direction_id: str
-    version: int
-    html_path: str
-    screenshots: dict[str, str]  # "mobile"/"tablet"/"desktop" -> png path
-    audit: AuditResult | None
-    review: ReviewResult | None
-    score: float | None
+class DirectionBrief(BaseModel):   # one direction = UX concept + visual mood
+    id: str
+    name: str                    # e.g. "Snap and Forget"
+    concept: str                 # how this direction solves the problem for these users
+    tradeoff: str                # what it gives up
+    sections: list[str]          # page sections, in order
+    layout_archetype: str
+    reference_style: str
+    mood: list[str]              # e.g. ["calm", "trustworthy"]
+    theme: Literal["light", "dark"]
+    heading_font: str; body_font: str
+    palette: dict[str, str]      # role -> hex, contrast-checked in code
+    density / shape / motion / imagery
+    signature_element: str
+    avoid: list[str]
 
 class AgentState(TypedDict):
     run_id: str
     user_id: str
-    prompt: str
-    preferences: DesignPreferences                       # from the setup screen (§5)
-    candidate_count: int                                 # 1–10, default 3 (§5.5)
+    brief: ProductBrief
+    candidate_count: int                                 # 1–10, default 3
+    intake: DesignBrief                                  # the designer's reading of the brief (+ questions)
+    kickoff: Kickoff | None                              # answers, or skipped
     memory_context: dict
     briefs: list[DirectionBrief]
-    candidates: Annotated[list[Design], operator.add]   # fan-out reducer
-    selection: Selection | None                          # chosen id + user notes
+    candidates: Annotated[list[Design], reducer]         # sketches (fan-out reducer)
+    selection: Selection | None                          # chosen id + notes
+    design: Design | None                                # first full design (refine v1)
     style_lock: StyleSpec | None
     current: Design | None
     best: Design | None
@@ -113,7 +123,7 @@ class AgentState(TypedDict):
     usage: TokenUsage                                    # running cost tracking
 ```
 
-Checkpointer: SQLite locally (Postgres later). Each run is one `thread_id`, so a run can stop at the gallery and resume hours later.
+Checkpointer: SQLite locally (Postgres later). Each run is one `thread_id`, so a run can stop at any interrupt and resume hours later.
 
 ### 3.3 System components
 
@@ -127,23 +137,23 @@ Next.js frontend  ⇄  FastAPI backend  →  LangGraph run (background task)  �
 
 | Endpoint | Purpose |
 |---|---|
-| `GET /presets` | Preset catalog for the setup screen (§5.4) |
-| `POST /runs` | Start a run with `prompt` + `DesignPreferences` + `candidate_count` → `run_id` |
-| `GET /runs/{id}/events` | Server-sent events (SSE) stream: node started/finished, each candidate ready, each refine iteration (screenshot, score, issues), interrupts |
-| `POST /runs/{id}/resume` | Answer an interrupt (gallery pick / regenerate / final approval) → `Command(resume=...)` |
-| `GET /runs/{id}/artifacts/...` | Candidate HTML (shown in sandboxed iframes), screenshots, handoff zip, PDF |
-| `GET/PUT/DELETE /memory` | View, edit and reset remembered preferences |
+| `POST /runs` | Start a run with a `ProductBrief` + `candidate_count` → `run_id` |
+| `GET /runs/{id}/events` | Server-sent events (SSE) stream: node started/finished, the design brief, each sketch ready, the full design, each refine iteration (screenshot, score, issues), interrupts |
+| `POST /runs/{id}/resume` | Answer an interrupt (kickoff answers / sketch pick / regenerate / final approval) → `Command(resume=...)` |
+| `GET /runs/{id}/artifacts/...` | Sketch and design HTML (shown in sandboxed iframes), screenshots, handoff zip, PDF |
+| `GET/PUT/DELETE /memory` | View, edit and reset what the agent remembers |
 
 The graph streams progress through LangGraph's custom stream mode, which the API relays as SSE. (Alternative: LangGraph Server plus its React `useStream` hook. That's less code, but less control over the API shape.)
 
 **Frontend screens:**
-1. **Setup:** prompt, content inputs, design preferences (each with a live sample), and the number of options to generate. Includes a live combined preview (§5).
-2. **Generating:** one card per option, filling in as each candidate finishes.
-3. **Gallery:** candidates in a grid; each opens to a desktop iframe + mobile view, and any two can be compared side by side. Pick + notes, or regenerate.
-4. **Refining:** a timeline of iterations, each showing screenshot, score per criterion, and issues found and fixed. Every issue gets a **plain-English explanation of why it matters**, so the developer learns UI/UX while the design improves.
-5. **Final review:** v1 vs. final side by side, score trajectory, and approve or request changes.
-6. **Download:** handoff package (zip), HTML, PDF.
-7. **Settings:** remembered preferences and memory reset.
+1. **Brief:** problem, users, optional name, goal and context, and the number of directions to sketch (§5).
+2. **Kickoff:** the designer's reading of the brief (problem, users, needs, primary action, assumptions) plus its questions, each with one-click suggested answers and a line on why it matters. Answer or skip. Shown only when the designer has questions.
+3. **Sketching:** one card per direction (concept, trade-off, mood swatch), filling in as each sketch finishes.
+4. **Pick a sketch:** sketches in a grid; each opens to a desktop iframe + mobile view, and any two can be compared side by side. Pick + notes, or ask for new directions with feedback.
+5. **Designing & refining:** the chosen sketch becomes a full design, then a timeline of iterations, each showing screenshot, score per criterion, and issues found and fixed. Every issue gets a **plain-English explanation of why it matters**, so the user learns UI/UX while the design improves.
+6. **Final review:** the picked sketch (or the first full design) vs. final side by side, score trajectory, and approve or request changes.
+7. **Download:** handoff package (zip), HTML, PDF.
+8. **Memory:** remembered taste, lessons and runs, with reset.
 
 Generated HTML always renders in a sandboxed `<iframe>` (no same-origin), never inline in the app.
 
@@ -152,55 +162,55 @@ Generated HTML always renders in a sandboxed `<iframe>` (no same-origin), never 
 ## 4. Nodes
 
 ### 4.1 `intake`
-Takes the prompt plus the structured `DesignPreferences` from the setup screen. Pulls out page type, audience and required sections from the prompt; explicit preferences always win over anything inferred. If something is ambiguous, fill it with a sensible default and record it as an assumption. Don't ask the user.
+Reads the PM's brief like a designer at kickoff and writes a design brief: the problem restated as a design problem, who the users are (context, skepticism, likely device), what they must understand/feel/do, the primary action, the page type and sections, and assumptions for every gap it filled. It may also return up to 3 **questions**, only when an answer would clearly change the design. It never asks about colors, fonts, layout or style. On its second pass (after answers) it updates the brief and returns no questions.
 
-### 4.2 `load_memory`
+### 4.2 `kickoff` (interrupt #1, only when there are questions)
+`interrupt()` with the design brief and the questions; each has suggested answers and a one-line "why it matters". Answers send the graph back to `intake` to update the brief; skipping keeps the assumptions. Either way the next stop is `load_memory`.
+
+### 4.3 `load_memory`
 Reads the user's taste profile, project brand kit (if any), and the system's lessons learned from the Store (see §9).
 
-### 4.3 `plan_directions`
-One LLM call with structured output that returns `candidate_count` `DirectionBrief`s (§5.5). **Preferences the user chose are copied into every brief unchanged; only the axes they left open vary.** Two exceptions (§5.2): several picked layouts are spread across the briefs, and a color direction fixes the color family while each brief composes its own exact palette within it.
+### 4.4 `plan_directions`
+One LLM call with structured output that returns `candidate_count` `DirectionBrief`s. A direction is **a different bet on solving the problem** (what it leads with, how it earns trust, how it gets users to the primary action), plus the visual mood the designer proposes for it: style, mood words, theme, type pairing, palette, density, shape, motion, imagery and a signature element. The presets (§5.4) are the designer's library: vocabulary and starting points, never constraints.
 
 Diversity is enforced in three places:
-- **Prompt:** each brief must differ from the others on at least 3 open axes (layout archetype, type pairing, palette within the color direction, density, reference style), or on every open axis if fewer than 3 are open.
+- **Prompt:** every pair differs in concept and on at least 3 of: layout archetype, type pairing, palette, density, reference style, section order, theme.
 - **Composition (scales with the count):**
   - 1 option: a single best-fit direction, informed by remembered taste.
   - 2 options: 1 leans toward remembered taste, 1 is neutral-strong.
   - 3+ options: about 40% lean toward remembered taste (at least 1), exactly 1 is a deliberate wildcard, and the rest are neutral-strong.
   - With no taste memory yet, taste slots become neutral-strong.
-- **Check (code):** reject and re-plan if two briefs share the same layout archetype and reference style. If the user fixed both, compare on the remaining open axes instead. When nothing visual is left open, briefs must still differ in composition within the layout (hero arrangement, section rhythm, signature element).
+- **Check (code):** reject and re-plan if two briefs share the same layout archetype and reference style, differ on fewer than 3 axes, or share a concept or signature element.
 
-**Palette check (code):** each brief's palette is checked against its color direction's hue and chroma ranges, and every text/background and button pair is checked for WCAG AA contrast. Failing pairs are repaired by shifting OKLCH lightness within the same hue, before any generation starts.
+**Palette check (code):** every text/background and button pair in each palette is checked for WCAG AA contrast. Failing pairs are repaired by shifting OKLCH lightness within the same hue, before any sketching starts.
 
-### 4.4 `generate_design` (×N via `Send`)
-Each generator gets: the prompt, one brief, the **HTML contract** (§7), and the "lessons learned" checklist from memory. Output is streamed (large `max_tokens`) and saved to `runs/<run_id>/candidates/<direction>/v1.html`. At most `max_parallel_generations` (in `config.yaml`, default 5) run at once to stay within API rate limits; the rest queue.
+### 4.5 `sketch_direction` (×N via `Send`)
+Each sketcher gets the PM brief, the design brief, kickoff answers and one direction, and writes a **low-fidelity wireframe** as HTML: structure, hierarchy, real copy for everything that carries the concept, text-line placeholders for running copy, and 2–4 annotations explaining *why* a part is shaped that way. It builds with a shared **sketch kit** (`prompts/sketch_kit.css`: grayscale ink on paper, annotations in blue) that code injects at the top of `<head>`; the sketcher adds layout CSS only. Sketches are rendered at every viewport for screenshots (no audit: a sketch is judged by the person, not the rubric). At most `max_parallel_generations` (default 5) run at once.
 
-### 4.5 `render_and_audit_all`
-Playwright screenshots of all candidates, plus a quick Layer-A audit. Broken candidates (overflow, missing sections) get one automatic repair attempt before reaching the gallery.
-
-### 4.6 `gallery` (interrupt #1)
-`interrupt()` with a payload that the frontend's Gallery screen renders: the candidates as a grid (each opens to a sandboxed iframe at 1440px plus a mobile view, and any two can be compared side by side), direction names, a one-line plain-English description of each, and audit badges. With a single candidate the gallery still appears, so the user can continue with it or regenerate.
+### 4.6 `gallery` (interrupt #2)
+`interrupt()` with the design brief and the sketches: each opens to a sandboxed iframe at 1440px plus a mobile view, and any two can be compared side by side. Each card shows the direction's concept, trade-off and **mood** (palette swatches, font names set in those fonts, theme, mood words), so picking a sketch also picks a look. With a single sketch the gallery still appears.
 The user chooses one of:
-- `pick(id, notes?)`, e.g. notes "use C's color palette" or "less rounded"
-- `regenerate(feedback)`: back to `plan_directions` with the feedback. The user can also adjust their preferences and the number of options here.
+- `pick(id, notes?)`, e.g. "put the pricing teaser higher; B's testimonials idea would fit here"
+- `regenerate(feedback, count?)`: back to `plan_directions`, which moves away from the previous directions.
 
-The frontend answers via `POST /runs/{id}/resume`, which resumes the graph with `Command(resume={...})`.
+### 4.7 `design`
+One generator turns the picked sketch into the **first full design** (`refine/v1.html`): it keeps the sketch's section order, structure, hierarchy and content, makes every visual decision within the direction's mood, applies the PM's notes, and follows the **HTML contract** (§7) and the lessons-learned checklist. It sees the sketch's HTML and its first desktop screen.
 
-### 4.7 `lock_style`
-Builds a `StyleSpec` from the chosen design:
-- **Deterministic:** parse `:root` custom properties (colors, fonts, spacing scale, radii, shadows). This is where the exact color combination the agent composed within the color direction becomes locked.
-- **LLM:** a short description of the design's character and signature elements, plus the user's notes.
-- **Preferences:** the user's explicit choices from the setup screen, marked as locked.
+### 4.8 `lock_style`
+Builds a `StyleSpec` from the first full design:
+- **Deterministic:** parse `:root` custom properties (colors, fonts, spacing scale, radii, shadows).
+- **LLM:** a short description of the design's character and signature elements, plus the PM's notes.
 
-The StyleSpec is the "don't lose what the user liked" constraint for the rest of the run.
+The StyleSpec is the "don't lose what the user picked" constraint for the rest of the run. The PM's notes become a high-severity issue that the reviewer verifies like any other.
 
-### 4.8 Refine loop (subgraph)
+### 4.9 Refine loop (subgraph)
 
 **`render`**: Playwright at 375 / 768 / 1440 px. Screenshots are taken per viewport **in viewport-height tiles**, because tall full-page images get downscaled and lose detail. Also captures a simplified DOM plus key computed styles: font sizes, colors, spacing, and bounding boxes of `data-component` sections.
 
 **`audit`**: Layer A checks (§6.1). Pure code, no LLM.
 
 **`review`**: A fresh-context vision LLM with structured output.
-- **Inputs:** screenshots, DOM summary, audit results, StyleSpec, original prompt, and the list of previously raised issues. It marks each as resolved or not, then does a fresh pass.
+- **Inputs:** screenshots, DOM summary, audit results, StyleSpec, the PM brief and design brief, and the list of previously raised issues. It marks each as resolved or not, then does a fresh pass.
 - **Never sees:** the executor's reasoning or edit history narrative.
 - **Output:** per-criterion scores with evidence, plus a list of `Issue`s (§6.3).
 
@@ -208,128 +218,68 @@ The StyleSpec is the "don't lose what the user liked" constraint for the rest of
 
 **`execute`**: The LLM gets the current HTML, the **top 5 open issues by severity** (not all of them), the StyleSpec, and a "do not regress" list of resolved issues. It edits with the Anthropic text-editor tool (`str_replace` on the file), so changes are targeted rather than a full regeneration. Each round writes a new version, `vN.html`.
 
-### 4.9 `final_approval` (interrupt #2, optional, on by default)
-Shows v1 vs. final, the score trajectory, and remaining low-severity issues. Two outcomes:
+### 4.10 `final_approval` (interrupt #3, optional, on by default)
+Shows the picked sketch (or the first full design) vs. final, the score trajectory, and remaining low-severity issues. Two outcomes:
 - **Approve:** continue to handoff.
 - **Request changes:** the feedback becomes high-severity issues, and the loop runs again with a small iteration cap.
 
-### 4.10 `build_handoff`
+### 4.11 `build_handoff`
 An LLM writes `HANDOFF.md` from the final HTML plus the StyleSpec (§7.2). `tokens.json` is extracted deterministically.
 
-### 4.11 `export`
+### 4.12 `export`
 - HTML: final file, validated as self-contained.
 - PDF (optional): Playwright `page.pdf()` at a fixed 1440px width with print CSS that prevents section breaks, plus a separate mobile-width PDF if requested.
 
-### 4.12 `update_memory`
+### 4.13 `update_memory`
 Writes the taste signal, lessons learned and a run summary (§9).
 
 ---
 
-## 5. Design preferences (setup screen)
+## 5. The brief (what the user says) and the library (what the designer uses)
 
-The users are developers who can't name design styles but recognize what they like when they see it. **Developers choose the look; the agent handles the craft.**
+The user thinks like a PM talking to a UI/UX designer: **what problem, for whom**. Everything about *how* (colors, fonts, layout, theme, style, density) is the designer's job, decided for the stated users.
 
-### 5.1 Principles
-1. **Everything is optional.** "Let AI decide" is the default for every option, so a prompt alone is enough to start.
-2. **Show, don't name.** Every option has a **live sample** next to it, rendered with that option's real tokens and fonts. Labels like "Clean sans" are secondary to what the sample shows.
-3. **Curated presets, not raw values.** Every layout, font pairing and shape preset is checked ahead of time, so no combination of choices can produce something illegible.
-4. **Color is a direction, not a combination.** Developers pick a color family (the big direction). The agent composes the exact combination of background, surface, text, primary and accent colors, and code verifies the contrast (§4.3). Developers never have to pair colors themselves.
-5. **Smart defaults based on page type.** For example, a dashboard pre-selects Compact density and a landing page pre-selects Airy. A "Recommended" tag explains why.
-6. **A plain-English hint per option**, e.g. "Compact: more information per screen, good for dashboards and admin tools."
-
-### 5.2 Options and their samples
-
-**Main options (always visible):**
-
-| Choice | Options | Sample shown next to each option |
+### 5.1 The brief screen
+| Field | Required | Example |
 |---|---|---|
-| **Style / mood** (pick up to 2) | Minimal · Modern SaaS · Editorial · Playful · Bold/Brutalist · Corporate/Trustworthy · Luxury · Technical/Dev-tool · Let AI decide | A mini hero section (headline, sub-text, button, decorative element) built in that style. These are hand-made static thumbnails, curated once. |
-| **Layout** (pick one, or several to compare) | A set per page type, about 5–6 each. Landing page: Centered hero · Split hero (text + visual) · Product-screenshot-led · Bento grid · Long-form story · Let AI decide. Dashboard: Sidebar + card grid · Top nav + wide tables · List/detail split · Let AI decide. | A wireframe of the whole page (nav, hero and sections as grey blocks) showing its structure. Rendered from the layout's definition in `presets/layouts.json`, so it reflects the sections the developer checked. |
-| **Color direction** | ~10 curated directions, e.g. Cool blues · Fresh greens · Warm earth · Sunset (orange/coral) · Monochrome + one accent · Soft pastels · Vivid · Dark neon · Let AI decide | A swatch strip of the color family **plus** 2–3 mini UI cards (heading, body text, primary and secondary buttons, badge, input), each a different combination the agent might make. Caption: "The agent picks the exact combination." |
-| ↳ "Already have a brand color?" | A link under the directions, not a second choice. Hex input / color picker. It **replaces** the color direction: the agent builds the whole palette around that one color. | A full palette generated **live in the browser** from the hex code (OKLCH tint/shade scale), with contrast badges (AA ✓/✗) on text and button pairs |
-| **Theme** | Light · Dark · Both | The same mini card in each theme |
+| What problem are we solving? | yes | "Freelancers lose receipts and dread tax season." |
+| Who are we solving it for? | yes | "Solo freelancers who do their own books, mostly on their phone. Skeptical of finance apps." |
+| Product name | no | "Receiptly" |
+| What should they do or come away with? | no | "Sign up for the free plan" |
+| Anything else the designer should know? | no | Constraints, an existing brand, competitors, what's been tried, real copy |
 
-**Layout picks:** the list is filtered by page type (the same one that pre-fills Sections). One picked layout is used by every candidate. Several picked layouts (up to the number of options) are **spread across the candidates** instead of combined, because two layouts can't be blended into one page. If there are more candidates than picked layouts, the extra candidates reuse picked layouts with a different composition inside them.
+Plus the number of directions to sketch (stepper, default **3**, 1–10). A side panel explains the flow: kickoff → sketches → pick one → hand off.
 
-**Color is always one choice:** a color direction, a brand color, or "Let AI decide". The developer never picks a palette and a brand color together, and never pairs individual colors.
+There are deliberately **no visual pickers**. If the user has a hard constraint (e.g. an existing brand color), they say so in the context field and the designer respects it.
 
-**More options (collapsed by default):**
+### 5.2 Kickoff questions
+The designer asks at most 3 questions, only when the answer would clearly change the design (who it's for, what it must achieve, a hard constraint). Each comes with suggested answers and a line on why it matters. Skipping is always allowed; the designer then records assumptions. Clear briefs get no questions and go straight to sketching.
 
-| Choice | Options | Sample |
-|---|---|---|
-| **Typography** | Clean sans · Geometric · Friendly/rounded · Elegant serif · Technical mono · Let AI decide | Real fonts rendering a heading, a paragraph, a button label and numbers, **using the developer's product name** if entered. Each feel maps to one curated font pairing. |
-| **Density** | Airy · Balanced · Compact | The same card and list block at that spacing |
-| **Shape** | Sharp · Soft · Rounded/pill | Button, input and card showing the corner radius and shadow style |
-| **Motion** | None · Subtle · Expressive | A short looping demo of hover and entrance animations. Respects the viewer's reduced-motion setting. |
-| **Imagery** | Illustrations · Photo placeholders · Abstract shapes/gradients · None | A mini hero using that image treatment |
-
-**Content inputs (not about looks, but they strongly affect quality):**
-- **Product name and one-line description**
-- **Tone of voice:** Professional · Friendly · Playful. Each shows an example headline in that tone.
-- **Sections:** checklist with tiny wireframe icons (hero, features, pricing, testimonials, FAQ, CTA, footer…), pre-filled from the page type
-- **Real copy:** optional paste area. Real text produces much better designs than invented text.
-
-**Later phase:** a reference URL or screenshot ("make it feel like this"). The agent extracts the aesthetic as preset-like values; it never clones the layout.
-
-### 5.3 Live combined preview
-Next to the options, a **mini page** (nav, hero, 3 feature cards, CTA, arranged in the picked layout or a neutral default) updates instantly as choices change. With a color direction, it uses one of the direction's example combinations, and a small toggle cycles through the others. Everything is driven by CSS custom properties, so there's no LLM call and no lag. It shows how the choices look *together*, which matters because developers can't predict clashes on their own. It's labeled "Preview of your choices, not the final design."
-
-### 5.4 Presets: one source of truth
-- Every preset is defined once in `presets/*.json` with its **exact tokens**: font families/weights/scale, radius, shadow, spacing multiplier, motion durations.
-- **Layouts** are defined structurally: page type, hero arrangement, section patterns and grid. The same definition renders the wireframe sample and goes into the generator's brief.
-- **Color directions** are defined as ranges, not fixed hex values: OKLCH hue ranges for primary and accent, a chroma range, neutral temperature (warm/cool gray), and how many accents to use. Each also ships 2–3 validated example palettes (hex per role) that power the samples and serve as starting points for the planner.
-- The **frontend** renders every sample and the combined preview from these files.
-- The **generators** receive the same tokens in their brief. For fonts, shapes, density and layouts, what the developer saw in the sample is what appears in the design. For color, the design stays within the direction's ranges, and the exact combination is the agent's job.
-- **CI validation** of presets:
-  - every example palette meets WCAG AA contrast on all text/background and button pairs, in both themes
-  - every color direction's ranges can produce AA-passing pairs in both themes
-  - fonts load from the allowlist
-  - every layout renders a wireframe for every section of its page type
-  - every preset has samples.
-
-### 5.5 Number of options, fixed vs. varied
-- **Number of options:** a stepper next to the Generate button. Default **3**, minimum **1**, maximum **10**. A hint underneath says that time and cost grow with the count. The last value is pre-selected on the next run (§9).
-- Chosen options are **copied into all candidates unchanged**. Options left on "Let AI decide" become the axes the candidates vary on. Two exceptions: several picked layouts are spread across candidates, and a color direction varies the exact combination within the direction (§5.2).
-- The setup screen summarizes this before generating, e.g. "**Kept in all 4:** Modern SaaS, Cool blues, Light. **Will vary:** exact colors, typography, density, shape. **Layouts:** Split hero ×2, Bento grid ×2."
-- **Too-similar warning:** if 4 or more of {style, layout, color, typography, density, shape} are fixed and more than 3 options are requested, show a soft warning: "With this many fixed choices, more than 3 options will look alike." The developer can continue anyway. Even with everything fixed, composition within the layout always varies (hero arrangement, section rhythm, signature element).
-
-### 5.6 Clash warnings
-A small rule table flags combinations that usually clash, e.g. Luxury + Compact, Playful + Corporate, Brutalist + Rounded/pill, Elegant serif + Technical/Dev-tool, Long-form story layout + Compact, Soft pastels + Dark theme. The developer sees a **soft warning** with a one-line reason and can continue anyway. Choices are never blocked.
-
-### 5.7 Priority rule
-**Accessibility > the developer's choices > the reviewer's taste.**
-- The reviewer and executor never override a chosen preference for aesthetic reasons. B9 penalizes drifting away from it.
-- If a choice causes an accessibility failure (e.g. a brand color too light for white text), the agent adjusts *within* the choice, such as a darker shade of the same hue, and tells the developer what changed and why.
-
-### 5.8 Deliberately not exposed
-Spacing scale, type-scale ratio, grid columns, exact font sizes, line heights, contrast and visual hierarchy. This is where non-designers go wrong, and it's what the reviewer protects.
-
-### 5.9 Schema (sketch)
+### 5.3 Schema (sketch)
 
 ```python
-class DesignPreferences(BaseModel):
-    styles: list[StyleId] = []              # max 2; empty = let AI decide
-    layouts: list[LayoutId] = []            # max candidate_count; spread across candidates; empty = let AI decide
-    color: ColorDirectionId | BrandColor | None = None   # one or the other, never both; None = let AI decide
-    theme: Literal["light", "dark", "both"] = "light"
-    typography: TypographyId | None = None
-    density: Literal["airy", "balanced", "compact"] | None = None
-    shape: Literal["sharp", "soft", "rounded"] | None = None
-    motion: Literal["none", "subtle", "expressive"] | None = None
-    imagery: ImageryId | None = None
+class ProductBrief(BaseModel):
+    problem: str                     # required
+    audience: str                    # required
     product_name: str | None = None
-    product_description: str | None = None
-    tone: Literal["professional", "friendly", "playful"] | None = None
-    sections: list[SectionId] = []
-    copy: str | None = None
+    goal: str | None = None
+    context: str | None = None
 
-class RunRequest(BaseModel):                # body of POST /runs
-    prompt: str
-    preferences: DesignPreferences
+class RunRequest(BaseModel):         # body of POST /runs
+    brief: ProductBrief
     candidate_count: int = Field(3, ge=1, le=10)
 ```
 
-Memory pre-selects the developer's last choices on the next run (§9), with a "Reset to defaults" button.
+### 5.4 The designer's library (`presets/*.json`)
+Curated reference material the planner draws on: reference styles (with guidance), layouts per page type, color directions (OKLCH ranges + AA-validated example palettes), type pairings, and density/shape/motion/imagery tokens. They are vocabulary and starting points, not constraints. CI validates them: every example palette meets WCAG AA in both themes and stays within its direction's ranges; fonts load from the allowlist; every page type has layouts and defined sections; every entry is described.
+
+### 5.5 Priority rule
+**Accessibility > the PM's notes and the picked direction > the reviewer's taste.**
+- The reviewer and executor never override the picked direction for aesthetic reasons. B9 penalizes drifting from the sketch, the StyleSpec or the PM's notes.
+- If a proposed palette fails contrast, code adjusts it *within* the same hue before sketching, and the change is shown.
+
+### 5.6 Never exposed
+Spacing scale, type-scale ratio, grid columns, exact font sizes, line heights, contrast and visual hierarchy, and now every other visual choice too. This is what the designer and the reviewer own.
 
 ---
 
@@ -360,9 +310,9 @@ Stored in `rubric/rubric.yaml` (versioned, so score changes can be traced back t
 | B4 | Color: purposeful, consistent roles, not muddy | 1.0 |
 | B5 | Responsive quality: mobile layout *makes sense*, not just "doesn't overflow" | 1.25 |
 | B6 | Component consistency: buttons, cards, inputs share one visual language | 1.0 |
-| B7 | Prompt fit and content: covers the requested sections, realistic copy, no lorem ipsum | 1.25 |
+| B7 | Brief fit and content: built for these users and this problem, the primary action is the page's center of gravity, realistic copy, no lorem ipsum | 1.25 |
 | B8 | Interaction states: hover/focus/active/disabled defined for interactive elements | 0.75 |
-| B9 | **Fidelity to StyleSpec and chosen preferences**: still recognizably the direction the user picked, and every locked preference is respected | 1.5 |
+| B9 | **Fidelity to the chosen direction**: still recognizably the sketch and direction the user picked, StyleSpec signature elements intact, every PM note applied | 1.5 |
 
 **Pass condition:** all Layer A pass **AND** weighted B average ≥ **4.0** **AND** no criterion < **3** **AND** no open `high` issues.
 
@@ -443,7 +393,7 @@ The output is always **`best`**, never just the latest version. `stop_reason` is
 
 | Namespace | Contents | Written when | Read by |
 |---|---|---|---|
-| `("user", uid, "taste")` | Structured profile: preferred/avoided styles, layouts, color directions, density, typography; counts of picks vs. rejects per attribute; last number of options | After setup (explicit choices and option count, pre-selected next time), after gallery pick (chosen vs. rejected briefs), and from user notes | `plan_directions` |
+| `("user", uid, "taste")` | Structured profile: preferred/avoided styles, layouts, fonts, density, shape; counts of picks vs. rejects per attribute | After each sketch pick (chosen vs. passed-over directions), and from user notes | `plan_directions` (the `taste` slots) |
 | `("project", pid, "brand")` | Brand constraints the user provides explicitly (colors, fonts, logo rules) so they carry across runs for the same product | Explicit user action | planner, generators, StyleSpec |
 | `("system", "lessons")` | Recurring issue patterns (e.g. "missing focus states", "hero CTA below fold on mobile") with counts | After each run, from final review issues | generators + executor (as a pre-flight checklist) |
 | `("runs", uid)` | Run summaries: prompt, chosen direction, iterations, final score, stop reason | End of run | analytics, evals |
@@ -524,34 +474,33 @@ ui-agent/
 
 **M1: Refine loop on a given HTML (≈ 1 week)** *(the core; build and tune first)*
 - `llm.py`, reviewer, executor, gate, refine subgraph, history/versioning.
-- `scripts/refine.py page.html --prompt "..."` (internal dev tool).
+- `scripts/refine.py page.html --problem "..." --audience "..."` (internal dev tool).
 - *Exit:* on 10 sample pages, mean weighted score rises, every run ends within ≤ 5 iterations, and there are no unhandled regressions.
 
-**M2: Presets catalog (≈ 1 week, can run in parallel with M1)**
-- Define `presets/*.json` (styles, layouts per page type, ~10 color directions with ranges and example palettes, typography pairings, density, shape, motion, imagery), hand-make the style/mood thumbnails, build the layout wireframe renderer, and add CI validation (contrast, fonts, wireframe and sample coverage).
-- *Exit:* every preset passes validation; generators given a preset reproduce its tokens and layout structure exactly, and stay within a color direction's ranges.
+**M2: Designer's library (≈ 3 days, can run in parallel with M1)**
+- Define `presets/*.json` (styles, layouts per page type, ~10 color directions with ranges and example palettes, typography pairings, density, shape, motion, imagery) and add CI validation (contrast, ranges, fonts, coverage).
+- *Exit:* every entry passes validation.
 
 **M3: Generation backend + API (≈ 1 week)**
-- `DesignPreferences`, `RunRequest`, intake, planner (fixed vs. varied, 1–10 candidate count, layout distribution, palette check), `Send` fan-out with parallelism cap, generator, gallery interrupt, regenerate path, `lock_style`.
-- FastAPI: `/presets`, `/runs`, `/runs/{id}/events` (SSE), `/runs/{id}/resume`, artifacts.
-- *Exit:* a full run driven only through the API, from prompt + preferences to a refined design; users judge the candidates clearly distinct on the varied axes and faithful on the fixed ones.
+- `ProductBrief`, `RunRequest`, intake + kickoff interrupt, planner (concept-level diversity, 1–10 directions, contrast repair), `Send` fan-out of sketchers with the sketch kit and a parallelism cap, gallery interrupt, regenerate path, design-from-sketch, `lock_style`.
+- FastAPI: `/runs`, `/runs/{id}/events` (SSE), `/runs/{id}/resume`, artifacts.
+- *Exit:* a full run driven only through the API, from a PM brief to a refined design; users judge the sketches as clearly different bets on the problem, and the full design as faithful to the picked sketch.
 
 **M4: Frontend (≈ 2 weeks)**
-- Setup screen: option samples, layout wireframes, color-direction samples, live combined preview, brand-color palette generator, clash warnings, "Kept / Will vary" summary, number-of-options stepper with too-similar warning.
-- Generating, Gallery, Refining (timeline + plain-English explanations), Final review, Download screens.
-- *Exit:* a developer with no design background completes a run without help (hallway test with 3–5 people), and can correctly describe what at least 3 options mean after using it.
+- Brief screen, Kickoff (questions with suggested answers), Sketching, Pick a sketch (concept, trade-off, mood), Designing & refining (timeline + plain-English explanations), Final review (sketch or v1 vs. final), Download screens.
+- *Exit:* someone with no design background completes a run without help (hallway test with 3–5 people), and can explain how the sketches differ as approaches to the problem.
 
 **M5: Handoff and export (≈ 3 days)**
 - `HANDOFF.md`, `tokens.json`, PDF, final-approval interrupt, zip download.
 - *Exit:* Claude Code, given only the package, scaffolds a new project (e.g. Next.js) that reproduces the design. Check fidelity with a screenshot diff against `screenshots/` at all three viewports.
 
 **M6: Memory (≈ 4 days)**
-- Store namespaces, write policy, pre-selected preferences, injection into planner/generators, Settings screen.
+- Store namespaces, write policy, taste from sketch picks, injection into planner/designer, Memory screen.
 - *Exit:* after 5 runs with consistent picks, the "taste" directions in later runs reflect those preferences.
 
 **M7: Hardening (ongoing)**
 - Eval suite, cost dashboards, Postgres checkpointer/store.
-- **MCP server interface**, so a coding agent can call `generate_ui(prompt)` and receive the handoff package directly. The gallery pick still happens in the browser.
+- **MCP server interface**, so a coding agent can call `generate_ui(brief)` and receive the handoff package directly. The gallery pick still happens in the browser.
 
 ---
 
@@ -575,7 +524,7 @@ ui-agent/
 
 | Risk | Mitigation |
 |---|---|
-| Directions look alike (worse at high counts with many fixed choices) | Axis-differentiated briefs, wildcard slot, automated similarity check, too-similar warning at setup |
+| Directions look alike (worse at high counts) | Concept-level directions, axis-differentiated briefs, wildcard slot, automated similarity check |
 | AI-composed colors clash or fail contrast | Color directions bound the hue/chroma range, code checks every palette before generation, B4 judges color quality |
 | Reviewer too lenient or never satisfied | Anchored rubric, deterministic gates, calibration against human scores, plateau stop |
 | Oscillation (fix A breaks B) | Top-5 issues per round, "do not regress" list, regression guard and revert-to-best |
@@ -594,11 +543,12 @@ ui-agent/
 - **Plain CSS, not Tailwind:** keeps the most detail for the downstream agent (see §2).
 - **Greenfield only:** no matching an existing codebase or design system. The design comes first.
 - **Web frontend, not CLI:** developers need to *see* each option (§3.3, §5). MCP server later (M7).
-- **Design preferences:** curated, optional presets, each with a live sample. Chosen options are fixed across all candidates and unchosen ones vary. Accessibility > choices > reviewer taste (§5).
-- **Number of options:** chosen by the user, 1–10, default 3. Replaces the earlier fixed 5 (or 3) (§5.5).
-- **Layout is a main option:** page-type-specific layouts with wireframe samples. Several picks are spread across candidates rather than combined (§5.2).
-- **Color is one choice, made as a direction:** developers pick a color family and the agent composes the exact combination, with contrast checked in code. A brand color replaces the direction; it is never chosen alongside a palette (§5.1, §5.2).
+- **The user states the problem, the agent owns the how:** the setup screen's style, layout, color, theme, typography, density, shape, motion and imagery pickers were removed. The user gives a PM-style brief (problem, users, optional name, goal, context); presets became the designer's internal library (§5).
+- **Kickoff questions:** the designer may ask up to 3 clarifying questions before sketching, only when the answer changes the design; skipping is allowed (§4.2, §5.2).
+- **Sketch first:** N low-fi wireframes plus a visual mood per direction; only the picked one is designed in full (§4.5–4.7).
+- **Number of directions:** chosen by the user, 1–10, default 3.
+- **Theme is a design decision:** each direction picks light or dark for its users.
 
 **Open**
-1. **Dark mode:** always generate both themes via tokens, or only when asked?
+1. **Dark mode:** each direction picks one theme today. Should the full design also ship the other theme via tokens?
 2. **Mixing directions** ("A's layout + C's palette") as a first-class gallery action instead of free-text notes?

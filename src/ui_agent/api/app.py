@@ -51,11 +51,6 @@ async def health():
             "models": {k: v["model"] for k, v in settings.config()["models"].items()}}
 
 
-@app.get("/presets")
-async def presets():
-    return settings.presets()
-
-
 @app.post("/runs")
 async def create_run(body: dict):
     try:
@@ -115,11 +110,11 @@ async def run_events(run_id: str, request: Request, since: int = 0):
 
 
 class ResumeBody(BaseModel):
-    action: str  # pick | regenerate | approve | request_changes
+    action: str  # answer | pick | regenerate | approve | request_changes
+    answers: dict[str, str] | None = None  # kickoff question id -> answer
     id: str | None = None
     notes: str | None = None
     feedback: str | None = None
-    preferences: dict | None = None
     candidate_count: int | None = None
 
 
@@ -182,9 +177,3 @@ async def put_memory(body: MemoryUpdate):
 async def delete_memory(what: str = "all"):
     await memory.reset(app.state.store, USER_ID, what)
     return {"ok": True}
-
-
-@app.get("/memory/last-preferences")
-async def last_preferences():
-    taste = await memory.get_taste(app.state.store, USER_ID)
-    return {"preferences": taste.get("last_preferences"), "candidate_count": taste.get("last_candidate_count")}

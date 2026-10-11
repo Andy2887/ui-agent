@@ -76,56 +76,6 @@ def rubric_text() -> str:
     return "\n".join(lines)
 
 
-def pref_summary(prefs: dict) -> dict:
-    """Explicit choices only (what's fixed), with preset details the models need."""
-    out: dict = {}
-    if prefs.get("styles"):
-        out["styles"] = [{"id": s, **{k: v for k, v in (settings.style(s) or {}).items() if k in ("name", "guidance")}}
-                         for s in prefs["styles"]]
-    if prefs.get("layouts"):
-        out["layouts"] = [{"id": l, **{k: v for k, v in (settings.layout(l) or {}).items() if k in ("name", "brief")}}
-                          for l in prefs["layouts"]]
-    color = prefs.get("color")
-    if color and color.get("kind") == "direction":
-        d = settings.color_direction(color["value"]) or {}
-        out["color_direction"] = {"id": color["value"], "name": d.get("name"), "ranges_oklch": d.get("ranges"),
-                                  "example_palettes": d.get("examples")}
-    elif color and color.get("kind") == "brand":
-        out["brand_color"] = color["value"]
-    out["theme"] = prefs.get("theme", "light")
-    if prefs.get("typography"):
-        t = settings.typography(prefs["typography"]) or {}
-        out["typography"] = {"id": prefs["typography"], "heading": t.get("heading"), "body": t.get("body"),
-                             "scale_ratio": t.get("scale_ratio")}
-    for group, key in (("density", "density"), ("shapes", "shape"), ("motion", "motion"), ("imagery", "imagery")):
-        if prefs.get(key):
-            out[key] = settings.option(group, prefs[key])
-    for k in ("product_name", "product_description", "tone", "sections"):
-        if prefs.get(k):
-            out[k] = prefs[k]
-    if prefs.get("copy_text") or prefs.get("copy"):
-        out["copy"] = prefs.get("copy_text") or prefs.get("copy")
-    return out
-
-
-def open_axes(prefs: dict) -> list[str]:
-    axes = []
-    if not prefs.get("styles"):
-        axes.append("reference style")
-    if not prefs.get("layouts"):
-        axes.append("layout archetype")
-    if not prefs.get("color"):
-        axes.append("palette / color direction")
-    elif prefs["color"].get("kind") == "direction":
-        axes.append("exact palette within the color direction")
-    if not prefs.get("typography"):
-        axes.append("type pairing")
-    for k in ("density", "shape", "motion", "imagery"):
-        if not prefs.get(k):
-            axes.append(k)
-    return axes
-
-
 def design_snapshot(design: dict) -> dict:
     """Compact per-iteration record for history/timeline (no raw facts)."""
     review = design.get("review") or {}

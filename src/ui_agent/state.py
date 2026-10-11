@@ -1,4 +1,4 @@
-"""Schemas (plan §3.2, §5.9, §6.3).
+"""Schemas (plan §3.2, §5.3, §6.3).
 
 Graph state holds plain JSON-able dicts (model.model_dump()) so checkpoints stay
 portable; nodes validate into these models when they need typed access."""
@@ -6,60 +6,42 @@ portable; nodes validate into these models when they need typed access."""
 from __future__ import annotations
 
 import operator
-from typing import Annotated, Any, Literal, Optional, TypedDict
+from typing import Annotated, Literal, Optional, TypedDict
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator
 
 # --------------------------------------------------------------------------
-# Setup screen → run request
+# Brief screen → run request
 # --------------------------------------------------------------------------
 
 
-class ColorChoice(BaseModel):
-    """Color is one choice: a direction OR a brand color, never both (§5.2)."""
+class ProductBrief(BaseModel):
+    """What a PM tells a designer: the problem and the people. Never the look."""
 
-    kind: Literal["direction", "brand"]
-    value: str  # direction id, or "#RRGGBB"
-
-
-class DesignPreferences(BaseModel):
-    page_type: Optional[str] = None  # landing / dashboard / pricing / auth / blog / portfolio
-    styles: list[str] = Field(default_factory=list)  # at most 1; empty = let AI decide
-    layouts: list[str] = Field(default_factory=list)  # at most 1; empty = let AI decide
-    color: Optional[ColorChoice] = None  # None = let AI decide
-    theme: Literal["light", "dark", "both"] = "light"
-    typography: Optional[str] = None
-    density: Optional[Literal["airy", "balanced", "compact"]] = None
-    shape: Optional[Literal["sharp", "soft", "rounded"]] = None
-    motion: Optional[Literal["none", "subtle", "expressive"]] = None
-    imagery: Optional[Literal["illustrations", "photos", "abstract", "none"]] = None
+    problem: str  # what we're solving
+    audience: str  # who we're solving it for
     product_name: Optional[str] = None
-    product_description: Optional[str] = None
-    tone: Optional[Literal["professional", "friendly", "playful"]] = None
-    sections: list[str] = Field(default_factory=list)
-    copy_text: Optional[str] = Field(default=None, alias="copy")
+    goal: Optional[str] = None  # what a visitor should do or come away with
+    context: Optional[str] = None  # constraints, existing brand, real copy, anything else
 
-    model_config = {"populate_by_name": True}
-
-    @model_validator(mode="after")
-    def _limits(self):
-        if len(self.styles) > 1:
-            raise ValueError("pick at most 1 style")
-        if len(self.layouts) > 1:
-            raise ValueError("pick at most 1 layout")
-        return self
+    @field_validator("problem", "audience")
+    @classmethod
+    def _required(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("required")
+        return v.strip()
 
 
 class RunRequest(BaseModel):
-    prompt: str
-    preferences: DesignPreferences = Field(default_factory=DesignPreferences)
+    brief: ProductBrief
     candidate_count: int = Field(3, ge=1, le=10)
 
-    @model_validator(mode="after")
-    def _layouts_fit(self):
-        if len(self.preferences.layouts) > self.candidate_count:
-            raise ValueError("pick at most as many layouts as options to generate")
-        return self
+
+def brief_text(brief: dict) -> str:
+    """The PM's brief as plain text, for prompts and run lists."""
+    labels = (("product_name", "Product"), ("problem", "Problem"), ("audience", "Users"),
+              ("goal", "Goal"), ("context", "Context"))
+    return "\n".join(f"{label}: {brief[k]}" for k, label in labels if brief.get(k))
 
 
 # --------------------------------------------------------------------------
@@ -67,12 +49,23 @@ class RunRequest(BaseModel):
 # --------------------------------------------------------------------------
 
 
+class KickoffQuestion(BaseModel):
+    id: str  # short slug, e.g. "q_returning_users"
+    question: str
+    why: str  # how the answer changes the design, in plain words
+    suggestions: list[str]  # likely answers the PM can pick with one click
+
+
 class IntakeResult(BaseModel):
-    page_type: str
-    audience: str
     product_name: str
+    page_type: str
+    problem: str  # restated as a design problem
+    audience: str  # who they are, their context, what they already know
+    user_needs: list[str]  # what the user must understand, feel or do on this page
+    primary_action: str
     sections: list[str]
     assumptions: list[str]
+    questions: list[KickoffQuestion]
 
 
 class Palette(BaseModel):
@@ -87,17 +80,23 @@ class Palette(BaseModel):
 
 
 class DirectionBrief(BaseModel):
+    """One design direction: a UX concept plus the visual mood the designer proposes for it."""
+
     id: str  # short slug, e.g. "a", "b"
-    name: str  # e.g. "Editorial Calm"
-    description: str  # one plain-English line for the gallery
+    name: str  # e.g. "Snap and Forget"
+    description: str  # one plain-English line for the sketch gallery
     slot: Literal["taste", "neutral", "wildcard"]
-    reference_style: str
+    concept: str  # how this direction solves the problem for these users
+    tradeoff: str  # what it gives up compared with other directions
+    sections: list[str]  # page sections in order
     layout_archetype: str
     layout_id: Optional[str]
+    reference_style: str
+    mood: list[str]  # 2–4 words, e.g. ["calm", "trustworthy"]
+    theme: Literal["light", "dark"]
     heading_font: str
     body_font: str
     palette: Palette
-    dark_palette: Optional[Palette]
     density: Literal["airy", "balanced", "compact"]
     shape: Literal["sharp", "soft", "rounded"]
     motion: Literal["none", "subtle", "expressive"]
@@ -180,7 +179,6 @@ class StyleSpec(BaseModel):
     signature_elements: list[str]
     must_keep: list[str]
     user_notes: str = ""
-    locked_preferences: dict[str, Any] = Field(default_factory=dict)
 
 
 # --------------------------------------------------------------------------
@@ -206,17 +204,18 @@ def usage_reducer(left: dict | None, right: dict | None) -> dict:
 class AgentState(TypedDict, total=False):
     run_id: str
     user_id: str
-    prompt: str
-    preferences: dict
+    brief: dict  # ProductBrief
     candidate_count: int
     intake: dict
+    kickoff: Optional[dict]  # {"answers": [{"id", "question", "answer"}], "skipped": bool}
     memory_context: dict
     regenerate_feedback: Optional[str]
     briefs: list[dict]
-    candidates: Annotated[list[dict], candidates_reducer]
+    candidates: Annotated[list[dict], candidates_reducer]  # sketches, one per brief
     selection: Optional[dict]  # {"id": ..., "notes": ...}
     rejected_ids: list[str]
     style_lock: Optional[dict]
+    design: Optional[dict]  # first full design built from the chosen sketch (refine v1)
     current: Optional[dict]
     best: Optional[dict]
     history: Annotated[list[dict], operator.add]

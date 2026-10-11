@@ -1,11 +1,11 @@
-"""4.2 load_memory and 4.12 update_memory."""
+"""4.3 load_memory and 4.13 update_memory."""
 
 from __future__ import annotations
 
 from langgraph.store.base import BaseStore
 
 from ..memory import store as memory
-from ..state import AgentState
+from ..state import AgentState, brief_text
 from .common import emit
 
 
@@ -20,7 +20,7 @@ async def update_memory(state: AgentState, *, store: BaseStore) -> dict:
     await memory.record_lessons(store, state["run_id"], issues)
     best = state.get("best") or state.get("current") or {}
     await memory.record_run(store, state["user_id"], state["run_id"], {
-        "prompt": state["prompt"][:300],
+        "prompt": brief_text(state["brief"])[:300],
         "chosen_direction": (state.get("selection") or {}).get("id"),
         "iterations": state.get("iteration"),
         "final_score": best.get("score"),

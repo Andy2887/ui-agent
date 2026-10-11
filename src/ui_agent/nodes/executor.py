@@ -14,7 +14,7 @@ from .common import SEVERITY_ORDER, emit, run_dir
 
 def top_issues(issues: list[dict], k: int) -> list[dict]:
     open_ = [i for i in issues if i["status"] in ("open", "regressed")]
-    # Change requests from the developer first, then by severity.
+    # Change requests from the PM first, then by severity.
     return sorted(open_, key=lambda i: (not i["id"].startswith("chg_"), SEVERITY_ORDER.get(i["severity"], 3)))[:k]
 
 

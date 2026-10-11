@@ -1,4 +1,4 @@
-"""CI validation of presets (plan §5.4)."""
+"""CI validation of the designer's preset library (plan §5.4)."""
 
 from ui_agent import settings
 from ui_agent.color import check_palette, palette_matches_direction
@@ -24,25 +24,19 @@ def test_fonts_come_from_allowlist():
             assert t[role]["family"].replace(" ", "+") in t["google"], (t["id"], role)
 
 
-def test_every_layout_renders_a_wireframe_for_its_page_type_sections():
+def test_every_layout_and_default_section_is_defined():
     lp = settings.presets()["layouts"]
-    sections = {s["id"]: s for s in lp["sections"]}
+    sections = {s["id"] for s in lp["sections"]}
     for pt in lp["page_types"]:
-        layouts = [l for l in lp["layouts"] if l["page_type"] == pt["id"]]
-        assert layouts, f"no layouts for {pt['id']}"
-        for l in layouts:
-            for sid in pt["default_sections"]:
-                assert sid in sections, sid
-                rows = l["overrides"].get(sid) or sections[sid]["rows"] or (l["hero"] if sid == "hero" else None)
-                assert rows is not None, (l["id"], sid)
-                for r in rows:
-                    assert sum(c["span"] + c.get("offset", 0) for c in r["cols"]) <= 12, (l["id"], sid)
+        assert any(l["page_type"] == pt["id"] for l in lp["layouts"]), f"no layouts for {pt['id']}"
+        assert set(pt["default_sections"]) <= sections, pt["id"]
 
 
-def test_every_preset_has_samples():
+def test_every_preset_is_described_for_the_planner():
     p = settings.presets()
-    assert all(s.get("sample") for s in p["styles"]["styles"])
-    assert all(d.get("swatches") and len(d["examples"]) >= 2 for d in p["colors"]["directions"])
+    assert all(s.get("guidance") for s in p["styles"]["styles"])
+    assert all(l.get("brief") for l in p["layouts"]["layouts"])
+    assert all(d.get("hint") and len(d["examples"]) >= 2 for d in p["colors"]["directions"])
     assert all(t.get("heading") and t.get("body") for t in p["typography"]["pairings"])
-    for group in ("density", "shapes", "motion", "imagery", "themes", "tones"):
+    for group in ("density", "shapes", "motion", "imagery"):
         assert all(o.get("hint") for o in p["options"][group]), group

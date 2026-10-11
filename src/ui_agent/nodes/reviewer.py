@@ -6,7 +6,7 @@ import json
 import re
 
 from .. import mock, settings
-from ..state import AgentState, ReviewResult
+from ..state import AgentState, ReviewResult, brief_text
 from ..llm import get_llm
 from .common import design_snapshot, emit, image_block, rubric_text, run_dir, weighted_score
 from .render import dom_summary, render_design
@@ -55,8 +55,8 @@ def _review_content(state: AgentState, cur: dict) -> list:
     previous = [{k: i[k] for k in ("id", "criterion", "severity", "selector", "evidence", "status")}
                 for i in state.get("issues") or []]
     content.append({"type": "text", "text": "\n\n".join([
-        f"<request>\n{state['prompt']}\n</request>",
-        f"<page>\n{json.dumps(state['intake'], indent=1)}\n</page>",
+        f"<pm_brief>\n{brief_text(state['brief'])}\n</pm_brief>",
+        f"<design_brief>\n{json.dumps({k: v for k, v in state['intake'].items() if k != 'questions'}, indent=1)}\n</design_brief>",
         f"<style_spec>\n{json.dumps(state.get('style_lock'), indent=1)}\n</style_spec>",
         f"<audit passed=\"{audit.get('passed')}\">\n{json.dumps([c for c in audit.get('checks', []) if not c['passed']], indent=1)}\n</audit>",
         f"<dom_summary>\n{json.dumps(dom_summary(facts), indent=1)[:30000]}\n</dom_summary>",

@@ -1,4 +1,4 @@
-"""End-to-end graph run in mock mode: intake → gallery → refine → approval → handoff."""
+"""End-to-end graph run in mock mode: intake → kickoff → sketches → pick → design → refine → approval → handoff."""
 
 import asyncio
 import json
@@ -16,8 +16,11 @@ from ui_agent.graph import build_graph  # noqa: E402
 from ui_agent.nodes.common import run_dir  # noqa: E402
 from ui_agent.tools.browser import get_browser  # noqa: E402
 
+BRIEF = {"product_name": "Shipfast", "problem": "Small teams waste hours babysitting flaky deploys",
+         "audience": "Engineering leads at 5–20 person startups"}
 
-async def _run(count: int, prefs: dict, notes: str = "", change: str | None = None):
+
+async def _run(count: int, brief: dict, answers: dict | None = None, notes: str = "", change: str | None = None):
     graph = build_graph(InMemorySaver(), InMemoryStore())
     run_id = "test-" + uuid.uuid4().hex[:6]
     cfg = {"configurable": {"thread_id": run_id}}
@@ -30,8 +33,9 @@ async def _run(count: int, prefs: dict, notes: str = "", change: str | None = No
             elif "__interrupt__" in chunk:
                 interrupts.append(chunk["__interrupt__"][0].value)
 
-    await drive({"run_id": run_id, "user_id": "tester", "prompt": "A landing page for Shipfast, a CI/CD tool for small teams",
-                 "preferences": prefs, "candidate_count": count, "usage": {}})
+    await drive({"run_id": run_id, "user_id": "tester", "brief": brief, "candidate_count": count, "usage": {}})
+    if interrupts[-1]["kind"] == "kickoff":
+        await drive(Command(resume={"action": "answer", "answers": answers or {}}))
     assert interrupts[-1]["kind"] == "gallery"
     assert len(interrupts[-1]["candidates"]) == count
     await drive(Command(resume={"action": "pick", "id": "a", "notes": notes}))
@@ -44,14 +48,21 @@ async def _run(count: int, prefs: dict, notes: str = "", change: str | None = No
     return run_id, state, events, interrupts
 
 
-def test_full_run():
+def test_full_run_with_kickoff_answer():
     async def main():
         try:
-            run_id, state, events, interrupts = await _run(3, {"theme": "light", "styles": ["modern-saas"]})
+            run_id, state, events, interrupts = await _run(3, BRIEF, answers={"q_primary_action": "Book a demo"})
+            assert interrupts[0]["kind"] == "kickoff" and interrupts[0]["questions"][0]["id"] == "q_primary_action"
+            assert state["intake"]["primary_action"] == "Book a demo" and not state["intake"]["questions"]
             types = [e["type"] for e in events]
-            assert types.count("candidate_ready") == 3
+            assert types.count("candidate_ready") == 3 and "design_ready" in types
+            sketches = interrupts[1]["candidates"]
+            assert all((run_dir(run_id) / c["screenshots"]["desktop"]).exists() for c in sketches)
+            assert len({c["brief"]["concept"] for c in sketches}) == 3
+            assert "data-sketch-kit" in (run_dir(run_id) / sketches[0]["html_path"]).read_text()
             assert state["stop_reason"] == "pass", state["stop_reason"]
             fin = interrupts[-1]
+            assert fin["sketch"]["html_path"].startswith("sketches/") and fin["v1"]["html_path"] == "refine/v1.html"
             assert fin["trajectory"][0]["score"] < fin["trajectory"][-1]["score"]
             out = run_dir(run_id) / "output"
             for f in ("index.html", "tokens.json", "HANDOFF.md", "review-report.json", "screenshots/desktop.png"):
@@ -68,13 +79,26 @@ def test_full_run():
     print("iterations", state["iteration"], "trajectory", [h["score"] for h in state["history"]])
 
 
-def test_notes_and_change_request():
+def test_clear_brief_skips_kickoff_and_applies_notes():
     async def main():
         try:
-            run_id, state, events, interrupts = await _run(1, {"theme": "dark"}, notes="less rounded", change="Make the hero headline shorter")
+            brief = {**BRIEF, "goal": "Start a free trial"}
+            run_id, state, events, interrupts = await _run(1, brief, notes="less rounded", change="Make the hero headline shorter")
+            assert [i["kind"] for i in interrupts][0] == "gallery"
             ids = {i["id"]: i["status"] for i in state["issues"]}
             assert ids.get("chg_gallery_notes") == "resolved"
             assert ids.get("chg_2") == "resolved"
+        finally:
+            await get_browser().close()
+    asyncio.run(main())
+
+
+def test_skipping_kickoff_questions_keeps_assumptions():
+    async def main():
+        try:
+            run_id, state, events, interrupts = await _run(2, BRIEF, answers={})
+            assert state["kickoff"] == {"answers": [], "skipped": True}
+            assert any("Primary action assumed" in a for a in state["intake"]["assumptions"])
         finally:
             await get_browser().close()
     asyncio.run(main())

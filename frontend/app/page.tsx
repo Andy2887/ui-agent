@@ -1,5 +1,5 @@
-import { SetupScreen } from "@/components/SetupScreen";
+import { BriefScreen } from "@/components/BriefScreen";
 
 export default function Home() {
-  return <SetupScreen />;
+  return <BriefScreen />;
 }

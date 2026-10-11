@@ -1,6 +1,6 @@
 """Long-term memory on the LangGraph Store (plan §9).
 
-Write policy: only explicit signals (setup choices, gallery picks, notes, recurring
+Write policy: only explicit signals (sketch picks, notes, recurring
 issues). Raw transcripts are never stored. A lesson is promoted only after it has
 shown up in at least LESSON_PROMOTION_RUNS different runs."""
 
@@ -31,16 +31,6 @@ def _brief_attributes(brief: dict) -> list[str]:
 async def get_taste(store: BaseStore, uid: str) -> dict:
     item = await store.aget(TASTE_NS(uid), "profile")
     return item.value if item else {"counts": {}, "notes": []}
-
-
-async def record_setup(store: BaseStore, uid: str, preferences: dict, candidate_count: int) -> None:
-    taste = await get_taste(store, uid)
-    taste["last_preferences"] = preferences
-    taste["last_candidate_count"] = candidate_count
-    for s in preferences.get("styles") or []:
-        c = taste["counts"].setdefault(f"style:{s}", {"picked": 0, "rejected": 0, "chosen_at_setup": 0})
-        c["chosen_at_setup"] = c.get("chosen_at_setup", 0) + 1
-    await store.aput(TASTE_NS(uid), "profile", taste)
 
 
 async def record_pick(store: BaseStore, uid: str, chosen: dict, rejected: list[dict], notes: str) -> None:

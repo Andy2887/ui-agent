@@ -10,10 +10,9 @@ from ui_agent import mock
 from ui_agent.tools.browser import get_browser
 from ui_agent.tools.checks import run_layer_a
 
-PREFS = {"theme": "light", "styles": [], "sections": []}
-INTAKE = mock.intake("A landing page for Shipfast, a CI tool", PREFS).model_dump()
-BRIEF = mock.plan(1, PREFS, ["neutral"], [None]).briefs[0]
-CLEAN = mock.html_for(BRIEF, PREFS, INTAKE, defects=[])
+INTAKE = mock.intake({"problem": "Shipfast: deploys break too often", "audience": "small dev teams"}, []).model_dump()
+BRIEF = mock.plan(1, INTAKE, ["neutral"]).briefs[0]
+CLEAN = mock.html_for(BRIEF, INTAKE, defects=[])
 
 
 def _inject(html: str, css: str = "", body: str = "") -> str:
@@ -25,10 +24,10 @@ FIXTURES = {
     "A1": (_inject(CLEAN, body='<section data-component="x"><h2>Logo</h2><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></section>'), "A1"),
     "A2": (_inject(CLEAN, css=".card__body { color: #d0d0d0; }"), "A2"),
     "A3": (_inject(CLEAN, body='<section data-component="wide"><div class="wide">x</div></section>', css=".wide { width: 900px; }"), "A3"),
-    "A4": (mock.html_for(BRIEF, PREFS, INTAKE, defects=["small-targets"]), "A4"),
-    "A5": (mock.html_for(BRIEF, PREFS, INTAKE, defects=["tiny-text"]), "A5"),
+    "A4": (mock.html_for(BRIEF, INTAKE, defects=["small-targets"]), "A4"),
+    "A5": (mock.html_for(BRIEF, INTAKE, defects=["tiny-text"]), "A5"),
     "A6": (_inject(CLEAN, body="<script>undefinedFunction()</script>"), "A6"),
-    "A7": (mock.html_for(BRIEF, PREFS, INTAKE, defects=["no-focus"]), "A7"),
+    "A7": (mock.html_for(BRIEF, INTAKE, defects=["no-focus"]), "A7"),
     "A8": (CLEAN.replace('<section class="cta"', '<section style="padding: 12px" class="cta"', 1), "A8"),
 }
 

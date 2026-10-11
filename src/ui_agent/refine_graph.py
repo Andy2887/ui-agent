@@ -11,7 +11,7 @@ from .state import AgentState
 
 
 def entry(state: AgentState) -> str:
-    # Developer change requests (gallery notes, final-review feedback) are applied before the next review.
+    # Change requests from final review are applied before the next review.
     return "execute" if state.get("change_requests_pending") else "render"
 
 
