@@ -76,8 +76,25 @@ button, input, textarea { font: inherit; color: inherit; }
 .code { white-space: pre-wrap; background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px; font: .8rem/1.5 var(--mono); margin: 8px 0 12px; }
 .spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border-strong); border-top-color: var(--accent); display: inline-block; animation: spin .8s linear infinite; flex: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.activity { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin: 0 0 20px; font-size: .9rem; }
-.empty { display: flex; align-items: center; gap: 10px; padding: 48px; justify-content: center; color: var(--muted); border: 1px dashed var(--border-strong); border-radius: var(--radius); }
+.agent-graph { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 16px 14px; margin: 0 0 20px; }
+.agent-graph__svg { display: block; width: 100%; max-width: 1040px; height: auto; margin: 0 auto; overflow: visible; }
+.agent-graph__svg.is-narrow { max-width: 420px; }
+.agent-graph__caption { text-align: center; color: var(--muted); font-size: .9rem; margin-top: 10px; }
+.ag-shape { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; transition: fill .35s, stroke .35s, filter .35s; }
+.ag-label { fill: var(--faint); font-size: 13px; font-weight: 500; transition: fill .35s; }
+.ag-node.is-done .ag-shape { stroke: var(--border-strong); }
+.ag-node.is-done .ag-label { fill: var(--muted); }
+.ag-node.is-active .ag-shape { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; animation: ag-glow 1.6s ease-in-out infinite; }
+.ag-node.is-active .ag-label { fill: var(--text); font-weight: 600; }
+@keyframes ag-glow { 0%, 100% { filter: drop-shadow(0 0 0 transparent); } 50% { filter: drop-shadow(0 0 7px var(--accent)); } }
+.ag-edge { fill: none; stroke: var(--border-strong); stroke-width: 1.5; transition: stroke .35s; }
+.ag-edge.is-on { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 5; animation: ag-flow .6s linear infinite; }
+@keyframes ag-flow { to { stroke-dashoffset: -11; } }
+.ag-arrow { fill: var(--border-strong); } .ag-arrow--on { fill: var(--accent); }
+.ag-loop { fill: var(--faint); font-size: 12px; } .ag-loop.is-on { fill: var(--accent); font-weight: 600; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) {
+  .ag-node.is-active .ag-shape, .ag-edge.is-on { animation: none; }
+}
 
 .grid { display: grid; gap: 12px; }
 .grid--3 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }

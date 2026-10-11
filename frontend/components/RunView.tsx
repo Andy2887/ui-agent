@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api, artifactUrl, downloadUrl, eventsUrl } from "@/lib/api";
 import { SLOT_LABEL, STOP_REASON } from "@/lib/logic";
 import type { Brief, Design, DesignBrief, GalleryCandidate, Issue, KickoffQuestion, RunEvent, Snapshot } from "@/lib/types";
+import { AgentGraph, initialTrack, trackAgent, type AgentTrack } from "./AgentGraph";
 import { AuditBadges, IssueItem, ScaledFrame, ScoreBars, ScoreChart, Shot } from "./RunParts";
 
 type RunState = {
@@ -19,12 +20,19 @@ type RunState = {
   iterations: { iteration: number; snapshot: Snapshot }[];
   gates: Record<number, { decision: string; note?: string }>;
   activity: string;
+  agent: AgentTrack;
   done?: any;
 };
 
-const initial: RunState = { status: "connecting", briefs: [], repairs: [], candidates: {}, iterations: [], gates: {}, activity: "" };
+const initial: RunState = { status: "connecting", briefs: [], repairs: [], candidates: {}, iterations: [], gates: {}, activity: "", agent: initialTrack };
 
 function reduce(s: RunState, e: RunEvent): RunState {
+  const next = reduceEvent(s, e);
+  const agent = trackAgent(s.agent, e);
+  return agent === next.agent ? next : { ...next, agent };
+}
+
+function reduceEvent(s: RunState, e: RunEvent): RunState {
   switch (e.type) {
     case "status":
       return { ...s, status: e.status, error: e.error ?? (e.status === "error" ? s.error : undefined), mock: e.mock ?? s.mock, request: e.request ?? s.request,
@@ -107,10 +115,9 @@ export function RunView({ runId }: { runId: string }) {
       {state.mock && <p className="callout">Mock mode: sketches, designs, reviews and fixes come from offline stand-ins, not Claude.</p>}
       {lost && state.status !== "done" && <p className="callout callout--warn">Connection lost. Reconnecting…</p>}
       {state.status === "error" && <div className="callout callout--error"><strong>The run stopped with an error.</strong><pre>{state.error}</pre></div>}
-      {state.activity && state.status === "running" && <p className="activity" role="status"><span className="spinner" aria-hidden="true" />{state.activity}</p>}
+      {state.status === "running" && <AgentGraph track={state.agent} caption={state.activity} />}
 
       {phase === 0 && state.status === "waiting_kickoff" && state.kickoff && <Kickoff runId={runId} kickoff={state.kickoff} />}
-      {phase === 0 && state.status !== "waiting_kickoff" && <div className="empty"><span className="spinner" /> The designer is reading your brief…</div>}
       {phase === 1 && state.status === "waiting_gallery" && state.gallery && <Gallery runId={runId} gallery={state.gallery} />}
       {phase === 1 && state.status !== "waiting_gallery" && <Sketching state={state} runId={runId} />}
       {phase === 2 && <Refining state={state} runId={runId} />}
@@ -230,7 +237,7 @@ function DirectionText({ brief }: { brief: Brief }) {
 /* ------------------------------------------------------------------- Sketching */
 
 function Sketching({ state, runId }: { state: RunState; runId: string }) {
-  if (!state.briefs.length) return <div className="empty"><span className="spinner" /> Planning distinct directions…</div>;
+  if (!state.briefs.length) return null;
   return (
     <section>
       <h2 className="h2">{state.briefs.length} direction{state.briefs.length > 1 ? "s" : ""}</h2>
@@ -392,7 +399,6 @@ function Refining({ state, runId }: { state: RunState; runId: string }) {
         <p className="muted">The designer turns the sketch into a full design. Then a reviewer checks each version against the rubric, a fixer makes targeted edits, and the best version is kept.</p>
       </div>
       <ScoreChart points={state.iterations.map((i) => ({ version: i.snapshot.version, score: i.snapshot.score }))} />
-      {!state.iterations.length && <div className="empty"><span className="spinner" /> Designing from the sketch, then the first review…</div>}
       <Timeline state={state} runId={runId} />
     </section>
   );
