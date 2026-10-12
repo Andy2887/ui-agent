@@ -73,6 +73,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .tag--waiting_kickoff, .tag--waiting_gallery, .tag--waiting_approval, .tag--plateau, .tag--max_iters { background: var(--warn-soft); color: var(--warn); }
 .badge { display: inline-flex; align-items: center; gap: 4px; font-size: .75rem; padding: 2px 8px; border-radius: 4px; }
 .badge--ok { background: var(--ok-soft); color: var(--ok); } .badge--bad { background: var(--bad-soft); color: var(--bad); }
+.badge--warn { background: var(--warn-soft); color: var(--warn); }
 .code { white-space: pre-wrap; background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px; font: .8rem/1.5 var(--mono); margin: 8px 0 12px; }
 .spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border-strong); border-top-color: var(--accent); display: inline-block; animation: spin .8s linear infinite; flex: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -155,15 +156,39 @@ input[type=color] { width: 48px; height: 42px; border: 1px solid var(--border-st
 .design-brief dd { margin: 2px 0 0; }
 .design-brief ul { margin: 0; padding-left: 1.1em; }
 
-/* ------------------------------------------------------------------- mood */
-.mood { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "aa meta btn" "sw sw sw"; gap: 10px 12px; align-items: center; padding: 12px; border: 1px solid; border-radius: var(--radius-sm); }
-.mood__aa { grid-area: aa; font-size: 2rem; font-weight: 700; line-height: 1; }
-.mood__meta { grid-area: meta; display: grid; gap: 2px; min-width: 0; }
-.mood__words { font-weight: 700; text-transform: capitalize; }
-.mood__fonts { font-size: .75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mood__swatches { grid-area: sw; display: flex; gap: 4px; }
-.mood__swatches span { flex: 1; height: 10px; border-radius: 3px; border: 1px solid; }
-.mood__btn { grid-area: btn; font-size: .75rem; font-weight: 600; padding: 6px 10px; border-radius: 6px; white-space: nowrap; }
+/* ------------------------------------------------------------- style tile */
+/* Colors, fonts, radii and padding come from the direction (--t-*), set inline per tile. */
+.tile { margin: 0; display: grid; gap: 10px; padding: var(--t-pad); background: var(--t-bg); color: var(--t-text); font-family: var(--t-body); border: 1px solid var(--t-border); border-radius: var(--radius-sm); }
+.tile__hero { display: grid; gap: 6px; }
+.tile__eyebrow { font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--t-accent); }
+.tile .tile__headline { font-family: var(--t-heading); font-size: 1.375rem; font-weight: 700; line-height: 1.15; color: var(--t-text); }
+.tile .tile__lead { font-size: .8125rem; line-height: 1.45; color: var(--t-muted); }
+.tile__actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.tile__btn { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .75rem; font-weight: 600; padding: 6px 12px; border-radius: var(--t-btn-r); border: 1px solid var(--t-border); color: var(--t-text); }
+.tile__btn--primary { background: var(--t-primary); border-color: var(--t-primary); color: var(--t-on-primary); max-width: 22ch; }
+.tile__card { display: grid; gap: 4px; padding: 10px 12px; background: var(--t-surface); border: 1px solid var(--t-border); border-radius: var(--t-card-r); }
+.tile__tag { justify-self: start; font-size: .6875rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; color: var(--t-on-primary); background: var(--t-accent); }
+.tile .tile__card-text { font-size: .8125rem; line-height: 1.4; color: var(--t-text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tile__swatches { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+.tile__swatches span { display: grid; gap: 2px; font-size: .625rem; color: var(--t-muted); text-align: center; overflow: hidden; text-overflow: ellipsis; }
+.tile__swatches i { height: 14px; border-radius: 3px; border: 1px solid var(--t-border); }
+.tile__meta { font-size: .6875rem; color: var(--t-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tile--compact { padding: 12px 14px; max-width: 560px; }
+.tile--compact .tile__hero { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 16px; }
+.tile--compact .tile__eyebrow, .tile--compact .tile__headline { grid-column: 1; }
+.tile--compact .tile__actions { grid-column: 2; grid-row: 1 / span 2; }
+
+/* Mix and match: pair the picked sketch with another direction's look. */
+.mix { display: grid; gap: 8px; margin: 8px 0 4px; }
+.mix__label { font-size: .8125rem; font-weight: 600; }
+.mix__options { display: flex; flex-wrap: wrap; gap: 6px; }
+.mix__opt { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 12px; font: inherit; font-size: .8125rem; color: var(--text); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; cursor: pointer; }
+.mix__opt:hover { border-color: var(--accent); }
+.mix__opt.is-on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.mix__opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mix__dots { display: inline-flex; }
+.mix__dots i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--border-strong); margin-left: -3px; }
+.mix__dots i:first-child { margin-left: 0; }
 
 /* -------------------------------------------------------------------- run */
 .steps { list-style: none; display: flex; gap: 4px; padding: 0; margin: 0; counter-reset: s; flex-wrap: wrap; }

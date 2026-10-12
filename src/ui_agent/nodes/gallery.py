@@ -9,7 +9,7 @@ from langgraph.types import Command, interrupt
 
 from ..memory import store as memory
 from ..state import AgentState
-from .common import emit
+from .common import chosen_direction, emit
 
 
 async def gallery(state: AgentState, *, store: BaseStore) -> Command[Literal["design", "plan_directions"]]:
@@ -41,8 +41,15 @@ async def gallery(state: AgentState, *, store: BaseStore) -> Command[Literal["de
     if pick not in briefs:
         raise ValueError(f"unknown candidate {pick!r}")
     notes = (answer.get("notes") or "").strip()
-    rejected = [b for k, b in briefs.items() if k != pick]
-    await memory.record_pick(store, state["user_id"], briefs[pick], rejected, notes)
-    emit("picked", id=pick, notes=notes)
-    return Command(goto="design", update={"selection": {"id": pick, "notes": notes},
-                                          "rejected_ids": [b["id"] for b in rejected]})
+    mood_from = answer.get("mood_from") or None
+    if mood_from == pick:
+        mood_from = None
+    if mood_from and mood_from not in briefs:
+        raise ValueError(f"unknown mood direction {mood_from!r}")
+    selection = {"id": pick, "notes": notes, "mood_from": mood_from}
+    # Taste learns the structure from the pick and the look from the mood donor.
+    rejected = [b for k, b in briefs.items() if k not in (pick, mood_from)]
+    await memory.record_pick(store, state["user_id"], chosen_direction({"selection": selection, "briefs": state["briefs"]}),
+                             rejected, notes)
+    emit("picked", id=pick, notes=notes, mood_from=mood_from)
+    return Command(goto="design", update={"selection": selection, "rejected_ids": [b["id"] for b in rejected]})

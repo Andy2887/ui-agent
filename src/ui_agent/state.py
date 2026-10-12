@@ -148,6 +148,7 @@ class CheckResult(BaseModel):
     id: str
     name: str
     passed: bool
+    blocking: bool = True  # False: a warning the reviewer must address; never fails the audit
     details: str = ""
     items: list[dict] = Field(default_factory=list)
 
@@ -157,7 +158,7 @@ class AuditResult(BaseModel):
     checks: list[CheckResult]
 
     def failing(self) -> list[CheckResult]:
-        return [c for c in self.checks if not c.passed]
+        return [c for c in self.checks if not c.passed and c.blocking]
 
 
 class Design(BaseModel):
@@ -212,7 +213,7 @@ class AgentState(TypedDict, total=False):
     regenerate_feedback: Optional[str]
     briefs: list[dict]
     candidates: Annotated[list[dict], candidates_reducer]  # sketches, one per brief
-    selection: Optional[dict]  # {"id": ..., "notes": ...}
+    selection: Optional[dict]  # {"id": ..., "notes": ..., "mood_from": direction id or None}
     rejected_ids: list[str]
     style_lock: Optional[dict]
     design: Optional[dict]  # first full design built from the chosen sketch (refine v1)

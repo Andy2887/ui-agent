@@ -114,6 +114,7 @@ class ResumeBody(BaseModel):
     answers: dict[str, str] | None = None  # kickoff question id -> answer
     id: str | None = None
     notes: str | None = None
+    mood_from: str | None = None  # pick: wear this direction's look instead of the picked one's
     feedback: str | None = None
     candidate_count: int | None = None
 

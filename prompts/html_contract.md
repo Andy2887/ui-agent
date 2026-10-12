@@ -10,6 +10,7 @@ The page you produce is the source of truth that another coding agent will rebui
 - Semantic landmarks: `header`, `nav`, `main`, `section`, `footer`. Exactly one `h1`. Logical heading order.
 - Every top-level block (each child of `main`, plus the header and footer) has `data-component="<kebab-name>"` (e.g. `hero`, `feature-grid`, `pricing-table`). Use BEM-style class names.
 - Mobile-first media queries at 768 / 1024 / 1280px. No horizontal scrolling at 375px.
+- **Balance side-by-side columns.** At 768px and up, columns in the same row must carry comparable weight. When one side is much shorter, make a deliberate choice: give it real content these users need, centre the row vertically, make the short side sticky, or collapse the row to one column. Never leave a large empty area beside or under content, and never push a block to one side with nothing balancing it.
 - Icons as inline SVG. Images are CSS/SVG placeholders annotated with `data-placeholder="<name> <WxH>, <what it shows>"`. No external images.
 - Fonts: system stacks or Google Fonts only (one `<link>` to fonts.googleapis.com). No other network requests.
 - Interaction states for every interactive element: hover, `:focus-visible` (clearly visible), active, and disabled where relevant.

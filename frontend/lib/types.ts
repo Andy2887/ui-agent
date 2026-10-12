@@ -17,7 +17,8 @@ export type DesignBrief = {
   primary_action: string; sections: string[]; assumptions: string[]; questions?: KickoffQuestion[];
 };
 
-export type CheckSummary = { id: string; name: string; passed: boolean; details: string };
+/** blocking=false: a warning (A9 layout balance) the reviewer must address, but it never fails the audit. */
+export type CheckSummary = { id: string; name: string; passed: boolean; blocking?: boolean; details: string };
 
 export type Issue = {
   id: string; criterion: string; severity: "high" | "medium" | "low"; selector: string; viewport: string;

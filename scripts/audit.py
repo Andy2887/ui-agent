@@ -33,7 +33,7 @@ async def main() -> int:
         print(json.dumps(audit.model_dump(), indent=2))
     else:
         for c in audit.checks:
-            print(f"{'PASS' if c.passed else 'FAIL'}  {c.id} {c.name}: {c.details}")
+            print(f"{'PASS' if c.passed else 'FAIL' if c.blocking else 'WARN'}  {c.id} {c.name}: {c.details}")
             for item in c.items[:5] if not c.passed else []:
                 print(f"        - {json.dumps(item)[:160]}")
         print(f"\n{'All checks pass' if audit.passed else 'Audit failed'}. Screenshots: {out}")

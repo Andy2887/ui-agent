@@ -22,6 +22,7 @@ async def update_memory(state: AgentState, *, store: BaseStore) -> dict:
     await memory.record_run(store, state["user_id"], state["run_id"], {
         "prompt": brief_text(state["brief"])[:300],
         "chosen_direction": (state.get("selection") or {}).get("id"),
+        "mood_from": (state.get("selection") or {}).get("mood_from"),
         "iterations": state.get("iteration"),
         "final_score": best.get("score"),
         "stop_reason": state.get("stop_reason"),

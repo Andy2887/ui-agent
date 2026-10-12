@@ -1,4 +1,4 @@
-"""A3 horizontal overflow, A4 tap target size (mobile), A5 font size floor."""
+"""A3 horizontal overflow, A4 tap target size (mobile), A5 font size floor, A9 layout balance (warning)."""
 
 from __future__ import annotations
 
@@ -47,4 +47,16 @@ def a5_font_floor(render: dict) -> CheckResult:
         id="A5", name="Font size floor", passed=not items,
         details=f"{len(items)} font-size problem(s)" if items else "Body ≥ 16px on mobile and nothing under 12px",
         items=items[:12],
+    )
+
+
+def a9_balance(render: dict) -> CheckResult:
+    """Warning only: some asymmetry is deliberate (a side rail, a sticky contents list), so the
+    reviewer must address it, but it never blocks the audit."""
+    items = [{"viewport": vp, **b} for vp in ("desktop", "tablet") for b in (render["facts"].get(vp) or {}).get("balance", [])]
+    return CheckResult(
+        id="A9", name="Layout balance", passed=not items, blocking=False,
+        details=(f"{len(items)} lopsided row(s) or block(s) leave a large empty area" if items
+                 else "Side-by-side columns are filled evenly; no block is pushed to one side"),
+        items=items[:10],
     )

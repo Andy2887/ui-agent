@@ -37,7 +37,9 @@ export function AuditBadges({ checks }: { checks: CheckSummary[] }) {
     <div className="audit-badges">
       {failing.length === 0
         ? <span className="badge badge--ok">✓ All {checks.length} automatic checks pass</span>
-        : failing.map((c) => <span key={c.id} className="badge badge--bad" title={c.details}>✗ {c.name}</span>)}
+        : failing.map((c) => c.blocking === false
+          ? <span key={c.id} className="badge badge--warn" title={c.details}>! {c.name}</span>
+          : <span key={c.id} className="badge badge--bad" title={c.details}>✗ {c.name}</span>)}
     </div>
   );
 }

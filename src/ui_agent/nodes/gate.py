@@ -9,7 +9,7 @@ from .common import emit
 
 
 def _failing(d: dict) -> int:
-    return sum(1 for c in (d.get("audit") or {}).get("checks", []) if not c["passed"])
+    return sum(1 for c in (d.get("audit") or {}).get("checks", []) if not c["passed"] and c.get("blocking", True))
 
 
 def rank(d: dict) -> float:

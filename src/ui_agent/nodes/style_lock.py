@@ -7,14 +7,14 @@ import json
 from .. import mock, settings
 from ..state import AgentState, StyleCharacter, StyleSpec
 from ..llm import get_llm
-from .common import emit, image_block, root_tokens, run_dir
+from .common import chosen_direction, emit, image_block, root_tokens, run_dir
 
 
 async def lock_style(state: AgentState) -> dict:
     pick = state["selection"]["id"]
     notes = state["selection"].get("notes") or ""
     first = state["design"]
-    brief = next(b for b in state["briefs"] if b["id"] == pick)
+    brief = chosen_direction(state)
     root = run_dir(state["run_id"])
     html = (root / first["html_path"]).read_text()
     tokens = root_tokens(html)

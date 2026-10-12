@@ -8,12 +8,12 @@ import re
 from .. import mock, settings
 from ..state import AgentState, ReviewResult, brief_text
 from ..llm import get_llm
-from .common import design_snapshot, emit, image_block, rubric_text, run_dir, weighted_score
+from .common import SEVERITY_ORDER, design_snapshot, emit, image_block, rubric_text, run_dir, weighted_score
 from .render import dom_summary, render_design
 
 AUDIT_SEVERITY = {"A1": "high", "A2": "high", "A3": "high", "A4": "high", "A5": "medium", "A6": "medium",
-                  "A7": "high", "A8": "medium"}
-AUDIT_CRITERION = {"A1": "B5", "A2": "B4", "A3": "B5", "A4": "B5", "A5": "B3", "A6": "B6", "A7": "B8", "A8": "B6"}
+                  "A7": "high", "A8": "medium", "A9": "medium"}
+AUDIT_CRITERION = {"A1": "B5", "A2": "B4", "A3": "B5", "A4": "B5", "A5": "B3", "A6": "B6", "A7": "B8", "A8": "B6", "A9": "B2"}
 AUDIT_EXPLANATION = {
     "A1": "Some visitors use screen readers or keyboards. These problems block them from using parts of the page.",
     "A2": "Low-contrast text is hard to read in sunlight, on cheap screens and for people with weaker eyesight.",
@@ -23,6 +23,7 @@ AUDIT_EXPLANATION = {
     "A6": "Errors and missing basics can break the page in some browsers and confuse the next developer.",
     "A7": "Keyboard users need to see where they are. Without a visible focus ring they get lost.",
     "A8": "The next developer rebuilds the page from these tokens and labels. Hard-coded values get lost or drift.",
+    "A9": "A big empty patch beside or under content makes the page look lopsided and unfinished, and draws the eye away from what matters.",
 }
 
 
@@ -38,7 +39,8 @@ async def audit_node(state: AgentState) -> dict:
     cur = state["current"]
     audit = cur.get("audit") or {}
     emit("audit", version=cur["version"], passed=audit.get("passed"),
-         checks=[{"id": c["id"], "name": c["name"], "passed": c["passed"], "details": c["details"]} for c in audit.get("checks", [])])
+         checks=[{"id": c["id"], "name": c["name"], "passed": c["passed"], "blocking": c.get("blocking", True),
+                  "details": c["details"]} for c in audit.get("checks", [])])
     return {}
 
 
@@ -77,14 +79,19 @@ def merge_issues(previous: list[dict], new: list[dict], audit: dict) -> list[dic
         merged[i["id"]] = i
     for pid, p in prev.items():
         merged.setdefault(pid, p)  # not mentioned → keep last known status
-    # Code-side guarantee: every failing audit check is covered by an open issue.
-    open_text = " ".join(f"{i['id']} {i['evidence']}" for i in merged.values() if i["status"] != "resolved")
+    # Code-side guarantee: every failing audit check is covered by an open issue, ranked at least
+    # as severe as the check, so the executor's top-k actually reaches it.
     for c in audit.get("checks", []):
         if c["passed"]:
             continue
         iid = f"iss_audit_{c['id'].lower()}"
-        covered = re.search(rf"\b{c['id']}\b", open_text) is not None
-        if covered or (iid in merged and merged[iid]["status"] != "resolved"):
+        floor = AUDIT_SEVERITY[c["id"]]
+        covering = [i for i in merged.values() if i["status"] != "resolved"
+                    and re.search(rf"\b{c['id']}\b", f"{i['id']} {i['evidence']}")]
+        for i in covering:
+            if SEVERITY_ORDER[i["severity"]] > SEVERITY_ORDER[floor]:
+                merged[i["id"]] = {**i, "severity": floor}
+        if covering or (iid in merged and merged[iid]["status"] != "resolved"):
             continue
         merged[iid] = {
             "id": iid, "criterion": AUDIT_CRITERION[c["id"]], "severity": AUDIT_SEVERITY[c["id"]],

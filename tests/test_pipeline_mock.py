@@ -20,7 +20,8 @@ BRIEF = {"product_name": "Shipfast", "problem": "Small teams waste hours babysit
          "audience": "Engineering leads at 5–20 person startups"}
 
 
-async def _run(count: int, brief: dict, answers: dict | None = None, notes: str = "", change: str | None = None):
+async def _run(count: int, brief: dict, answers: dict | None = None, notes: str = "", change: str | None = None,
+               mood_from: str | None = None):
     graph = build_graph(InMemorySaver(), InMemoryStore())
     run_id = "test-" + uuid.uuid4().hex[:6]
     cfg = {"configurable": {"thread_id": run_id}}
@@ -38,7 +39,7 @@ async def _run(count: int, brief: dict, answers: dict | None = None, notes: str 
         await drive(Command(resume={"action": "answer", "answers": answers or {}}))
     assert interrupts[-1]["kind"] == "gallery"
     assert len(interrupts[-1]["candidates"]) == count
-    await drive(Command(resume={"action": "pick", "id": "a", "notes": notes}))
+    await drive(Command(resume={"action": "pick", "id": "a", "notes": notes, "mood_from": mood_from}))
     assert interrupts[-1]["kind"] == "final_approval"
     if change:
         await drive(Command(resume={"action": "request_changes", "feedback": change}))
@@ -93,12 +94,17 @@ def test_clear_brief_skips_kickoff_and_applies_notes():
     asyncio.run(main())
 
 
-def test_skipping_kickoff_questions_keeps_assumptions():
+def test_skipping_kickoff_questions_keeps_assumptions_and_mixes_moods():
     async def main():
         try:
-            run_id, state, events, interrupts = await _run(2, BRIEF, answers={})
+            run_id, state, events, interrupts = await _run(2, BRIEF, answers={}, mood_from="b")
             assert state["kickoff"] == {"answers": [], "skipped": True}
             assert any("Primary action assumed" in a for a in state["intake"]["assumptions"])
+            # Mix and match: A's structure wearing B's look.
+            a, b = state["briefs"]
+            final = (run_dir(run_id) / "output" / "index.html").read_text()
+            assert b["heading_font"] in final and b["palette"]["primary"].lower() in final.lower()
+            assert a["sections"][0] in final and state["selection"]["mood_from"] == "b"
         finally:
             await get_browser().close()
     asyncio.run(main())

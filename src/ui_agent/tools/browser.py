@@ -77,6 +77,82 @@ FACTS_JS = r"""
     .filter((el) => !['SCRIPT', 'STYLE', 'TEMPLATE'].includes(el.tagName));
   const missingComponent = topLevel.filter((el) => !el.hasAttribute('data-component')).map(sel);
 
+  // A9 layout balance. A column "has content" where it shows text, media, controls or a visible
+  // panel; grid/flex stretching alone adds nothing, so a short column beside a tall one shows up.
+  const clear = (c) => !c || c === 'transparent' || c === 'rgba(0, 0, 0, 0)';
+  const bgOf = (el) => { for (; el; el = el.parentElement) { const c = getComputedStyle(el).backgroundColor;
+    if (!clear(c)) return c; } return 'rgb(255, 255, 255)'; };
+  const MEDIA = new Set(['IMG', 'SVG', 'VIDEO', 'CANVAS', 'IFRAME', 'INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'HR', 'PICTURE']);
+  const contentBox = (root, skipSelf) => {
+    let top = Infinity, bottom = -Infinity, left = Infinity, right = -Infinity;
+    const add = (r) => { if (r.width < 1 || r.height < 1 || r.width > vw * 0.9) return;
+      top = Math.min(top, r.top + scrollY); bottom = Math.max(bottom, r.bottom + scrollY);
+      left = Math.min(left, r.left); right = Math.max(right, r.right); };
+    const walk = (el) => {
+      if (!visible(el)) return;
+      const s = getComputedStyle(el); const r = el.getBoundingClientRect();
+      if (!(skipSelf && el === root)) {
+        if (MEDIA.has(el.tagName.toUpperCase()) || el.hasAttribute('data-placeholder') || el.getAttribute('role') === 'img') { add(r); return; }
+        if (s.backgroundImage !== 'none' || (!clear(s.backgroundColor) && s.backgroundColor !== bgOf(el.parentElement))) add(r);
+        const sides = ['Top', 'Right', 'Bottom', 'Left'].filter((d) => parseFloat(s[`border${d}Width`]) > 0 && s[`border${d}Style`] !== 'none');
+        if (sides.length === 4) add(r);
+        else for (const d of sides) { const w = parseFloat(s[`border${d}Width`]);
+          add(d === 'Top' ? new DOMRect(r.left, r.top, r.width, w) : d === 'Bottom' ? new DOMRect(r.left, r.bottom - w, r.width, w)
+            : d === 'Left' ? new DOMRect(r.left, r.top, w, r.height) : new DOMRect(r.right - w, r.top, w, r.height)); }
+      }
+      for (const n of el.childNodes) {
+        if (n.nodeType === 3 && n.textContent.trim()) { const rg = document.createRange(); rg.selectNodeContents(n); add(rg.getBoundingClientRect()); }
+        else if (n.nodeType === 1) walk(n);
+      }
+    };
+    walk(root);
+    return top === Infinity ? null : { top, bottom, left, right };
+  };
+  const hasSticky = (el) => getComputedStyle(el).position === 'sticky' || [...el.querySelectorAll('*')].some((d) => getComputedStyle(d).position === 'sticky');
+  const minBand = Math.max(160, vw * 0.17);
+  const lopsided = [];
+  for (const box of document.querySelectorAll('body *')) {
+    const s = getComputedStyle(box);
+    const isRow = s.display.endsWith('grid') || (s.display.endsWith('flex') && s.flexDirection.startsWith('row'));
+    if (!isRow || !visible(box)) continue;
+    const kids = [...box.children].filter((k) => visible(k) && !['absolute', 'fixed'].includes(getComputedStyle(k).position)
+      && k.getBoundingClientRect().width >= 160);
+    // Group children into visual rows by vertical overlap.
+    const rows = [];
+    for (const k of kids.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)) {
+      const r = k.getBoundingClientRect();
+      const row = rows.find((g) => Math.min(g.bottom, r.bottom) - Math.max(g.top, r.top) > 0.5 * Math.min(g.bottom - g.top, r.height));
+      if (row) { row.kids.push(k); row.top = Math.min(row.top, r.top); row.bottom = Math.max(row.bottom, r.bottom); }
+      else rows.push({ kids: [k], top: r.top, bottom: r.bottom });
+    }
+    for (const row of rows) {
+      if (row.kids.length < 2) continue;
+      const cols = row.kids.map((k) => ({ k, c: contentBox(k, false) })).filter((x) => x.c);
+      if (cols.length < 2) continue;
+      const top = Math.min(...cols.map((x) => x.c.top)); const bottom = Math.max(...cols.map((x) => x.c.bottom));
+      if (bottom - top < 300) continue;
+      for (const { k, c } of cols) {
+        const above = c.top - top, below = bottom - c.bottom, band = Math.max(above, below);
+        const fill = (c.bottom - c.top) / (bottom - top);
+        // Sticky only rescues a row the visitor scrolls through; in a row shorter than the screen it changes nothing.
+        if (band < minBand || fill > 0.6 || (hasSticky(k) && bottom - top > innerHeight)) continue;
+        const r = k.getBoundingClientRect();
+        lopsided.push({ kind: 'short-column', row: sel(box), column: sel(k), empty_px: Math.round(band),
+          empty_where: above > below ? 'above' : 'below', fill: Math.round(fill * 100) / 100, row_height: Math.round(bottom - top),
+          column_side: r.left + r.width / 2 < vw / 2 ? 'left' : 'right', y: Math.round(top) });
+      }
+    }
+    if (lopsided.length >= 12) break;
+  }
+  // Whole blocks pushed right with an empty left (left-aligned text with space on its right is normal reading layout).
+  const blocks = [...document.querySelectorAll('[data-component]')].filter((el) => visible(el) && !el.parentElement.closest('[data-component]'))
+    .map((el) => ({ el, c: contentBox(el, true) })).filter((x) => x.c && x.el.getBoundingClientRect().height >= 150);
+  const lefts = blocks.map((x) => x.c.left).sort((a, b) => a - b);
+  const pageLeft = lefts.length ? lefts[Math.floor(lefts.length / 2)] : 0;
+  const offside = blocks.filter(({ c }) => c.left - pageLeft >= Math.max(200, vw * 0.2) && Math.abs((c.left + c.right) / 2 - vw / 2) > vw * 0.08)
+    .map(({ el, c }) => ({ kind: 'pushed-right', component: el.dataset.component, empty_left_px: Math.round(c.left - pageLeft),
+                           content_left: Math.round(c.left), page_left: Math.round(pageLeft), y: Math.round(c.top) }));
+
   const components = [...document.querySelectorAll('[data-component]')].map((el) => {
     const r = el.getBoundingClientRect(); const s = getComputedStyle(el);
     const h = el.querySelector('h1, h2, h3');
@@ -101,7 +177,7 @@ FACTS_JS = r"""
     tiny_text: tiny.slice(0, 15), body_font_px: bodyFont, small_body_text: smallBody.slice(0, 10),
     inline_styles: inlineStyles.slice(0, 10), inline_style_count: inlineStyles.length,
     missing_component: missingComponent.slice(0, 10),
-    components,
+    components, balance: [...lopsided, ...offside].slice(0, 12),
     h1_count: document.querySelectorAll('h1').length,
     headings: [...document.querySelectorAll('h1,h2,h3,h4')].slice(0, 40).map((h) => h.tagName.toLowerCase() + ': ' + h.innerText.trim().slice(0, 60)),
     body_font_family: getComputedStyle(document.body).fontFamily,

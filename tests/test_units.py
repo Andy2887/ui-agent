@@ -94,6 +94,14 @@ def test_merge_issues_detects_regression_and_covers_audit():
     assert merged["iss_audit_a3"]["status"] == "open"
 
 
+def test_issue_covering_a_check_is_ranked_at_least_as_severe():
+    low = {"id": "iss_hero_empty_right", "criterion": "B2", "severity": "low", "selector": "s", "viewport": "desktop",
+           "evidence": "A9: the aside ends 345px above the copy", "suggested_fix": "f", "explanation": "x", "status": "open"}
+    audit = {"checks": [{"id": "A9", "name": "Layout balance", "passed": False, "blocking": False, "details": "d", "items": []}]}
+    merged = {i["id"]: i for i in merge_issues([], [low], audit)}
+    assert merged["iss_hero_empty_right"]["severity"] == "medium" and "iss_audit_a9" not in merged
+
+
 def test_revert_restores_issue_statuses_of_best():
     # v2 fixes iss_a but scores lower and is reverted to v1. v3 is built on v1, so iss_a is
     # still there: that is "open", not a regression of a fix v1 never had.

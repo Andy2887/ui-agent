@@ -1,7 +1,7 @@
 "use client";
 // Screens 2–7: Kickoff, Sketching, Pick a sketch, Designing & refining, Final review, Download — all driven by the run's SSE events.
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { api, artifactUrl, downloadUrl, eventsUrl } from "@/lib/api";
 import { SLOT_LABEL, STOP_REASON } from "@/lib/logic";
 import type { Brief, Design, DesignBrief, GalleryCandidate, Issue, KickoffQuestion, RunEvent, Snapshot } from "@/lib/types";
@@ -16,7 +16,7 @@ type RunState = {
   candidates: Record<string, { brief?: Brief; design?: Design; started: boolean }>;
   gallery?: { design_brief: DesignBrief; candidates: GalleryCandidate[]; candidate_count: number };
   final?: any;
-  picked?: { id: string; notes: string };
+  picked?: { id: string; notes: string; mood_from?: string | null };
   iterations: { iteration: number; snapshot: Snapshot }[];
   gates: Record<number, { decision: string; note?: string }>;
   activity: string;
@@ -51,7 +51,8 @@ function reduceEvent(s: RunState, e: RunEvent): RunState {
     case "interrupt":
       if (e.kind === "kickoff") return { ...s, kickoff: e.payload, activity: "" };
       return e.kind === "gallery" ? { ...s, gallery: e.payload, activity: "" } : { ...s, final: e.payload, activity: "" };
-    case "picked": return { ...s, picked: { id: e.id, notes: e.notes }, activity: `Designing ${e.id.toUpperCase()} in full from the sketch…` };
+    case "picked": return { ...s, picked: { id: e.id, notes: e.notes, mood_from: e.mood_from },
+                            activity: `Designing ${e.id.toUpperCase()} in full from the sketch${e.mood_from ? ` with ${e.mood_from.toUpperCase()}'s look` : ""}…` };
     case "design_ready": return { ...s, activity: "Locking the style…" };
     case "regenerating": return { ...s, picked: undefined, iterations: [], activity: "Re-planning with your feedback…" };
     case "style_locked": return { ...s, activity: "Starting refinement…" };
@@ -203,33 +204,56 @@ function useGoogleFonts(families: string[]) {
   }, [key]);
 }
 
-function Mood({ brief }: { brief: Brief }) {
+const RADIUS: Record<string, [string, string]> = { sharp: ["2px", "3px"], soft: ["8px", "12px"], rounded: ["999px", "18px"] }; // [button, card]
+const PAD: Record<string, string> = { compact: "12px", balanced: "16px", airy: "22px" };
+const SWATCHES = ["bg", "surface", "primary", "accent", "muted", "text"] as const;
+
+/** A style tile: the direction's look applied to a small hero sample and a card, like a designer's mood sheet.
+ *  `headline`/`lead` let the pick panel preview one direction's words in another direction's look. */
+function StyleTile({ brief, action, headline, lead, compact }: { brief: Brief; action?: string; headline?: string; lead?: string; compact?: boolean }) {
   useGoogleFonts([brief.heading_font, brief.body_font]);
   const p = brief.palette;
-  const heading = `"${brief.heading_font}", system-ui, sans-serif`;
-  const body = `"${brief.body_font}", system-ui, sans-serif`;
-  return (
-    <div className="mood" style={{ background: p.bg, color: p.text, borderColor: p.border }} aria-label={`Proposed mood: ${brief.mood.join(", ")}`}>
-      <span className="mood__aa" style={{ fontFamily: heading }} aria-hidden="true">Aa</span>
-      <div className="mood__meta">
-        <span className="mood__words" style={{ fontFamily: heading }}>{brief.mood.join(" · ")}</span>
-        <span className="mood__fonts" style={{ fontFamily: body, color: p.muted }}>{brief.heading_font} / {brief.body_font} · {brief.theme}</span>
+  const [btnR, cardR] = RADIUS[brief.shape] ?? RADIUS.soft;
+  const vars = {
+    "--t-bg": p.bg, "--t-surface": p.surface, "--t-text": p.text, "--t-muted": p.muted, "--t-primary": p.primary,
+    "--t-on-primary": p.on_primary, "--t-accent": p.accent, "--t-border": p.border,
+    "--t-heading": `"${brief.heading_font}", system-ui, sans-serif`, "--t-body": `"${brief.body_font}", system-ui, sans-serif`,
+    "--t-btn-r": btnR, "--t-card-r": cardR, "--t-pad": PAD[brief.density] ?? PAD.balanced,
+  } as CSSProperties;
+  const hero = (
+    <div className="tile__hero">
+      <span className="tile__eyebrow">{brief.mood.join(" · ")}</span>
+      <p className="tile__headline">{headline ?? brief.name}</p>
+      {!compact && <p className="tile__lead">{lead ?? brief.description}</p>}
+      <div className="tile__actions">
+        <span className="tile__btn tile__btn--primary">{action || "Get started"}</span>
+        <span className="tile__btn">Learn more</span>
       </div>
-      <div className="mood__swatches">
-        {(["surface", "primary", "accent", "muted", "text"] as const).map((k) => <span key={k} title={`${k} ${p[k]}`} style={{ background: p[k], borderColor: p.border }} />)}
-      </div>
-      <span className="mood__btn" style={{ background: p.primary, color: p.on_primary, fontFamily: body }}>Button</span>
     </div>
+  );
+  if (compact) return <div className="tile tile--compact" style={vars} aria-label={`${brief.name}'s look: ${brief.mood.join(", ")}`}>{hero}</div>;
+  return (
+    <figure className="tile" style={vars} aria-label={`Proposed look: ${brief.mood.join(", ")}`}>
+      {hero}
+      <div className="tile__card">
+        <span className="tile__tag">Signature</span>
+        <p className="tile__card-text">{brief.signature_element}</p>
+      </div>
+      <div className="tile__swatches">
+        {SWATCHES.map((k) => <span key={k} title={`${k} ${p[k]}`}><i style={{ background: p[k] }} />{k}</span>)}
+      </div>
+      <figcaption className="tile__meta">{brief.heading_font} / {brief.body_font} · {brief.theme} · {brief.density} · {brief.shape}</figcaption>
+    </figure>
   );
 }
 
-function DirectionText({ brief }: { brief: Brief }) {
+function DirectionText({ brief, action }: { brief: Brief; action?: string }) {
   return (
     <>
       <div className="cand__head"><span className="letter">{brief.id.toUpperCase()}</span><h3>{brief.name}</h3><span className="tag">{SLOT_LABEL[brief.slot] ?? brief.slot}</span></div>
       <p className="cand__concept">{brief.concept}</p>
       <p className="cand__tradeoff"><strong>Trade-off:</strong> {brief.tradeoff}</p>
-      <Mood brief={brief} />
+      <StyleTile brief={brief} action={action} />
     </>
   );
 }
@@ -252,7 +276,7 @@ function Sketching({ state, runId }: { state: RunState; runId: string }) {
                   : c?.design?.error ? <div className="shot shot--empty">Sketch failed: {c.design.error}</div>
                   : <div className="shot shot--loading"><span className="spinner" />{c?.started ? "Sketching…" : "Queued"}</div>}
               </div>
-              <div className="cand__body"><DirectionText brief={b} /></div>
+              <div className="cand__body"><DirectionText brief={b} action={state.intake?.primary_action} /></div>
             </article>
           );
         })}
@@ -266,7 +290,9 @@ function Sketching({ state, runId }: { state: RunState; runId: string }) {
 function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunState["gallery"]> }) {
   const [open, setOpen] = useState<string | null>(null);
   const [compare, setCompare] = useState<string[]>([]);
-  const [pick, setPick] = useState<string | null>(gallery.candidates.length === 1 ? gallery.candidates[0].id : null);
+  const [pick, setPickRaw] = useState<string | null>(gallery.candidates.length === 1 ? gallery.candidates[0].id : null);
+  const [moodFrom, setMoodFrom] = useState<string | null>(null); // null: the picked direction's own look
+  const setPick = (id: string) => { setPickRaw(id); setMoodFrom(null); };
   const [notes, setNotes] = useState("");
   const [regen, setRegen] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -274,6 +300,8 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const byId = Object.fromEntries(gallery.candidates.map((c) => [c.id, c]));
+  const looks = gallery.candidates.filter((c) => !c.error);
+  const mixed = !!pick && !!moodFrom && moodFrom !== pick;
 
   const send = async (body: Record<string, unknown>) => {
     setBusy(true); setErr(null);
@@ -291,7 +319,7 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
     <section>
       <div className="section-bar">
         <h2 className="h2">Pick a direction</h2>
-        <p className="muted">Each sketch is a different bet on solving the problem. Judge the idea and the structure; the mood shows the look the designer proposes. Tick two to compare.</p>
+        <p className="muted">Each sketch is a different bet on solving the problem. Judge the idea and the structure; the style tile shows the look the designer proposes. You can pair any sketch with another direction&apos;s look. Tick two to compare.</p>
       </div>
       <DesignBriefCard brief={gallery.design_brief} />
       {open && byId[open] && (
@@ -313,7 +341,7 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
               {c.error ? <div className="shot shot--empty">Failed: {c.error}</div> : <Shot runId={runId} path={c.screenshots.desktop} alt={`${c.name} sketch`} />}
             </button>
             <div className="cand__body">
-              <DirectionText brief={c.brief} />
+              <DirectionText brief={c.brief} action={gallery.design_brief.primary_action} />
               <div className="cand__actions">
                 <button className={`btn ${pick === c.id ? "btn--primary" : ""}`} disabled={!!c.error} onClick={() => setPick(c.id)}>{pick === c.id ? "Selected" : "Choose this"}</button>
                 <label className="check"><input type="checkbox" checked={compare.includes(c.id)} disabled={!compare.includes(c.id) && compare.length >= 2}
@@ -328,10 +356,28 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
       <div className="decision">
         {pick ? (
           <div className="decision__pick">
-            <h3>Design {pick.toUpperCase()} · {byId[pick].name} in full</h3>
+            <h3>Design {pick.toUpperCase()} · {byId[pick].name} in full{mixed && <> with {moodFrom!.toUpperCase()}&apos;s look</>}</h3>
+            {looks.length > 1 && (
+              <div className="mix">
+                <span className="mix__label" id="mix-label">Look and feel</span>
+                <div className="mix__options" role="radiogroup" aria-labelledby="mix-label">
+                  {looks.map((c) => {
+                    const on = (moodFrom ?? pick) === c.id;
+                    return (
+                      <button key={c.id} role="radio" aria-checked={on} className={`mix__opt ${on ? "is-on" : ""}`} onClick={() => setMoodFrom(c.id === pick ? null : c.id)}>
+                        <span className="mix__dots" aria-hidden="true">{(["bg", "primary", "accent"] as const).map((k) => <i key={k} style={{ background: c.brief.palette[k] }} />)}</span>
+                        {c.id === pick ? `${c.id.toUpperCase()}'s own` : `${c.id.toUpperCase()} · ${c.name}`}
+                      </button>
+                    );
+                  })}
+                </div>
+                {mixed && <StyleTile compact brief={byId[moodFrom!].brief} headline={byId[pick].name} action={gallery.design_brief.primary_action} />}
+              </div>
+            )}
             <label className="field"><span>Notes for the designer (optional)</span>
               <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. put the pricing teaser higher; B's testimonials idea would fit here" /></label>
-            <button className="btn btn--primary" disabled={busy} onClick={() => send({ action: "pick", id: pick, notes })}>Design this direction →</button>
+            <button className="btn btn--primary" disabled={busy} onClick={() => send({ action: "pick", id: pick, notes, ...(mixed ? { mood_from: moodFrom } : {}) })}>
+              {mixed ? "Design this mix →" : "Design this direction →"}</button>
           </div>
         ) : <p className="muted">Choose a sketch to continue, or ask for different directions.</p>}
         <div className="decision__regen">
@@ -392,10 +438,11 @@ function Timeline({ state, runId }: { state: RunState; runId: string }) {
 
 function Refining({ state, runId }: { state: RunState; runId: string }) {
   const name = state.briefs.find((b) => b.id === state.picked?.id)?.name;
+  const look = state.briefs.find((b) => b.id === state.picked?.mood_from);
   return (
     <section>
       <div className="section-bar">
-        <h2 className="h2">Designing {state.picked?.id.toUpperCase()}{name ? ` · ${name}` : ""}</h2>
+        <h2 className="h2">Designing {state.picked?.id.toUpperCase()}{name ? ` · ${name}` : ""}{look ? ` with ${look.id.toUpperCase()}'s look (${look.name})` : ""}</h2>
         <p className="muted">The designer turns the sketch into a full design. Then a reviewer checks each version against the rubric, a fixer makes targeted edits, and the best version is kept.</p>
       </div>
       <ScoreChart points={state.iterations.map((i) => ({ version: i.snapshot.version, score: i.snapshot.score }))} />

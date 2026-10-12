@@ -8,7 +8,7 @@ import json
 from .. import mock, settings
 from ..llm import get_llm
 from ..state import AgentState, DirectionBrief, brief_text
-from .common import emit, extract_html, image_block, run_dir
+from .common import chosen_direction, emit, extract_html, image_block, run_dir
 from .render import render_design
 
 
@@ -44,7 +44,7 @@ def designer_content(state: AgentState, direction: dict, sketch: dict, notes: st
 async def design(state: AgentState) -> dict:
     pick = state["selection"]["id"]
     notes = state["selection"].get("notes") or ""
-    direction = next(b for b in state["briefs"] if b["id"] == pick)
+    direction = chosen_direction(state)
     sketch = next(c for c in state["candidates"] if c["direction_id"] == pick)
     root = run_dir(state["run_id"])
     emit("design_started", id=pick, name=direction["name"])

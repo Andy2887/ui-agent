@@ -13,6 +13,9 @@ from langgraph.config import get_stream_writer
 from .. import settings
 
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
+# The visual half of a DirectionBrief; the rest (concept, sections, layout) is the UX bet.
+MOOD_FIELDS = ("reference_style", "mood", "theme", "heading_font", "body_font", "palette", "density", "shape",
+               "motion", "imagery", "signature_element")
 
 
 def run_dir(run_id: str) -> Path:
@@ -37,6 +40,19 @@ def emit(event_type: str, **data) -> None:
 def image_block(path: Path) -> dict:
     return {"type": "image", "source": {"type": "base64", "media_type": "image/png",
                                         "data": base64.standard_b64encode(path.read_bytes()).decode()}}
+
+
+def chosen_direction(state: dict) -> dict:
+    """The picked direction, wearing another direction's look when the PM mixed and matched."""
+    sel = state["selection"]
+    briefs = {b["id"]: b for b in state["briefs"]}
+    direction = briefs[sel["id"]]
+    donor = briefs.get(sel.get("mood_from") or "")
+    if not donor or donor["id"] == direction["id"]:
+        return direction
+    return {**direction, **{k: donor[k] for k in MOOD_FIELDS},
+            "avoid": list(dict.fromkeys(direction["avoid"] + donor["avoid"])),
+            "mood_from": {"id": donor["id"], "name": donor["name"]}}
 
 
 def extract_html(text: str) -> str:
@@ -89,7 +105,8 @@ def design_snapshot(design: dict) -> dict:
         "issues": review.get("issues", []),
         "summary": review.get("summary"),
         "audit": {"passed": audit.get("passed"),
-                  "checks": [{"id": c["id"], "name": c["name"], "passed": c["passed"], "details": c["details"]}
+                  "checks": [{"id": c["id"], "name": c["name"], "passed": c["passed"],
+                                     "blocking": c.get("blocking", True), "details": c["details"]}
                              for c in audit.get("checks", [])]},
         "executor_summary": design.get("executor_summary"),
     }

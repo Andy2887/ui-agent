@@ -14,6 +14,7 @@ layer_a:
   - {id: A6, name: Console errors, pass: "0 console errors or page errors"}
   - {id: A7, name: Focus visibility, pass: "every keyboard-focusable element has a visible focus style"}
   - {id: A8, name: Integrability, pass: "no inline style=; >= 90% of color/font/spacing values use var(--*); every top-level section has data-component; no requests outside the allowlist"}
+  - {id: A9, name: Layout balance, warning: true, pass: "at 768 and 1440px, no side-by-side column ends far short of its neighbour (sticky columns exempt) and no block is pushed right leaving the left empty"}
 
 layer_b:
   - id: B1
@@ -27,9 +28,9 @@ layer_b:
     name: Layout, spacing rhythm and alignment
     weight: 1.25
     anchors:
-      1: "Arbitrary spacing, misaligned edges, cramped or floating elements."
-      3: "Mostly consistent spacing with a few odd gaps or alignment breaks."
-      5: "A clear spacing scale applied consistently; strong shared alignment lines; section rhythm feels deliberate."
+      1: "Arbitrary spacing, misaligned edges, cramped or floating elements; lopsided rows with large dead zones."
+      3: "Mostly consistent spacing with a few odd gaps or alignment breaks, or one row where a short column leaves a large empty area beside a tall one."
+      5: "A clear spacing scale applied consistently; strong shared alignment lines; side-by-side columns carry comparable weight, so no row looks half-empty; section rhythm feels deliberate."
   - id: B3
     name: Typography
     weight: 1.0
