@@ -19,7 +19,7 @@ def top_issues(issues: list[dict], k: int) -> list[dict]:
 
 
 async def apply_fixes(run_id: str, src_rel: str, dst_rel: str, issues: list[dict], *, style_spec: dict | None,
-                      do_not_regress: list[dict], regression_note: str | None = None) -> tuple[str, dict, int]:
+                      do_not_regress: list[dict], regression_note: str | None = None) -> tuple[str, dict, dict]:
     root = run_dir(run_id)
     dst = root / dst_rel
     dst.parent.mkdir(parents=True, exist_ok=True)
@@ -30,14 +30,17 @@ async def apply_fixes(run_id: str, src_rel: str, dst_rel: str, issues: list[dict
         "StyleSpec (keep this character):\n" + json.dumps(style_spec, indent=1) if style_spec else None,
         "Do not regress (already fixed):\n" + json.dumps(do_not_regress, indent=1) if do_not_regress else None,
         f"Warning: your previous round made things worse and was reverted. {regression_note}" if regression_note else None,
-        "Start by viewing the parts of index.html you need.",
+        # The whole file up front (about 8k tokens, cached with the rest of the turn) saves the view round trips.
+        f"<index_html>\n{dst.read_text()}\n</index_html>",
     ]))
     system = settings.prompt("executor").replace("{html_contract}", settings.prompt("html_contract"))
     summary, usage = await get_llm().edit_file(
         "executor", system=system, content=content, editor=editor,
         mock=lambda: mock.execute(editor, dst.read_text(), issues),
     )
-    return summary or "\n".join(editor.log), usage, editor.edits
+    stats = {"edits": editor.edits, "views": editor.views, "failed_edits": editor.failures, "turns": usage.get("calls", 0),
+             "edit_errors": editor.errors[:5]}
+    return summary or "\n".join(editor.log), usage, stats
 
 
 async def execute(state: AgentState) -> dict:
@@ -49,7 +52,7 @@ async def execute(state: AgentState) -> dict:
     dst_rel = f"refine/v{version}.html"
     emit("execute_started", version=version, issues=[i["id"] for i in issues])
     try:
-        summary, usage, edits = await apply_fixes(
+        summary, usage, stats = await apply_fixes(
             state["run_id"], cur["html_path"], dst_rel, issues, style_spec=state.get("style_lock"),
             do_not_regress=resolved, regression_note=state.get("regression_note"),
         )
@@ -58,5 +61,5 @@ async def execute(state: AgentState) -> dict:
         return {"stop_reason": f"executor_error: {e}", "gate_decision": "stop"}
     new = {"direction_id": cur["direction_id"], "version": version, "html_path": dst_rel,
            "executor_summary": summary, "addressed": [i["id"] for i in issues]}
-    emit("execute_done", version=version, summary=summary, edits=edits)
+    emit("execute_done", version=version, summary=summary, **stats)
     return {"current": new, "regression_note": None, "usage": usage, "change_requests_pending": False}

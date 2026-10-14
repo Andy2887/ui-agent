@@ -14,6 +14,9 @@ class TextEditor:
     def __init__(self, target: Path):
         self.target = target.resolve()
         self.edits = 0
+        self.views = 0
+        self.failures = 0
+        self.errors: list[str] = []
         self.log: list[str] = []
 
     def _check_path(self, path: str | None) -> str | None:
@@ -22,6 +25,13 @@ class TextEditor:
         return None
 
     def handle(self, tool_input: dict) -> tuple[bool, str]:
+        ok, out = self._handle(tool_input)
+        if not ok:
+            self.failures += 1
+            self.errors.append(f"{tool_input.get('command')} {tool_input.get('path')!r}: {out[:120]}")
+        return ok, out
+
+    def _handle(self, tool_input: dict) -> tuple[bool, str]:
         cmd = tool_input.get("command")
         err = self._check_path(tool_input.get("path"))
         if err:
@@ -29,6 +39,7 @@ class TextEditor:
         text = self.target.read_text()
 
         if cmd == "view":
+            self.views += 1
             lines = text.splitlines()
             rng = tool_input.get("view_range")
             start, end = 1, len(lines)

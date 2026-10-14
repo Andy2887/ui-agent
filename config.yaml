@@ -6,7 +6,7 @@ models:
   generator:  {model: claude-sonnet-5-5, effort: medium, max_tokens: 64000}
   style_lock: {model: claude-haiku-5-5,  effort: medium, max_tokens: 8000}
   reviewer:   {model: claude-sonnet-5-5, effort: high,   max_tokens: 32000}
-  executor:   {model: claude-haiku-5-5,  effort: high,   max_tokens: 32000}
+  executor:   {model: claude-haiku-5-5,  effort: high,   max_tokens: 64000}
   handoff:    {model: claude-haiku-5-5,  effort: medium, max_tokens: 32000}
 
 # Server-side refusal fallback (Claude API only; not sent for Haiku, which has none). Set to null to disable.
