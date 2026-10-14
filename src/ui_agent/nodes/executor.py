@@ -9,7 +9,7 @@ from .. import mock, settings
 from ..llm import LLMError, get_llm
 from ..tools.text_editor import TextEditor
 from ..state import AgentState
-from .common import SEVERITY_ORDER, emit, run_dir
+from .common import SEVERITY_ORDER, emit, run_dir, with_base_layer
 
 
 def top_issues(issues: list[dict], k: int) -> list[dict]:
@@ -38,6 +38,7 @@ async def apply_fixes(run_id: str, src_rel: str, dst_rel: str, issues: list[dict
         "executor", system=system, content=content, editor=editor,
         mock=lambda: mock.execute(editor, dst.read_text(), issues),
     )
+    dst.write_text(with_base_layer(dst.read_text()))  # undo any edit to the base layer
     stats = {"edits": editor.edits, "views": editor.views, "failed_edits": editor.failures, "turns": usage.get("calls", 0),
              "edit_errors": editor.errors[:5]}
     return summary or "\n".join(editor.log), usage, stats

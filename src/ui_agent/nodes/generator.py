@@ -8,7 +8,7 @@ import json
 from .. import mock, settings
 from ..llm import get_llm
 from ..state import AgentState, DirectionBrief, brief_text
-from .common import chosen_direction, emit, extract_html, image_block, run_dir
+from .common import chosen_direction, emit, extract_html, image_block, run_dir, with_base_layer
 from .render import render_design
 
 
@@ -55,7 +55,7 @@ async def design(state: AgentState) -> dict:
         mock=lambda: mock.html_for(DirectionBrief(**direction), state["intake"], notes=notes),
     )
     (root / "refine").mkdir(exist_ok=True)
-    (root / "refine" / "v1.html").write_text(extract_html(text))
+    (root / "refine" / "v1.html").write_text(with_base_layer(extract_html(text)))
     first, _ = await render_design(state["run_id"], {"direction_id": pick, "version": 1, "html_path": "refine/v1.html"},
                                    "refine/v1-shots")
     emit("design_ready", id=pick, design=first)

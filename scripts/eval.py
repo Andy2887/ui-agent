@@ -1,12 +1,13 @@
 """Eval harness (plan §13): run the full pipeline headless on the fixed briefs and record quality, cost and time.
 
-    python scripts/eval.py run --label baseline [--only clinic-booking,vague-shop] [--max-usd 4]
+    python scripts/eval.py run --label baseline [--only clinic-booking,vague-shop] [--max-usd 4] [--stop-after design]
     python scripts/eval.py compare evals/results/<a> evals/results/<b>
 
 The PM is simulated: kickoff questions get their first suggested answer, the first sketch is picked with no
 notes, and the final design is approved. Memory is in-process, so eval runs neither read nor change the real
 taste profile or lessons. Each run's artifacts and events.jsonl go to evals/results/<stamp>-<label>/<brief id>/,
-and the per-brief metrics go to results.json in that folder. Set UI_AGENT_MOCK=1 for a free smoke test."""
+and the per-brief metrics go to results.json in that folder. `--stop-after design` ends each run at the first full
+design (about $0.15 a brief), for changes that only affect v1. Set UI_AGENT_MOCK=1 for a free smoke test."""
 
 from __future__ import annotations
 
@@ -43,7 +44,7 @@ def auto_answer(interrupt: dict) -> dict:
     raise ValueError(f"unexpected interrupt {kind!r}")
 
 
-async def run_brief(case: dict) -> dict:
+async def run_brief(case: dict, stop_after: str | None = None) -> dict:
     from langgraph.checkpoint.memory import InMemorySaver
     from langgraph.store.memory import InMemoryStore
     from langgraph.types import Command
@@ -68,10 +69,11 @@ async def run_brief(case: dict) -> dict:
     try:
         while True:
             interrupted = None
-            async for _ns, mode, chunk in graph.astream(inp, cfg, stream_mode=["custom", "updates"], subgraphs=True):
+            async for _ns, mode, chunk in graph.astream(inp, cfg, stream_mode=["custom", "updates"], subgraphs=True,
+                                                        interrupt_after=[stop_after] if stop_after else None):
                 if mode == "custom":
                     record(chunk)
-                elif "__interrupt__" in chunk:
+                elif chunk.get("__interrupt__"):  # empty for the --stop-after breakpoint, which ends the run
                     interrupted = chunk["__interrupt__"][0].value
             if not interrupted:
                 break
@@ -91,7 +93,7 @@ def summarize(case_id: str, state: dict, events: list[dict], wall: float, error:
     # Usage comes from the final state, not events.jsonl, where refine's node_done repeats review/execute usage.
     usage = state.get("usage") or {}
     history = state.get("history") or []
-    v1 = history[0] if history else {}
+    v1 = history[0] if history else state.get("design") or {}
     by_type = lambda t: [e for e in events if e["type"] == t]  # noqa: E731
     starts = {e["version"]: e["ts"] for e in by_type("execute_started")}
     rounds = [{"version": e["version"], "seconds": round(e["ts"] - starts[e["version"]], 1),
@@ -105,6 +107,7 @@ def summarize(case_id: str, state: dict, events: list[dict], wall: float, error:
         "iterations": state.get("iteration", 0),
         "v1_audit_passed": (v1.get("audit") or {}).get("passed"),
         "v1_audit_failures": [c["id"] for c in (v1.get("audit") or {}).get("checks", []) if not c["passed"]],
+        "v1_audit_details": {c["id"]: c["details"] for c in (v1.get("audit") or {}).get("checks", []) if not c["passed"]},
         "v1_score": v1.get("score"),
         "trajectory": [h.get("score") for h in history],
         "final_score": best.get("score"), "final_version": best.get("version"),
@@ -131,7 +134,7 @@ async def cmd_run(a) -> None:
     from ui_agent.tools.browser import get_browser
 
     meta = {"label": a.label, "git": git_rev(), "mock": settings.mock_mode(), "started": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "models": settings.config()["models"], "refine": settings.config()["refine"]}
+            "models": settings.config()["models"], "refine": settings.config()["refine"], "stop_after": a.stop_after}
     results: list[dict] = []
     spent = 0.0
     try:
@@ -140,7 +143,7 @@ async def cmd_run(a) -> None:
                 print(f"skipping {case['id']}: ${spent:.2f} spent, cap is ${a.max_usd:.2f}")
                 continue
             print(f"[{len(results) + 1}/{len(cases)}] {case['id']} …", flush=True)
-            r = await run_brief(case)
+            r = await run_brief(case, a.stop_after)
             spent += r["cost_usd"]
             results.append(r)
             (out / "results.json").write_text(json.dumps({"meta": meta, "results": results}, indent=2))
@@ -185,7 +188,7 @@ def _fmt(v) -> str:
 def print_table(results: list[dict]) -> None:
     print(f"\n{'brief':22} {'stop':10} {'iters':>5} {'v1 audit':>9} {'v1':>5} {'final':>6} {'$':>6} {'sec':>5} {'exec s/rd':>9} {'turns/rd':>8}")
     for r in results:
-        print(f"{r['id']:22} {str(r['stop_reason'] or 'ERROR'):10} {r['iterations']:>5} "
+        print(f"{r['id']:22} {'ERROR' if r['error'] else str(r['stop_reason'] or 'stopped'):10} {r['iterations']:>5} "
               f"{'pass' if r['v1_audit_passed'] else ','.join(r['v1_audit_failures']) or '—':>9} "
               f"{_fmt(r['v1_score']):>5} {_fmt(r['final_score']):>6} {r['cost_usd']:>6.2f} {r['seconds']:>5.0f} "
               f"{_fmt(_per_round(r, 'seconds')):>9} {_fmt(_per_round(r, 'turns')):>8}")
@@ -208,6 +211,7 @@ def main() -> None:
     r.add_argument("--label", required=True)
     r.add_argument("--only", help="comma-separated brief ids")
     r.add_argument("--max-usd", type=float, default=5.0, help="stop starting new briefs once this much is spent")
+    r.add_argument("--stop-after", choices=["design"], help="end each run after this node")
     c = sub.add_parser("compare")
     c.add_argument("a")
     c.add_argument("b")

@@ -5,13 +5,12 @@ from __future__ import annotations
 
 import asyncio
 import json
-import re
 import weakref
 
 from .. import mock, settings
 from ..llm import LLMError, get_llm
 from ..state import DirectionBrief, brief_text
-from .common import emit, extract_html, run_dir
+from .common import emit, extract_html, put_first_in_head, run_dir
 from .render import render_sketch
 
 _sems: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore] = weakref.WeakKeyDictionary()
@@ -31,12 +30,7 @@ def sketch_kit() -> str:
 
 def with_kit(html: str) -> str:
     """Put the shared sketch stylesheet first in <head>, so every sketch looks hand-made the same way."""
-    kit = f"<style data-sketch-kit>\n{sketch_kit()}</style>"
-    html = re.sub(r"<style data-sketch-kit>.*?</style>\s*", "", html, flags=re.S)
-    html, n = re.subn(r"(<head[^>]*>)", lambda m: f"{m.group(1)}\n{kit}", html, count=1, flags=re.I)
-    if not n:
-        html = re.sub(r"(<html[^>]*>)", lambda m: f"{m.group(1)}\n<head>{kit}</head>", html, count=1, flags=re.I)
-    return html
+    return put_first_in_head(html, "data-sketch-kit", sketch_kit())
 
 
 def sketcher_content(payload: dict) -> str:

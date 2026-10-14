@@ -448,8 +448,9 @@ def execute(editor, html: str, top_issues: list[dict]) -> str:
                 if ok:
                     fixed.append(iss["id"])
         elif iss["id"].startswith("chg_"):
-            ok, _ = editor.handle({"command": "str_replace", "path": "index.html", "old_str": "</style>",
-                                   "new_str": f"/* change:{iss['id']} */\n</style>"})
+            # The design's own <style> is the last one in <head>; the base layer comes first.
+            ok, _ = editor.handle({"command": "str_replace", "path": "index.html", "old_str": "</style>\n</head>",
+                                   "new_str": f"/* change:{iss['id']} */\n</style>\n</head>"})
             if ok:
                 fixed.append(iss["id"])
     return "Mock executor fixed: " + (", ".join(fixed) or "nothing")

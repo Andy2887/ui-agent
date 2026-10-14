@@ -55,6 +55,21 @@ def chosen_direction(state: dict) -> dict:
             "mood_from": {"id": donor["id"], "name": donor["name"]}}
 
 
+def put_first_in_head(html: str, marker: str, css: str) -> str:
+    """Make `<style marker>css</style>` the first thing in <head>, replacing any earlier copy."""
+    block = f"<style {marker}>\n{css}</style>"
+    html = re.sub(rf"<style {marker}>.*?</style>\s*", "", html, flags=re.S)
+    html, n = re.subn(r"(<head[^>]*>)", lambda m: f"{m.group(1)}\n{block}", html, count=1, flags=re.I)
+    if not n:
+        html = re.sub(r"(<html[^>]*>)", lambda m: f"{m.group(1)}\n<head>{block}</head>", html, count=1, flags=re.I)
+    return html
+
+
+def with_base_layer(html: str) -> str:
+    """The structural defaults every full design starts from (prompts/base_layer.css)."""
+    return put_first_in_head(html, "data-base-layer", (settings.ROOT / "prompts" / "base_layer.css").read_text())
+
+
 def extract_html(text: str) -> str:
     m = re.search(r"```(?:html)?\s*(<!doctype html.*?</html>)\s*```", text, flags=re.S | re.I)
     if m:
