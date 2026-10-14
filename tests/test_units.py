@@ -9,6 +9,7 @@ from ui_agent.nodes.handoff import w3c_tokens
 from ui_agent.nodes.planner import diversity_problems, slots_for
 from ui_agent.nodes.sketch import with_kit
 from ui_agent.nodes.reviewer import merge_issues
+from ui_agent.tools.autofix import apply_font_floor
 from ui_agent.tools.text_editor import TextEditor
 
 
@@ -127,3 +128,19 @@ def test_w3c_tokens():
     assert t["color"]["bg"] == {"$type": "color", "$value": "#fff"}
     assert t["fontFamily"]["heading"]["$type"] == "fontFamily"
     assert t["spacing"]["4"]["$value"] == "16px"
+
+
+def test_font_floor_patches_the_rule_the_browser_found():
+    html = ("<style data-base-layer>@layer base { p { font-size: 12px; } }</style>"
+            "<style>.faq>p{color:red;font-size:.9375rem}\n[data-component=cta] .note { font-size: var(--fs-sm) !important; }"
+            ".twice { font-size: 14px }\n@media (min-width: 768px) { .twice { font-size: 14px } }</style>")
+    rules = [{"selector": ".faq > p", "value": "0.9375rem", "before": 15, "after": 16},
+             {"selector": '[data-component="cta"] .note', "value": "var(--fs-sm)", "before": 15, "after": 16},
+             {"selector": ".twice", "value": "14px", "before": 14, "after": 16}]
+    out, applied = apply_font_floor(html, rules)
+    assert ".faq>p{color:red;font-size: max(1rem, .9375rem)}" in out
+    assert "font-size: max(1rem, var(--fs-sm)) !important;" in out
+    assert out.count(".twice { font-size: 14px }") == 2  # found twice: ambiguous, left alone
+    assert "@layer base { p { font-size: 12px; } }" in out  # the base layer is never patched
+    assert [a["selector"] for a in applied] == [".faq > p", '[data-component="cta"] .note']
+

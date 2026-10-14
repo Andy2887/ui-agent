@@ -196,11 +196,52 @@ FOCUS_JS = r"""
   const snap = () => { const s = getComputedStyle(el);
     const outline = s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0 ? `${s.outlineStyle} ${s.outlineWidth} ${s.outlineColor}` : 'none';
     return [outline, s.boxShadow, s.backgroundColor, s.borderColor, s.color, s.textDecorationLine].join(' | '); };
-  const focused = snap(); el.blur(); const unfocused = snap(); el.focus();
+  // Finish focus-ring transitions first: the base layer's reduced-motion rule keeps them at 0.01ms, and a
+  // snapshot taken at a transition's start would read the previous state.
+  const settle = () => document.getAnimations().forEach((a) => { try { a.finish(); } catch (e) {} });  // infinite ones throw
+  settle(); const focused = snap(); el.blur(); settle(); const unfocused = snap(); el.focus(); settle();
   let selector = el.tagName.toLowerCase() + (el.classList.length ? '.' + [...el.classList].slice(0, 2).join('.') : '');
   const comp = el.closest('[data-component]');
   if (comp) selector = `[data-component=${comp.dataset.component}] ${selector}`;
   return { selector, text: (el.innerText || el.getAttribute('aria-label') || '').trim().slice(0, 40), visible: focused !== unfocused };
+}
+"""
+
+# A5 autofix support: for each sentence-length <p>/<li> in <main> under 16px, find the CSS rule that sets its
+# size. A rule counts when raising its font-size to max(1rem, value) lifts the element to 16px or more; candidates
+# are rules that set font-size and match the element or an ancestor, latest first. Every probe is reverted.
+FONT_FLOOR_JS = r"""
+() => {
+  const visible = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
+  const rules = [];
+  const walk = (list) => { for (const r of list) { if (r instanceof CSSStyleRule) rules.push(r); if (r.cssRules) walk(r.cssRules); } };
+  for (const ss of document.styleSheets) { try { walk(ss.cssRules); } catch (e) {} }
+  const matches = (el, sel) => { for (let n = el; n && n.nodeType === 1; n = n.parentElement) {
+    try { if (n.matches(sel)) return true; } catch (e) { return false; } } return false; };
+  // Under emulated reduced motion, short transitions still run; read the end value, not the start.
+  const settle = () => document.getAnimations().forEach((a) => { try { a.finish(); } catch (e) {} });  // infinite ones throw
+  const size = (el) => { settle(); return parseFloat(getComputedStyle(el).fontSize); };
+  const found = [];
+  const small = [...document.querySelectorAll('main p, main li')].filter(visible)
+    .filter((el) => (el.innerText || '').trim().length > 60 && size(el) < 16);
+  for (const el of small) {
+    const before = size(el);
+    for (const r of [...rules].reverse()) {
+      const value = r.style.getPropertyValue('font-size');
+      if (!value || !matches(el, r.selectorText)) continue;
+      const prio = r.style.getPropertyPriority('font-size');
+      r.style.setProperty('font-size', `max(1rem, ${value})`, prio);
+      const after = size(el);
+      r.style.setProperty('font-size', value, prio);
+      settle();
+      if (after !== before) {
+        if (after >= 15.99 && !found.some((f) => f.selector === r.selectorText && f.value === value))
+          found.push({ selector: r.selectorText, value, before, after });
+        break;
+      }
+    }
+  }
+  return found;
 }
 """
 
@@ -248,7 +289,7 @@ class BrowserSession:
         out_dir.mkdir(parents=True, exist_ok=True)
         allowed = set(cfg["allowed_hosts"])
         result: dict = {"screenshots": {}, "tiles": {}, "facts": {}, "axe": [], "focus": [],
-                        "console_errors": [], "blocked_requests": []}
+                        "console_errors": [], "blocked_requests": [], "font_floor_rules": []}
         async with self._sem:
             browser = await self.browser()
             for vp, (w, h) in cfg["viewports"].items():
@@ -304,6 +345,8 @@ class BrowserSession:
                             paths.append(p)
                         result["tiles"][vp] = paths
 
+                    if deep_checks and vp == "mobile" and facts["small_body_text"]:
+                        result["font_floor_rules"] = await page.evaluate(FONT_FLOOR_JS)
                     if deep_checks and vp in ("desktop", "mobile"):
                         await page.add_script_tag(content=AXE_JS)
                         for v in await page.evaluate(AXE_RUN_JS):
