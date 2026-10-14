@@ -25,7 +25,7 @@ def rubric() -> dict:
 @lru_cache
 def presets() -> dict:
     out = {}
-    for name in ("styles", "layouts", "colors", "typography", "options"):
+    for name in ("styles", "layouts", "colors", "typography", "options", "structures", "industries"):
         out[name] = json.loads((ROOT / "presets" / f"{name}.json").read_text())
     return out
 
@@ -60,6 +60,10 @@ def style(style_id: str) -> dict | None:
 
 def layout(layout_id: str) -> dict | None:
     return next((l for l in presets()["layouts"]["layouts"] if l["id"] == layout_id), None)
+
+
+def structure(structure_id: str) -> dict | None:
+    return next((s for s in presets()["structures"]["structures"] if s["id"] == structure_id), None)
 
 
 def color_direction(direction_id: str) -> dict | None:

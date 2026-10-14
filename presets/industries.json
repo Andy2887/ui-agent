@@ -1,0 +1,5380 @@
+{
+  "version": 1,
+  "source": {
+    "name": "ui-ux-pro-max",
+    "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "commit": "7246805",
+    "license": "MIT, see presets/THIRD_PARTY.md"
+  },
+  "industries": [
+    {
+      "id": "saas-general",
+      "name": "SaaS (General)",
+      "keywords": [
+        "app",
+        "b2b",
+        "cloud",
+        "general",
+        "saas",
+        "software",
+        "subscription"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "flat-design",
+        "soft-ui-evolution",
+        "minimal"
+      ],
+      "structure_id": "hero-features-cta",
+      "color_mood": "Trust blue + Accent contrast",
+      "typography_mood": "Professional + Hierarchy",
+      "key_effects": "Subtle hover (200-250ms) + Smooth transitions",
+      "avoid": [
+        "Excessive animation",
+        "Dark mode by default"
+      ],
+      "considerations": "Balance modern feel with clarity. Focus on CTAs."
+    },
+    {
+      "id": "micro-saas",
+      "name": "Micro SaaS",
+      "keywords": [
+        "indie",
+        "micro-saas",
+        "niche",
+        "solo",
+        "bootstrap",
+        "micro",
+        "side-project",
+        "solopreneur",
+        "small-team",
+        "indie-hacker",
+        "product-hunt"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Bold primaries + Accent contrast",
+      "typography_mood": "Modern + Energetic typography",
+      "key_effects": "Scroll-triggered animations + Parallax",
+      "avoid": [
+        "Static design",
+        "No video",
+        "Poor mobile"
+      ],
+      "considerations": "Keep simple, show product quickly. Speed is key."
+    },
+    {
+      "id": "e-commerce",
+      "name": "E-commerce",
+      "keywords": [
+        "buy",
+        "commerce",
+        "e",
+        "ecommerce",
+        "products",
+        "retail",
+        "sell",
+        "shop",
+        "store"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "aurora-ui"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Brand primary + Success green",
+      "typography_mood": "Engaging + Clear hierarchy",
+      "key_effects": "Card hover lift (200ms) + Scale effect",
+      "avoid": [
+        "Flat design without depth",
+        "Text-heavy pages"
+      ],
+      "considerations": "Engagement & conversions. High visual hierarchy."
+    },
+    {
+      "id": "e-commerce-luxury",
+      "name": "E-commerce Luxury",
+      "keywords": [
+        "buy",
+        "commerce",
+        "e",
+        "ecommerce",
+        "elegant",
+        "exclusive",
+        "high-end",
+        "luxury",
+        "premium",
+        "products",
+        "retail",
+        "sell",
+        "shop",
+        "store"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "aurora-ui"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Premium colors + Minimal accent",
+      "typography_mood": "Elegant + Refined typography",
+      "key_effects": "Chromatic aberration + Fluid animations (400-600ms)",
+      "avoid": [
+        "Vibrant & Block-based",
+        "Playful colors"
+      ],
+      "considerations": "Elegance & sophistication. Premium materials."
+    },
+    {
+      "id": "b2b-service",
+      "name": "B2B Service",
+      "keywords": [
+        "b2b",
+        "enterprise",
+        "consulting",
+        "professional",
+        "solution",
+        "contract",
+        "corporate",
+        "strategy",
+        "advisory",
+        "roi",
+        "deliverable",
+        "whitepaper"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "minimal",
+        "bento-box-grid"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Professional blue + Neutral grey",
+      "typography_mood": "Formal + Clear typography",
+      "key_effects": "Section transitions + Feature reveals",
+      "avoid": [
+        "Playful design",
+        "Hidden credentials",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Credibility essential. Clear ROI messaging."
+    },
+    {
+      "id": "financial-dashboard",
+      "name": "Financial Dashboard",
+      "keywords": [
+        "portfolio",
+        "trading",
+        "pnl",
+        "budget",
+        "revenue",
+        "expense",
+        "cashflow",
+        "balance-sheet",
+        "investment",
+        "bank",
+        "accounting",
+        "fintech"
+      ],
+      "style_ids": [
+        "data-dense-dashboard",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "enterprise-gateway",
+      "color_mood": "Dark bg + Red/Green alerts + Trust blue",
+      "typography_mood": "Clear + Readable typography",
+      "key_effects": "Real-time number animations + Alert pulse",
+      "avoid": [
+        "Light mode default",
+        "Slow rendering"
+      ],
+      "considerations": "High contrast, real-time updates, accuracy paramount."
+    },
+    {
+      "id": "analytics-dashboard",
+      "name": "Analytics Dashboard",
+      "keywords": [
+        "kpi",
+        "metric",
+        "funnel",
+        "conversion",
+        "cohort",
+        "retention",
+        "segment",
+        "attribution",
+        "ab-test",
+        "dashboard-data",
+        "business-intelligence"
+      ],
+      "style_ids": [
+        "data-dense-dashboard",
+        "minimal"
+      ],
+      "structure_id": "enterprise-gateway",
+      "color_mood": "Cool→Hot gradients + Neutral grey",
+      "typography_mood": "Clear + Functional typography",
+      "key_effects": "Hover tooltips + Chart zoom + Filter animations",
+      "avoid": [
+        "Ornate design",
+        "No filtering"
+      ],
+      "considerations": "Clarity > aesthetics. Color-coded data priority."
+    },
+    {
+      "id": "healthcare-app",
+      "name": "Healthcare App",
+      "keywords": [
+        "app",
+        "clinic",
+        "health",
+        "healthcare",
+        "medical",
+        "patient"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "soft-ui-evolution",
+        "claymorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Calm blue + Health green",
+      "typography_mood": "Readable + Large type (16px+)",
+      "key_effects": "Soft box-shadow + Smooth press (150ms)",
+      "avoid": [
+        "Bright neon colors",
+        "Motion-heavy animations",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Accessibility mandatory. Calming aesthetic."
+    },
+    {
+      "id": "educational-app",
+      "name": "Educational App",
+      "keywords": [
+        "app",
+        "course",
+        "education",
+        "educational",
+        "learning",
+        "school",
+        "training"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Playful colors + Clear hierarchy",
+      "typography_mood": "Friendly + Engaging typography",
+      "key_effects": "Soft press (200ms) + Fluffy elements",
+      "avoid": [
+        "Dark modes",
+        "Complex jargon"
+      ],
+      "considerations": "Engagement & ease of use. Age-appropriate design."
+    },
+    {
+      "id": "creative-agency",
+      "name": "Creative Agency",
+      "keywords": [
+        "branding",
+        "identity",
+        "portfolio",
+        "logo",
+        "visual",
+        "rebrand",
+        "creative-director",
+        "campaign",
+        "awards",
+        "award-winning",
+        "showreel"
+      ],
+      "style_ids": [
+        "retro-futurism",
+        "editorial"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Bold primaries + Artistic freedom",
+      "typography_mood": "Bold + Expressive typography",
+      "key_effects": "CRT scanlines + Neon glow + Glitch effects",
+      "avoid": [
+        "Corporate minimalism",
+        "Hidden portfolio"
+      ],
+      "considerations": "Differentiation key. Wow-factor necessary."
+    },
+    {
+      "id": "portfolio-personal",
+      "name": "Portfolio/Personal",
+      "keywords": [
+        "creative",
+        "personal",
+        "portfolio",
+        "projects",
+        "showcase",
+        "work"
+      ],
+      "style_ids": [
+        "minimal",
+        "aurora-ui"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Brand primary + Artistic",
+      "typography_mood": "Expressive + Variable typography",
+      "key_effects": "Parallax (3-5 layers) + Scroll-triggered reveals",
+      "avoid": [
+        "Corporate templates",
+        "Generic layouts"
+      ],
+      "considerations": "Showcase work. Personality shine through."
+    },
+    {
+      "id": "gaming",
+      "name": "Gaming",
+      "keywords": [
+        "entertainment",
+        "esports",
+        "game",
+        "gaming",
+        "play"
+      ],
+      "style_ids": [
+        "retro-futurism",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Vibrant + Neon + Immersive",
+      "typography_mood": "Bold + Impactful typography",
+      "key_effects": "WebGL 3D rendering + Glitch effects",
+      "avoid": [
+        "Minimalist design",
+        "Static assets"
+      ],
+      "considerations": "Immersion priority. Performance critical."
+    },
+    {
+      "id": "government-public-service",
+      "name": "Government/Public Service",
+      "keywords": [
+        "government",
+        "civic",
+        "municipal",
+        "federal",
+        "citizen",
+        "public",
+        "administration",
+        "permit",
+        "tax",
+        "voter",
+        "transparency",
+        "regulation"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "minimal-single-column",
+      "color_mood": "Professional blue + High contrast",
+      "typography_mood": "Clear + Large typography",
+      "key_effects": "Clear focus rings (3-4px) + Skip links",
+      "avoid": [
+        "Ornate design",
+        "Low contrast",
+        "Motion effects",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "WCAG AAA mandatory. Trust paramount."
+    },
+    {
+      "id": "fintech-crypto",
+      "name": "Fintech/Crypto",
+      "keywords": [
+        "banking",
+        "blockchain",
+        "crypto",
+        "defi",
+        "finance",
+        "fintech",
+        "money",
+        "nft",
+        "payment",
+        "web3"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "glassmorphism",
+        "retro-futurism"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Navy + Trust Blue + Gold",
+      "typography_mood": "Professional + Trustworthy",
+      "key_effects": "Smooth state transitions + Number animations",
+      "avoid": [
+        "Playful design",
+        "Unclear fees",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Security perception. Real-time data critical."
+    },
+    {
+      "id": "social-media-app",
+      "name": "Social Media App",
+      "keywords": [
+        "app",
+        "community",
+        "content",
+        "entertainment",
+        "media",
+        "network",
+        "sharing",
+        "social",
+        "streaming",
+        "users",
+        "video"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "aurora-ui"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Vibrant + Engagement colors",
+      "typography_mood": "Modern + Bold typography",
+      "key_effects": "Large scroll animations + Icon animations",
+      "avoid": [
+        "Heavy skeuomorphism",
+        "Accessibility ignored"
+      ],
+      "considerations": "Engagement & retention. Addictive design ethics."
+    },
+    {
+      "id": "productivity-tool",
+      "name": "Productivity Tool",
+      "keywords": [
+        "collaboration",
+        "productivity",
+        "project",
+        "task",
+        "tool",
+        "workflow"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Clear hierarchy + Functional colors",
+      "typography_mood": "Clean + Efficient typography",
+      "key_effects": "Quick actions (150ms) + Task animations",
+      "avoid": [
+        "Complex onboarding",
+        "Slow performance"
+      ],
+      "considerations": "Ease of use. Speed & efficiency focus."
+    },
+    {
+      "id": "design-system-component-library",
+      "name": "Design System/Component Library",
+      "keywords": [
+        "component",
+        "design",
+        "library",
+        "system"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "flat-design"
+      ],
+      "structure_id": "faq-documentation-landing",
+      "color_mood": "Clear hierarchy + Code-like structure",
+      "typography_mood": "Monospace + Clear typography",
+      "key_effects": "Code copy animations + Component previews",
+      "avoid": [
+        "Poor documentation",
+        "No live preview"
+      ],
+      "considerations": "Consistency. Developer-first approach."
+    },
+    {
+      "id": "ai-chatbot-platform",
+      "name": "AI/Chatbot Platform",
+      "keywords": [
+        "ai",
+        "artificial-intelligence",
+        "automation",
+        "chatbot",
+        "machine-learning",
+        "ml",
+        "platform"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Neutral + AI Purple",
+      "typography_mood": "Modern + Clear typography",
+      "key_effects": "Streaming text + Typing indicators + Fade-in",
+      "avoid": [
+        "Heavy chrome",
+        "Slow response feedback"
+      ],
+      "considerations": "Conversational UI. Streaming text. Context awareness. Minimal chrome."
+    },
+    {
+      "id": "nft-web3-platform",
+      "name": "NFT/Web3 Platform",
+      "keywords": [
+        "nft",
+        "platform",
+        "web"
+      ],
+      "style_ids": [
+        "cyberpunk-ui",
+        "glassmorphism",
+        "aurora-ui"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Dark + Neon + Gold",
+      "typography_mood": "Bold + Modern typography",
+      "key_effects": "Wallet connect animations + Transaction feedback",
+      "avoid": [
+        "Light mode default",
+        "No transaction status"
+      ],
+      "considerations": "Wallet integration. Transaction feedback. Gas fees display. Dark mode essential."
+    },
+    {
+      "id": "creator-economy-platform",
+      "name": "Creator Economy Platform",
+      "keywords": [
+        "creator",
+        "economy",
+        "platform"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "bento-box-grid",
+        "aurora-ui"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Vibrant + Brand colors",
+      "typography_mood": "Modern + Bold typography",
+      "key_effects": "Engagement counter animations + Profile reveals",
+      "avoid": [
+        "Generic layout",
+        "Hidden earnings"
+      ],
+      "considerations": "Creator profiles. Monetization display. Engagement metrics. Social proof."
+    },
+    {
+      "id": "remote-work-collaboration-tool",
+      "name": "Remote Work/Collaboration Tool",
+      "keywords": [
+        "collaboration",
+        "remote",
+        "tool",
+        "work"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "minimal",
+        "glassmorphism"
+      ],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Calm Blue + Neutral grey",
+      "typography_mood": "Clean + Readable typography",
+      "key_effects": "Real-time presence indicators + Notification badges",
+      "avoid": [
+        "Cluttered interface",
+        "No presence"
+      ],
+      "considerations": "Real-time collaboration. Status indicators. Video integration. Notification management."
+    },
+    {
+      "id": "mental-health-app",
+      "name": "Mental Health App",
+      "keywords": [
+        "app",
+        "health",
+        "mental"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "claymorphism",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Calm Pastels + Trust colors",
+      "typography_mood": "Calming + Readable typography",
+      "key_effects": "Soft press + Breathing animations",
+      "avoid": [
+        "Bright neon",
+        "Motion overload"
+      ],
+      "considerations": "Calming aesthetics. Privacy-first. Crisis resources. Progress tracking. Accessibility mandatory."
+    },
+    {
+      "id": "pet-tech-app",
+      "name": "Pet Tech App",
+      "keywords": [
+        "app",
+        "pet",
+        "tech"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Playful + Warm colors",
+      "typography_mood": "Friendly + Playful typography",
+      "key_effects": "Pet profile animations + Health tracking charts",
+      "avoid": [
+        "Generic design",
+        "No personality"
+      ],
+      "considerations": "Pet profiles. Health tracking. Playful UI. Photo galleries. Vet integration."
+    },
+    {
+      "id": "smart-home-iot-dashboard",
+      "name": "Smart Home/IoT Dashboard",
+      "keywords": [
+        "admin",
+        "analytics",
+        "dashboard",
+        "data",
+        "home",
+        "iot",
+        "panel",
+        "smart"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "minimal"
+      ],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Dark + Status indicator colors",
+      "typography_mood": "Clear + Functional typography",
+      "key_effects": "Device status pulse + Quick action animations",
+      "avoid": [
+        "Slow updates",
+        "No automation"
+      ],
+      "considerations": "Device status. Real-time controls. Energy monitoring. Automation rules. Quick actions."
+    },
+    {
+      "id": "ev-charging-ecosystem",
+      "name": "EV/Charging Ecosystem",
+      "keywords": [
+        "charging",
+        "ecosystem",
+        "ev"
+      ],
+      "style_ids": [
+        "minimal",
+        "aurora-ui",
+        "glassmorphism",
+        "organic-biophilic"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Electric Blue + Green",
+      "typography_mood": "Modern + Clear typography",
+      "key_effects": "Range estimation animations + Map interactions",
+      "avoid": [
+        "Poor map UX",
+        "Hidden costs"
+      ],
+      "considerations": "Charging station maps. Range estimation. Cost calculation. Environmental impact."
+    },
+    {
+      "id": "subscription-box-service",
+      "name": "Subscription Box Service",
+      "keywords": [
+        "subscription",
+        "box",
+        "recurring",
+        "membership",
+        "unboxing",
+        "curated",
+        "plan",
+        "monthly",
+        "surprise",
+        "product-box"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "claymorphism",
+        "aurora-ui"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Brand + Excitement colors",
+      "typography_mood": "Engaging + Clear typography",
+      "key_effects": "Unboxing reveal animations + Product carousel",
+      "avoid": [
+        "Confusing pricing",
+        "No unboxing preview"
+      ],
+      "considerations": "Unboxing experience. Personalization quiz. Subscription management. Product reveals."
+    },
+    {
+      "id": "podcast-platform",
+      "name": "Podcast Platform",
+      "keywords": [
+        "platform",
+        "podcast"
+      ],
+      "style_ids": [
+        "minimal",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Dark + Audio waveform accents",
+      "typography_mood": "Modern + Clear typography",
+      "key_effects": "Waveform visualizations + Episode transitions",
+      "avoid": [
+        "Poor audio player",
+        "Cluttered layout"
+      ],
+      "considerations": "Audio player UX. Episode discovery. Creator tools. Analytics for podcasters."
+    },
+    {
+      "id": "dating-app",
+      "name": "Dating App",
+      "keywords": [
+        "app",
+        "dating"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "aurora-ui",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Warm + Romantic (Pink/Red gradients)",
+      "typography_mood": "Modern + Friendly typography",
+      "key_effects": "Profile card swipe + Match animations",
+      "avoid": [
+        "Generic profiles",
+        "No safety"
+      ],
+      "considerations": "Profile cards. Swipe interactions. Match animations. Safety features. Video chat."
+    },
+    {
+      "id": "micro-credentials-badges-platform",
+      "name": "Micro-Credentials/Badges Platform",
+      "keywords": [
+        "badges",
+        "credentials",
+        "micro",
+        "platform"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "accessible-and-ethical",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Trust Blue + Gold",
+      "typography_mood": "Professional + Clear typography",
+      "key_effects": "Badge reveal animations + Progress tracking",
+      "avoid": [
+        "No verification",
+        "Hidden progress"
+      ],
+      "considerations": "Credential verification. Badge display. Progress tracking. Issuer trust. LinkedIn integration."
+    },
+    {
+      "id": "knowledge-base-documentation",
+      "name": "Knowledge Base/Documentation",
+      "keywords": [
+        "base",
+        "documentation",
+        "knowledge"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "swiss-modernism-2-0",
+        "flat-design"
+      ],
+      "structure_id": "faq-documentation-landing",
+      "color_mood": "Clean hierarchy + Minimal color",
+      "typography_mood": "Clear + Readable typography",
+      "key_effects": "Search highlight + Smooth scrolling",
+      "avoid": [
+        "Poor navigation",
+        "No search"
+      ],
+      "considerations": "Search-first. Clear navigation. Code highlighting. Version switching. Feedback system."
+    },
+    {
+      "id": "hyperlocal-services",
+      "name": "Hyperlocal Services",
+      "keywords": [
+        "hyperlocal",
+        "local",
+        "neighborhood",
+        "nearby",
+        "community",
+        "nearby",
+        "zip",
+        "map",
+        "local-business",
+        "geo-target",
+        "city"
+      ],
+      "style_ids": [
+        "minimal",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Location markers + Trust colors",
+      "typography_mood": "Clear + Functional typography",
+      "key_effects": "Map hover + Provider card reveals",
+      "avoid": [
+        "No map",
+        "Hidden reviews"
+      ],
+      "considerations": "Map integration. Service categories. Provider profiles. Booking system. Reviews."
+    },
+    {
+      "id": "beauty-spa-wellness-service",
+      "name": "Beauty/Spa/Wellness Service",
+      "keywords": [
+        "spa",
+        "beauty",
+        "salon",
+        "wellness",
+        "treatment",
+        "relaxation",
+        "massage",
+        "skincare",
+        "facial",
+        "aesthetic",
+        "self-care",
+        "pamper"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "glassmorphism",
+        "minimal"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Soft pastels (Pink Sage Cream) + Gold accents",
+      "typography_mood": "Elegant + Calming typography",
+      "key_effects": "Soft shadows + Smooth transitions (200-300ms) + Gentle hover",
+      "avoid": [
+        "Bright neon colors",
+        "Harsh animations",
+        "Dark mode"
+      ],
+      "considerations": "Calming aesthetic. Booking system. Service menu. Before/after gallery. Testimonials. Relaxing imagery."
+    },
+    {
+      "id": "luxury-premium-brand",
+      "name": "Luxury/Premium Brand",
+      "keywords": [
+        "brand",
+        "elegant",
+        "exclusive",
+        "high-end",
+        "luxury",
+        "premium"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "minimal"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Black + Gold + White",
+      "typography_mood": "Elegant + Refined typography",
+      "key_effects": "Slow parallax + Premium reveals (400-600ms)",
+      "avoid": [
+        "Cheap visuals",
+        "Fast animations"
+      ],
+      "considerations": "Elegance paramount. Premium imagery. Storytelling. High-quality visuals. Exclusive feel."
+    },
+    {
+      "id": "restaurant-food-service",
+      "name": "Restaurant/Food Service",
+      "keywords": [
+        "restaurant",
+        "menu",
+        "order",
+        "food",
+        "dining",
+        "reservation",
+        "delivery",
+        "cuisine",
+        "chef",
+        "table",
+        "takeaway",
+        "eatery"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "claymorphism",
+        "flat-design"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Warm colors (Orange Red Brown)",
+      "typography_mood": "Appetizing + Clear typography",
+      "key_effects": "Food image reveal + Menu hover effects",
+      "avoid": [
+        "Low-quality imagery",
+        "Outdated hours"
+      ],
+      "considerations": "Menu display. Online ordering. Reservation system. Food photography. Location/hours prominent."
+    },
+    {
+      "id": "fitness-gym-app",
+      "name": "Fitness/Gym App",
+      "keywords": [
+        "app",
+        "exercise",
+        "fitness",
+        "gym",
+        "health",
+        "workout"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Energetic (Orange ) + Dark bg",
+      "typography_mood": "Bold + Motivational typography",
+      "key_effects": "Progress ring animations + Achievement unlocks",
+      "avoid": [
+        "Static design",
+        "No gamification"
+      ],
+      "considerations": "Progress tracking. Workout plans. Community features. Achievements. Motivational design."
+    },
+    {
+      "id": "real-estate-property",
+      "name": "Real Estate/Property",
+      "keywords": [
+        "buy",
+        "estate",
+        "housing",
+        "property",
+        "real",
+        "real-estate",
+        "rent"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "minimal"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Trust Blue + Gold + White",
+      "typography_mood": "Professional + Confident",
+      "key_effects": "3D property tour zoom + Map hover",
+      "avoid": [
+        "Poor photos",
+        "No virtual tours"
+      ],
+      "considerations": "Property listings. Virtual tours. Map integration. Agent profiles. Mortgage calculator. High-quality imagery."
+    },
+    {
+      "id": "travel-tourism-agency",
+      "name": "Travel/Tourism Agency",
+      "keywords": [
+        "travel",
+        "tourism",
+        "vacation",
+        "flight",
+        "hotel",
+        "destination",
+        "adventure",
+        "cruise",
+        "safari",
+        "backpacking",
+        "guided-tour",
+        "holiday-package"
+      ],
+      "style_ids": [
+        "aurora-ui",
+        "vibrant-and-block-based",
+        "glassmorphism"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Vibrant destination + Sky Blue",
+      "typography_mood": "Inspirational + Engaging",
+      "key_effects": "Destination parallax + Itinerary animations",
+      "avoid": [
+        "Generic photos",
+        "Complex booking"
+      ],
+      "considerations": "Destination showcase. Booking system. Itinerary builder. Reviews. Inspiration galleries. Mobile-first."
+    },
+    {
+      "id": "hotel-hospitality",
+      "name": "Hotel/Hospitality",
+      "keywords": [
+        "hospitality",
+        "hotel"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Warm neutrals + Gold",
+      "typography_mood": "Elegant + Welcoming typography",
+      "key_effects": "Room gallery + Amenity reveals",
+      "avoid": [
+        "Poor photos",
+        "Complex booking"
+      ],
+      "considerations": "Room booking. Amenities showcase. Location maps. Guest reviews. Seasonal pricing. Luxury imagery."
+    },
+    {
+      "id": "wedding-event-planning",
+      "name": "Wedding/Event Planning",
+      "keywords": [
+        "conference",
+        "event",
+        "meetup",
+        "planning",
+        "registration",
+        "ticket",
+        "wedding"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "aurora-ui",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Soft Pink + Gold + Cream",
+      "typography_mood": "Elegant + Romantic typography",
+      "key_effects": "Gallery reveals + Timeline animations",
+      "avoid": [
+        "Generic templates",
+        "No portfolio"
+      ],
+      "considerations": "Portfolio gallery. Vendor directory. Planning tools. Timeline. Budget tracker. Romantic aesthetic."
+    },
+    {
+      "id": "legal-services",
+      "name": "Legal Services",
+      "keywords": [
+        "law",
+        "attorney",
+        "legal",
+        "case",
+        "compliance",
+        "contract",
+        "court",
+        "firm",
+        "counsel",
+        "litigation",
+        "practice-area",
+        "jurisdiction"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "minimal",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Navy Blue + Gold + White",
+      "typography_mood": "Professional + Authoritative typography",
+      "key_effects": "Practice area reveal + Attorney profile animations",
+      "avoid": [
+        "Outdated design",
+        "Hidden credentials",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Credibility paramount. Practice areas. Attorney profiles. Case results. Contact forms. Professional imagery."
+    },
+    {
+      "id": "insurance-platform",
+      "name": "Insurance Platform",
+      "keywords": [
+        "insurance",
+        "platform"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "flat-design",
+        "minimal"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Trust Blue + Green + Neutral",
+      "typography_mood": "Clear + Professional typography",
+      "key_effects": "Quote calculator animations + Policy comparison",
+      "avoid": [
+        "Confusing pricing",
+        "No trust signals",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Quote calculator. Policy comparison. Claims process. Trust signals. Clear pricing. Security badges."
+    },
+    {
+      "id": "banking-traditional-finance",
+      "name": "Banking/Traditional Finance",
+      "keywords": [
+        "banking",
+        "finance",
+        "traditional"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Navy + Trust Blue + Gold",
+      "typography_mood": "Professional + Trustworthy typography",
+      "key_effects": "Smooth number animations + Security indicators",
+      "avoid": [
+        "Playful design",
+        "Poor security UX",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Security-first. Account overview. Transaction history. Mobile banking. Accessibility critical. Trust paramount."
+    },
+    {
+      "id": "online-course-e-learning",
+      "name": "Online Course/E-learning",
+      "keywords": [
+        "course",
+        "e",
+        "learning",
+        "online"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Vibrant learning colors + Progress green",
+      "typography_mood": "Friendly + Engaging typography",
+      "key_effects": "Progress bar animations + Certificate reveals",
+      "avoid": [
+        "Boring design",
+        "No gamification"
+      ],
+      "considerations": "Course catalog. Progress tracking. Video player. Quizzes. Certificates. Community forums. Gamification."
+    },
+    {
+      "id": "non-profit-charity",
+      "name": "Non-profit/Charity",
+      "keywords": [
+        "charity",
+        "non",
+        "profit"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "organic-biophilic",
+        "minimal",
+        "editorial"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Cause-related colors + Trust + Warm",
+      "typography_mood": "Heartfelt + Readable typography",
+      "key_effects": "Impact counter animations + Story reveals",
+      "avoid": [
+        "No impact data",
+        "Hidden financials"
+      ],
+      "considerations": "Impact stories. Donation flow. Transparency reports. Volunteer signup. Event calendar. Emotional connection."
+    },
+    {
+      "id": "music-streaming",
+      "name": "Music Streaming",
+      "keywords": [
+        "music",
+        "streaming"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "aurora-ui"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Dark + Vibrant accents + Album art colors",
+      "typography_mood": "Modern + Bold typography",
+      "key_effects": "Waveform visualization + Playlist animations",
+      "avoid": [
+        "Cluttered layout",
+        "Poor audio player UX"
+      ],
+      "considerations": "Audio player. Playlist management. Artist pages. Personalization. Social features. Waveform visualizations."
+    },
+    {
+      "id": "video-streaming-ott",
+      "name": "Video Streaming/OTT",
+      "keywords": [
+        "ott",
+        "streaming",
+        "video"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Dark bg + Poster colors + Brand accent",
+      "typography_mood": "Bold + Engaging typography",
+      "key_effects": "Video player animations + Content carousel (parallax)",
+      "avoid": [
+        "Static layout",
+        "Slow video player"
+      ],
+      "considerations": "Video player. Content discovery. Watchlist. Continue watching. Personalized recommendations. Thumbnail-heavy."
+    },
+    {
+      "id": "job-board-recruitment",
+      "name": "Job Board/Recruitment",
+      "keywords": [
+        "board",
+        "job",
+        "recruitment"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "vibrant-and-block-based",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Professional Blue + Success Green + Neutral",
+      "typography_mood": "Clear + Professional typography",
+      "key_effects": "Search/filter animations + Application flow",
+      "avoid": [
+        "Outdated forms",
+        "Hidden filters"
+      ],
+      "considerations": "Job listings. Search/filter. Company profiles. Application tracking. Resume upload. Salary insights."
+    },
+    {
+      "id": "marketplace-p2p",
+      "name": "Marketplace (P2P)",
+      "keywords": [
+        "buyers",
+        "listings",
+        "marketplace",
+        "p",
+        "platform",
+        "sellers"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "flat-design",
+        "bento-box-grid"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Trust colors + Category colors + Success green",
+      "typography_mood": "Modern + Engaging typography",
+      "key_effects": "Review star animations + Listing hover effects",
+      "avoid": [
+        "Low trust signals",
+        "Confusing layout"
+      ],
+      "considerations": "Seller/buyer profiles. Listings. Reviews/ratings. Secure payment. Messaging. Search/filter. Trust badges."
+    },
+    {
+      "id": "logistics-delivery",
+      "name": "Logistics/Delivery",
+      "keywords": [
+        "delivery",
+        "logistics"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Blue + Orange (tracking) + Green",
+      "typography_mood": "Clear + Functional typography",
+      "key_effects": "Real-time tracking animation + Status pulse",
+      "avoid": [
+        "Static tracking",
+        "No map integration",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Real-time tracking. Delivery scheduling. Route optimization. Driver management. Status updates. Map integration."
+    },
+    {
+      "id": "agriculture-farm-tech",
+      "name": "Agriculture/Farm Tech",
+      "keywords": [
+        "agriculture",
+        "farm",
+        "tech"
+      ],
+      "style_ids": [
+        "organic-biophilic",
+        "flat-design",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Earth Green + Brown + Sky Blue",
+      "typography_mood": "Clear + Informative typography",
+      "key_effects": "Data visualization + Weather animations",
+      "avoid": [
+        "Generic design",
+        "Ignored accessibility",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Crop monitoring. Weather data. IoT sensors. Yield tracking. Market prices. Sustainable imagery."
+    },
+    {
+      "id": "construction-architecture",
+      "name": "Construction/Architecture",
+      "keywords": [
+        "architecture",
+        "construction"
+      ],
+      "style_ids": [
+        "minimal",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Grey + Orange (safety) + Blueprint Blue",
+      "typography_mood": "Professional + Bold typography",
+      "key_effects": "3D model viewer + Timeline animations",
+      "avoid": [
+        "2D-only layouts",
+        "Poor image quality",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Project portfolio. 3D renders. Timeline. Material specs. Team collaboration. Blueprint aesthetic."
+    },
+    {
+      "id": "automotive-car-dealership",
+      "name": "Automotive/Car Dealership",
+      "keywords": [
+        "automotive",
+        "car",
+        "dealership"
+      ],
+      "style_ids": [
+        "glassmorphism"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Brand colors + Metallic + Dark/Light",
+      "typography_mood": "Bold + Confident typography",
+      "key_effects": "360 product view + Configurator animations",
+      "avoid": [
+        "Static product pages",
+        "Poor UX"
+      ],
+      "considerations": "Vehicle showcase. 360° views. Comparison tools. Financing calculator. Test drive booking. High-quality imagery."
+    },
+    {
+      "id": "photography-studio",
+      "name": "Photography Studio",
+      "keywords": [
+        "photography",
+        "studio"
+      ],
+      "style_ids": [
+        "minimal",
+        "aurora-ui",
+        "glassmorphism"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Black + White + Minimal accent",
+      "typography_mood": "Elegant + Minimal typography",
+      "key_effects": "Full-bleed gallery + Before/after reveal",
+      "avoid": [
+        "Heavy text",
+        "Poor image showcase"
+      ],
+      "considerations": "Portfolio gallery. Before/after. Service packages. Booking system. Client galleries. Full-bleed imagery."
+    },
+    {
+      "id": "coworking-space",
+      "name": "Coworking Space",
+      "keywords": [
+        "coworking",
+        "space"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism",
+        "minimal"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Energetic colors + Wood tones + Brand",
+      "typography_mood": "Modern + Engaging typography",
+      "key_effects": "Space tour video + Amenity reveal animations",
+      "avoid": [
+        "Outdated photos",
+        "Confusing layout"
+      ],
+      "considerations": "Space tour. Membership plans. Booking system. Amenities. Community events. Virtual tour."
+    },
+    {
+      "id": "home-services-plumber-electrician",
+      "name": "Home Services (Plumber/Electrician)",
+      "keywords": [
+        "plumber",
+        "electrician",
+        "hvac",
+        "handyman",
+        "repair",
+        "maintenance",
+        "home",
+        "emergency",
+        "leak",
+        "wiring",
+        "inspection",
+        "licensed"
+      ],
+      "style_ids": [
+        "flat-design",
+        "accessible-and-ethical",
+        "minimal"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Trust Blue + Safety Orange + Grey",
+      "typography_mood": "Professional + Clear typography",
+      "key_effects": "Emergency contact highlight + Service menu animations",
+      "avoid": [
+        "Hidden contact info",
+        "No certifications"
+      ],
+      "considerations": "Service list. Emergency contact. Booking. Price transparency. Certifications. Local trust signals."
+    },
+    {
+      "id": "childcare-daycare",
+      "name": "Childcare/Daycare",
+      "keywords": [
+        "childcare",
+        "daycare"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "soft-ui-evolution",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Playful pastels + Safe colors + Warm",
+      "typography_mood": "Friendly + Playful typography",
+      "key_effects": "Parent portal animations + Activity gallery reveal",
+      "avoid": [
+        "Generic design",
+        "Hidden safety info"
+      ],
+      "considerations": "Programs. Staff profiles. Safety certifications. Parent portal. Activity updates. Cheerful imagery."
+    },
+    {
+      "id": "senior-care-elderly",
+      "name": "Senior Care/Elderly",
+      "keywords": [
+        "care",
+        "elderly",
+        "senior"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "soft-ui-evolution",
+        "minimal"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Calm Blue + Warm neutrals + Large text",
+      "typography_mood": "Large + Clear typography (18px+)",
+      "key_effects": "Large touch targets + Clear navigation",
+      "avoid": [
+        "Small text",
+        "Complex navigation",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Care services. Staff qualifications. Facility tour. Family portal. Large touch targets. High contrast. Accessibility-first."
+    },
+    {
+      "id": "medical-clinic",
+      "name": "Medical Clinic",
+      "keywords": [
+        "clinic",
+        "medical"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Medical Blue + Trust White",
+      "typography_mood": "Professional + Readable typography",
+      "key_effects": "Online booking flow + Doctor profile reveals",
+      "avoid": [
+        "Outdated interface",
+        "Confusing booking",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Services. Doctor profiles. Online booking. Patient portal. Insurance info. HIPAA compliant. Trust signals."
+    },
+    {
+      "id": "pharmacy-drug-store",
+      "name": "Pharmacy/Drug Store",
+      "keywords": [
+        "drug",
+        "pharmacy",
+        "store"
+      ],
+      "style_ids": [
+        "flat-design",
+        "accessible-and-ethical",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Pharmacy Green + Trust Blue + Clean White",
+      "typography_mood": "Clear + Functional typography",
+      "key_effects": "Prescription upload flow + Refill reminders",
+      "avoid": [
+        "Confusing layout",
+        "Privacy concerns",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Product catalog. Prescription upload. Refill reminders. Health info. Store locator. Safety certifications."
+    },
+    {
+      "id": "dental-practice",
+      "name": "Dental Practice",
+      "keywords": [
+        "dental",
+        "practice"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Fresh Blue + White + Smile Yellow",
+      "typography_mood": "Friendly + Professional typography",
+      "key_effects": "Before/after gallery + Patient testimonial carousel",
+      "avoid": [
+        "Poor imagery",
+        "No testimonials"
+      ],
+      "considerations": "Services. Dentist profiles. Before/after. Online booking. Insurance. Patient testimonials. Friendly imagery."
+    },
+    {
+      "id": "veterinary-clinic",
+      "name": "Veterinary Clinic",
+      "keywords": [
+        "clinic",
+        "veterinary"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "accessible-and-ethical",
+        "soft-ui-evolution",
+        "flat-design"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Caring Blue + Pet colors + Warm",
+      "typography_mood": "Friendly + Welcoming typography",
+      "key_effects": "Pet profile management + Service animations",
+      "avoid": [
+        "Generic design",
+        "Hidden services"
+      ],
+      "considerations": "Pet services. Vet profiles. Online booking. Pet portal. Emergency info. Friendly animal imagery."
+    },
+    {
+      "id": "florist-plant-shop",
+      "name": "Florist/Plant Shop",
+      "keywords": [
+        "florist",
+        "plant",
+        "shop"
+      ],
+      "style_ids": [
+        "organic-biophilic",
+        "vibrant-and-block-based",
+        "aurora-ui"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Natural Green + Floral pinks/purples",
+      "typography_mood": "Elegant + Natural typography",
+      "key_effects": "Product reveal + Seasonal transitions",
+      "avoid": [
+        "Poor imagery",
+        "No seasonal content"
+      ],
+      "considerations": "Product catalog. Occasion categories. Delivery scheduling. Care guides. Seasonal collections. Beautiful imagery."
+    },
+    {
+      "id": "bakery-cafe",
+      "name": "Bakery/Cafe",
+      "keywords": [
+        "bakery",
+        "cafe"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "soft-ui-evolution",
+        "claymorphism"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Warm Brown + Cream + Appetizing accents",
+      "typography_mood": "Warm + Inviting typography",
+      "key_effects": "Menu hover + Order animations",
+      "avoid": [
+        "Poor food photos",
+        "Hidden hours"
+      ],
+      "considerations": "Menu display. Online ordering. Location/hours. Catering. Seasonal specials. Appetizing photography."
+    },
+    {
+      "id": "brewery-winery",
+      "name": "Brewery/Winery",
+      "keywords": [
+        "brewery",
+        "winery"
+      ],
+      "style_ids": [
+        "vintage-analog-retro-film",
+        "organic-biophilic"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Deep amber/burgundy + Gold + Craft",
+      "typography_mood": "Artisanal + Heritage typography",
+      "key_effects": "Tasting note reveals + Heritage timeline",
+      "avoid": [
+        "Generic product pages",
+        "No story"
+      ],
+      "considerations": "Product showcase. Story/heritage. Tasting notes. Events. Club membership. Artisanal imagery."
+    },
+    {
+      "id": "airline",
+      "name": "Airline",
+      "keywords": [
+        "airline",
+        "aviation",
+        "flight",
+        "travel",
+        "booking",
+        "airport",
+        "flying"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Sky Blue + Brand colors + Trust",
+      "typography_mood": "Clear + Professional typography",
+      "key_effects": "Flight search animations + Boarding pass reveals",
+      "avoid": [
+        "Complex booking",
+        "Poor mobile"
+      ],
+      "considerations": "Flight search. Booking. Check-in. Boarding pass. Loyalty program. Route maps. Mobile-first."
+    },
+    {
+      "id": "news-media-platform",
+      "name": "News/Media Platform",
+      "keywords": [
+        "content",
+        "entertainment",
+        "media",
+        "news",
+        "platform",
+        "streaming",
+        "video"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Brand colors + High contrast",
+      "typography_mood": "Clear + Readable typography",
+      "key_effects": "Breaking news badge + Article reveal animations",
+      "avoid": [
+        "Cluttered layout",
+        "Slow loading"
+      ],
+      "considerations": "Article layout. Breaking news. Categories. Search. Subscription. Mobile reading. Fast loading."
+    },
+    {
+      "id": "magazine-blog",
+      "name": "Magazine/Blog",
+      "keywords": [
+        "articles",
+        "blog",
+        "content",
+        "magazine",
+        "posts",
+        "writing"
+      ],
+      "style_ids": [
+        "swiss-modernism-2-0",
+        "minimal",
+        "aurora-ui"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Editorial colors + Brand + Clean white",
+      "typography_mood": "Editorial + Elegant typography",
+      "key_effects": "Article transitions + Category reveals",
+      "avoid": [
+        "Poor typography",
+        "Slow loading"
+      ],
+      "considerations": "Article showcase. Category navigation. Author profiles. Newsletter signup. Related content. Typography-focused."
+    },
+    {
+      "id": "freelancer-platform",
+      "name": "Freelancer Platform",
+      "keywords": [
+        "freelancer",
+        "platform"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Professional Blue + Success Green",
+      "typography_mood": "Clear + Professional typography",
+      "key_effects": "Skill match animations + Review reveals",
+      "avoid": [
+        "Poor profiles",
+        "No reviews"
+      ],
+      "considerations": "Profile creation. Portfolio. Skill matching. Messaging. Payment. Reviews. Project management."
+    },
+    {
+      "id": "marketing-agency",
+      "name": "Marketing Agency",
+      "keywords": [
+        "campaign",
+        "ads",
+        "growth",
+        "roi",
+        "seo",
+        "sem",
+        "ppc",
+        "social-media",
+        "conversion-funnel",
+        "ab-test",
+        "attribution",
+        "performance-marketing"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "aurora-ui"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Bold brand colors + Creative freedom",
+      "typography_mood": "Bold + Expressive typography",
+      "key_effects": "Portfolio reveals + Results animations",
+      "avoid": [
+        "Boring design",
+        "Hidden work"
+      ],
+      "considerations": "Portfolio. Case studies. Services. Team. Creative showcase. Results-focused. Bold aesthetic."
+    },
+    {
+      "id": "event-management",
+      "name": "Event Management",
+      "keywords": [
+        "conference",
+        "event",
+        "management",
+        "meetup",
+        "registration",
+        "ticket"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism",
+        "aurora-ui"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Event theme colors + Excitement accents",
+      "typography_mood": "Bold + Engaging typography",
+      "key_effects": "Countdown timer + Registration flow",
+      "avoid": [
+        "Confusing registration",
+        "No countdown"
+      ],
+      "considerations": "Event showcase. Registration. Agenda. Speakers. Sponsors. Ticket sales. Countdown timer."
+    },
+    {
+      "id": "membership-community",
+      "name": "Membership/Community",
+      "keywords": [
+        "community",
+        "membership"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "soft-ui-evolution",
+        "bento-box-grid"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Community brand colors + Engagement",
+      "typography_mood": "Friendly + Engaging typography",
+      "key_effects": "Member counter + Benefit reveals",
+      "avoid": [
+        "Hidden benefits",
+        "No community proof"
+      ],
+      "considerations": "Member benefits. Pricing tiers. Community showcase. Events. Member directory. Exclusive content."
+    },
+    {
+      "id": "newsletter-platform",
+      "name": "Newsletter Platform",
+      "keywords": [
+        "newsletter",
+        "platform"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "swiss-modernism-2-0",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Brand primary + Clean white + CTA",
+      "typography_mood": "Clean + Readable typography",
+      "key_effects": "Subscribe form + Archive reveals",
+      "avoid": [
+        "Complex signup",
+        "No preview"
+      ],
+      "considerations": "Subscribe form. Archive. About. Social proof. Sample content. Simple conversion."
+    },
+    {
+      "id": "digital-products-downloads",
+      "name": "Digital Products/Downloads",
+      "keywords": [
+        "digital",
+        "downloads",
+        "products"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism",
+        "bento-box-grid"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Product colors + Brand + Success green",
+      "typography_mood": "Modern + Clear typography",
+      "key_effects": "Product preview + Instant delivery animations",
+      "avoid": [
+        "No preview",
+        "Slow delivery"
+      ],
+      "considerations": "Product showcase. Preview. Pricing. Instant delivery. License management. Customer reviews."
+    },
+    {
+      "id": "church-religious-organization",
+      "name": "Church/Religious Organization",
+      "keywords": [
+        "church",
+        "organization",
+        "religious"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "soft-ui-evolution",
+        "minimal"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Warm Gold + Deep Purple/Blue + White",
+      "typography_mood": "Welcoming + Clear typography",
+      "key_effects": "Service time highlights + Event calendar",
+      "avoid": [
+        "Outdated design",
+        "Hidden info"
+      ],
+      "considerations": "Service times. Events. Sermons. Community. Giving. Location. Welcoming imagery."
+    },
+    {
+      "id": "sports-team-club",
+      "name": "Sports Team/Club",
+      "keywords": [
+        "club",
+        "sports",
+        "team"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Team colors + Energetic accents",
+      "typography_mood": "Bold + Impactful typography",
+      "key_effects": "Score animations + Schedule reveals",
+      "avoid": [
+        "Static content",
+        "Poor fan engagement"
+      ],
+      "considerations": "Schedule. Roster. News. Tickets. Merchandise. Fan engagement. Action imagery."
+    },
+    {
+      "id": "museum-gallery",
+      "name": "Museum/Gallery",
+      "keywords": [
+        "gallery",
+        "museum"
+      ],
+      "style_ids": [
+        "minimal",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Art-appropriate neutrals + Exhibition accents",
+      "typography_mood": "Elegant + Minimal typography",
+      "key_effects": "Virtual tour + Collection reveals",
+      "avoid": [
+        "Cluttered layout",
+        "No online access"
+      ],
+      "considerations": "Exhibitions. Collections. Tickets. Events. Virtual tours. Educational content. Art-focused design."
+    },
+    {
+      "id": "theater-cinema",
+      "name": "Theater/Cinema",
+      "keywords": [
+        "cinema",
+        "theater"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Dark + Spotlight accents + Gold",
+      "typography_mood": "Dramatic + Bold typography",
+      "key_effects": "Seat selection + Trailer reveals",
+      "avoid": [
+        "Poor booking UX",
+        "No trailers"
+      ],
+      "considerations": "Showtimes. Seat selection. Trailers. Coming soon. Membership. Dramatic imagery."
+    },
+    {
+      "id": "language-learning-app",
+      "name": "Language Learning App",
+      "keywords": [
+        "app",
+        "language",
+        "learning"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Playful colors + Progress indicators",
+      "typography_mood": "Friendly + Clear typography",
+      "key_effects": "Progress animations + Achievement unlocks",
+      "avoid": [
+        "Boring design",
+        "No motivation"
+      ],
+      "considerations": "Lesson structure. Progress tracking. Gamification. Speaking practice. Community. Achievement badges."
+    },
+    {
+      "id": "coding-bootcamp",
+      "name": "Coding Bootcamp",
+      "keywords": [
+        "bootcamp",
+        "coding"
+      ],
+      "style_ids": [
+        "minimal",
+        "cyberpunk-ui",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Code editor colors + Brand + Success",
+      "typography_mood": "Technical + Clear typography",
+      "key_effects": "Terminal animations + Career outcome reveals",
+      "avoid": [
+        "Light mode only",
+        "Hidden results"
+      ],
+      "considerations": "Curriculum. Projects. Career outcomes. Alumni. Pricing. Application. Terminal aesthetic."
+    },
+    {
+      "id": "cybersecurity-platform",
+      "name": "Cybersecurity Platform",
+      "keywords": [
+        "cyber",
+        "security",
+        "platform"
+      ],
+      "style_ids": [
+        "cyberpunk-ui",
+        "brutalist",
+        "minimal"
+      ],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Matrix Green + Deep Black",
+      "typography_mood": "Technical + Clear typography",
+      "key_effects": "Threat visualization + Alert animations",
+      "avoid": [
+        "Light mode",
+        "Poor data viz"
+      ],
+      "considerations": "Data density. Threat visualization. Dark mode default."
+    },
+    {
+      "id": "developer-tool-ide",
+      "name": "Developer Tool / IDE",
+      "keywords": [
+        "dev",
+        "developer",
+        "tool",
+        "ide"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "bento-box-grid"
+      ],
+      "structure_id": "faq-documentation-landing",
+      "color_mood": "Dark syntax theme + Blue focus",
+      "typography_mood": "Monospace + Functional typography",
+      "key_effects": "Syntax highlighting + Command palette",
+      "avoid": [
+        "Light mode default",
+        "Slow performance"
+      ],
+      "considerations": "Keyboard shortcuts. Syntax highlighting. Fast performance."
+    },
+    {
+      "id": "biotech-life-sciences",
+      "name": "Biotech / Life Sciences",
+      "keywords": [
+        "biotech",
+        "biology",
+        "science"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "minimal",
+        "organic-biophilic"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Sterile White + DNA Blue + Life Green",
+      "typography_mood": "Scientific + Clear typography",
+      "key_effects": "Data visualization + Research reveals",
+      "avoid": [
+        "Cluttered data",
+        "Poor credibility"
+      ],
+      "considerations": "Data accuracy. Cleanliness. Complex data viz."
+    },
+    {
+      "id": "space-tech-aerospace",
+      "name": "Space Tech / Aerospace",
+      "keywords": [
+        "aerospace",
+        "space",
+        "tech"
+      ],
+      "style_ids": [
+        "glassmorphism"
+      ],
+      "structure_id": null,
+      "color_mood": "Deep Space Black + Star White + Metallic",
+      "typography_mood": "Futuristic + Precise typography",
+      "key_effects": "Telemetry animations + 3D renders",
+      "avoid": [
+        "Generic design",
+        "No immersion"
+      ],
+      "considerations": "High-tech feel. Precision. Telemetry data."
+    },
+    {
+      "id": "architecture-interior",
+      "name": "Architecture / Interior",
+      "keywords": [
+        "architecture",
+        "design",
+        "interior"
+      ],
+      "style_ids": [
+        "exaggerated-minimalism",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "portfolio-grid",
+      "color_mood": "Monochrome + Gold Accent + High Imagery",
+      "typography_mood": "Architectural + Elegant typography",
+      "key_effects": "Project gallery + Blueprint reveals",
+      "avoid": [
+        "Poor imagery",
+        "Cluttered layout"
+      ],
+      "considerations": "High-res images. Typography. Space."
+    },
+    {
+      "id": "quantum-computing-interface",
+      "name": "Quantum Computing Interface",
+      "keywords": [
+        "quantum",
+        "computing",
+        "physics",
+        "qubit",
+        "future",
+        "science"
+      ],
+      "style_ids": [
+        "glassmorphism"
+      ],
+      "structure_id": null,
+      "color_mood": "Quantum Blue + Deep Black",
+      "typography_mood": "Futuristic + Scientific typography",
+      "key_effects": "Probability visualizations + Qubit state animations",
+      "avoid": [
+        "Generic tech design",
+        "No viz"
+      ],
+      "considerations": "Visualize complexity. Qubit states. Probability clouds. High-tech trust."
+    },
+    {
+      "id": "biohacking-longevity-app",
+      "name": "Biohacking / Longevity App",
+      "keywords": [
+        "biohacking",
+        "health",
+        "longevity",
+        "tracking",
+        "wellness",
+        "science"
+      ],
+      "style_ids": [
+        "minimal"
+      ],
+      "structure_id": "enterprise-gateway",
+      "color_mood": "Cellular Pink/Red + DNA Blue + White",
+      "typography_mood": "Scientific + Clear typography",
+      "key_effects": "Biological data viz + Progress animations",
+      "avoid": [
+        "Generic health app",
+        "No privacy"
+      ],
+      "considerations": "Personal data privacy. Scientific credibility. Biological visualizations."
+    },
+    {
+      "id": "autonomous-drone-fleet-manager",
+      "name": "Autonomous Drone Fleet Manager",
+      "keywords": [
+        "drone",
+        "autonomous",
+        "fleet",
+        "aerial",
+        "logistics",
+        "robotics"
+      ],
+      "style_ids": [],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Tactical Green + Alert Red + Map Dark",
+      "typography_mood": "Technical + Functional typography",
+      "key_effects": "Telemetry animations + 3D spatial awareness",
+      "avoid": [
+        "Slow updates",
+        "Poor spatial viz"
+      ],
+      "considerations": "Real-time telemetry. 3D spatial awareness. Latency indicators. Safety alerts."
+    },
+    {
+      "id": "generative-art-platform",
+      "name": "Generative Art Platform",
+      "keywords": [
+        "art",
+        "generative",
+        "ai",
+        "creative",
+        "platform",
+        "gallery"
+      ],
+      "style_ids": [
+        "minimal",
+        "bento-box-grid"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Neutral + User Content",
+      "typography_mood": "Minimal + Content-focused typography",
+      "key_effects": "Gallery masonry + Minting animations",
+      "avoid": [
+        "Heavy chrome",
+        "Slow loading"
+      ],
+      "considerations": "Content is king. Fast loading. Creator attribution. Minting flow."
+    },
+    {
+      "id": "spatial-computing-os-app",
+      "name": "Spatial Computing OS / App",
+      "keywords": [
+        "spatial",
+        "vr",
+        "ar",
+        "vision",
+        "os",
+        "immersive",
+        "mixed-reality"
+      ],
+      "style_ids": [
+        "glassmorphism"
+      ],
+      "structure_id": null,
+      "color_mood": "Frosted Glass + System Colors + Depth",
+      "typography_mood": "Spatial + Readable typography",
+      "key_effects": "Depth hierarchy + Gaze interactions",
+      "avoid": [
+        "2D design",
+        "No spatial depth"
+      ],
+      "considerations": "Gaze/Pinch interaction. Depth hierarchy. Environment awareness."
+    },
+    {
+      "id": "sustainable-energy-climate-tech",
+      "name": "Sustainable Energy / Climate Tech",
+      "keywords": [
+        "climate",
+        "energy",
+        "sustainable",
+        "green",
+        "tech",
+        "carbon"
+      ],
+      "style_ids": [
+        "organic-biophilic",
+        "e-ink-paper",
+        "data-dense-dashboard",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Earth Green + Sky Blue + Solar Yellow",
+      "typography_mood": "Clear + Informative typography",
+      "key_effects": "Impact viz + Progress animations",
+      "avoid": [
+        "Greenwashing",
+        "No real data"
+      ],
+      "considerations": "Data transparency. Impact visualization. Low-carbon web design."
+    },
+    {
+      "id": "personal-finance-tracker",
+      "name": "Personal Finance Tracker",
+      "keywords": [
+        "budget",
+        "expense",
+        "money",
+        "finance",
+        "spending",
+        "savings",
+        "tracker",
+        "personal",
+        "wallet"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Calm blue + success green + alert red + chart accents",
+      "typography_mood": "Modern + Clear hierarchy",
+      "key_effects": "Backdrop blur (10-20px) + Translucent overlays",
+      "avoid": [
+        "Pure white backgrounds"
+      ],
+      "considerations": "Category pie/donut charts. Monthly trend lines. Budget progress bars. Transaction list with swipe actions. Receipt camera. Currency formatting. Recurring entries."
+    },
+    {
+      "id": "chat-messaging-app",
+      "name": "Chat & Messaging App",
+      "keywords": [
+        "chat",
+        "message",
+        "messenger",
+        "im",
+        "realtime",
+        "conversation",
+        "inbox",
+        "dm",
+        "whatsapp",
+        "telegram"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Brand primary + bubble contrast (sender/receiver) + typing grey",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Bubble UI (left/right alignment). Typing indicators. Read receipts (✓✓). Image/file preview. Emoji reactions. Group avatars. Online status dots. Swipe-to-reply."
+    },
+    {
+      "id": "notes-writing-app",
+      "name": "Notes & Writing App",
+      "keywords": [
+        "notes",
+        "memo",
+        "writing",
+        "editor",
+        "notebook",
+        "markdown",
+        "journal",
+        "notion",
+        "obsidian"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "swiss-modernism-2-0",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "minimal-single-column",
+      "color_mood": "Clean white/cream + minimal accent + editor syntax colors",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "WYSIWYG or Markdown toggle. Folder/tag organization. Full-text search. Cloud sync. Typography-first. Distraction-free zen mode. Slash-command palette."
+    },
+    {
+      "id": "habit-tracker",
+      "name": "Habit Tracker",
+      "keywords": [
+        "habit",
+        "streak",
+        "routine",
+        "daily",
+        "tracker",
+        "goals",
+        "consistency",
+        "discipline"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Streak warm (amber/orange) + progress green + motivational accents",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Streak calendar heatmap. Daily check-in interaction. Gamification (badges/levels/fire). Reminder push. Progress ring charts. Weekly/monthly stats. Motivational micro-copy."
+    },
+    {
+      "id": "food-delivery-on-demand",
+      "name": "Food Delivery / On-Demand",
+      "keywords": [
+        "delivery",
+        "food",
+        "order",
+        "uber-eats",
+        "doordash",
+        "takeout",
+        "on-demand",
+        "courier"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism",
+        "flat-design"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Appetizing warm (orange/red) + trust blue + map accent",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Scroll animations + Parallax + Page transitions",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Restaurant cards with ratings. Menu category horizontal scroll. Cart bottom sheet. Real-time map tracking + driver ETA. Order status stepper. Rating post-delivery."
+    },
+    {
+      "id": "ride-hailing-transportation",
+      "name": "Ride Hailing / Transportation",
+      "keywords": [
+        "ride",
+        "taxi",
+        "uber",
+        "lyft",
+        "transport",
+        "carpool",
+        "driver",
+        "trip",
+        "fare"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Brand primary + map neutral + status indicator colors",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Backdrop blur (10-20px) + Translucent overlays",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Map-centric full-screen UI. Pickup/dropoff pins + route polyline. Driver card (photo/rating/vehicle). Fare estimate. Trip timer. Safety SOS button. Payment sheet."
+    },
+    {
+      "id": "recipe-cooking-app",
+      "name": "Recipe & Cooking App",
+      "keywords": [
+        "recipe",
+        "cooking",
+        "food",
+        "kitchen",
+        "cookbook",
+        "meal",
+        "ingredient",
+        "chef"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "soft-ui-evolution",
+        "organic-biophilic"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Warm food tones (terracotta/sage/cream) + appetizing imagery",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Step-by-step with checkable instructions. Ingredient list with serving adjuster. Built-in timer per step. Cooking mode (screen-awake + large text). Save/bookmark. Share."
+    },
+    {
+      "id": "meditation-mindfulness",
+      "name": "Meditation & Mindfulness",
+      "keywords": [
+        "meditation",
+        "mindfulness",
+        "calm",
+        "breathe",
+        "wellness",
+        "relaxation",
+        "sleep",
+        "headspace"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "aurora-ui",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Ultra-calm pastels (lavender/sage/sky) + breathing animation gradient",
+      "typography_mood": "Subtle + Soft + Monochromatic",
+      "key_effects": "Dual shadows (light+dark) + Soft press 150ms",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Breathing circle animation. Session duration picker. Ambient sound mixer. Streak/consistency tracking. Guided audio player. Sleep timer. Minimal chrome. Slow easing transitions only."
+    },
+    {
+      "id": "weather-app",
+      "name": "Weather App",
+      "keywords": [
+        "weather",
+        "forecast",
+        "temperature",
+        "climate",
+        "rain",
+        "sun",
+        "location",
+        "humidity"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "aurora-ui",
+        "minimal"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Atmospheric gradients (sky blue → sunset → storm grey) + temp scale",
+      "typography_mood": "Modern + Clear hierarchy",
+      "key_effects": "Backdrop blur (10-20px) + Translucent overlays",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Location auto-detect. Hourly horizontal scroll + daily/weekly list. Animated weather icons. Air quality index. UV/wind/humidity chips. Radar map overlay. Widget-friendly layout."
+    },
+    {
+      "id": "diary-journal-app",
+      "name": "Diary & Journal App",
+      "keywords": [
+        "diary",
+        "journal",
+        "personal",
+        "daily",
+        "reflection",
+        "mood",
+        "gratitude",
+        "writing"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "minimal"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Warm paper tones (cream/linen) + muted ink + mood-coded accents",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Calendar month-view entry. Mood tag selector (emoji/color). Photo/voice attachment. Writing prompts. Privacy lock (FaceID/PIN). Search across entries. Export to PDF."
+    },
+    {
+      "id": "crm-client-management",
+      "name": "CRM & Client Management",
+      "keywords": [
+        "crm",
+        "client",
+        "customer",
+        "sales",
+        "pipeline",
+        "contact",
+        "lead",
+        "deal",
+        "hubspot"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Professional blue + pipeline stage colors + closed-won green",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Contact card list with avatar. Pipeline kanban board. Activity timeline. Quick-log (call/email/meeting). Deal amount + probability. Tag/segment filter. Mobile quick-actions."
+    },
+    {
+      "id": "inventory-stock-management",
+      "name": "Inventory & Stock Management",
+      "keywords": [
+        "inventory",
+        "stock",
+        "warehouse",
+        "product",
+        "barcode",
+        "supply",
+        "sku",
+        "management"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Functional neutral + status traffic-light (green/amber/red) + scanner accent",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Product list/grid with thumbnails. Barcode/QR scanner. Stock level badges. Low-stock alert banner. Category/location filter. Batch edit. Reorder trigger. Audit log."
+    },
+    {
+      "id": "flashcard-study-tool",
+      "name": "Flashcard & Study Tool",
+      "keywords": [
+        "flashcard",
+        "quiz",
+        "study",
+        "spaced-repetition",
+        "anki",
+        "learn",
+        "memory",
+        "exam"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Playful primary + correct green + incorrect red + progress blue",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "3D card flip animation. Spaced repetition algorithm. Deck browser. Session progress bar. Streak tracking. Timed quiz mode. Share/import decks. Rich text + image cards."
+    },
+    {
+      "id": "booking-appointment-app",
+      "name": "Booking & Appointment App",
+      "keywords": [
+        "booking",
+        "appointment",
+        "schedule",
+        "calendar",
+        "reservation",
+        "slot",
+        "service"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "flat-design",
+        "minimal"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Trust blue + available green + booked grey + confirm accent",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Calendar strip or month picker. Available time-slot grid. Service + staff selector. Confirmation summary. Reminder push. Reschedule/cancel flow. Two-sided (provider ↔ client)."
+    },
+    {
+      "id": "invoice-billing-tool",
+      "name": "Invoice & Billing Tool",
+      "keywords": [
+        "invoice",
+        "billing",
+        "payment",
+        "receipt",
+        "freelance",
+        "estimate",
+        "quote",
+        "accounting"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "swiss-modernism-2-0",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Professional navy + paid green + overdue red + neutral grey",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Invoice template with line items. Tax/discount calculation. Status badges (Draft/Sent/Paid/Overdue). PDF export + share. Payment link generation. Client address book. Recurring invoices."
+    },
+    {
+      "id": "grocery-shopping-list",
+      "name": "Grocery & Shopping List",
+      "keywords": [
+        "grocery",
+        "shopping",
+        "list",
+        "supermarket",
+        "checklist",
+        "pantry",
+        "meal-plan",
+        "buy"
+      ],
+      "style_ids": [
+        "flat-design",
+        "vibrant-and-block-based",
+        "claymorphism"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Fresh green + food-category colors + checkmark accent",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects",
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Category-grouped list. Tap-to-check interaction (with strikethrough). Quantity stepper. Share list with family. Store aisle sorting. Barcode scan to add. Frequently bought suggestions."
+    },
+    {
+      "id": "timer-pomodoro",
+      "name": "Timer & Pomodoro",
+      "keywords": [
+        "timer",
+        "pomodoro",
+        "countdown",
+        "stopwatch",
+        "focus",
+        "clock",
+        "productivity",
+        "interval"
+      ],
+      "style_ids": [
+        "minimal"
+      ],
+      "structure_id": "minimal-single-column",
+      "color_mood": "High-contrast on dark + focus red/amber + break green",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Dual shadows (light+dark) + Soft press 150ms",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Large centered countdown digits. Circular progress ring. Session/break auto-switch. Session history log. Custom interval settings. Sound + haptic alerts. Focus stats chart."
+    },
+    {
+      "id": "parenting-baby-tracker",
+      "name": "Parenting & Baby Tracker",
+      "keywords": [
+        "baby",
+        "parenting",
+        "child",
+        "feeding",
+        "sleep",
+        "diaper",
+        "milestone",
+        "family",
+        "newborn"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "soft-ui-evolution",
+        "vibrant-and-block-based",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Soft pastels (baby pink/sky blue/mint/peach) + warm accents",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Feed/sleep/diaper quick-log buttons. Growth percentile chart. Milestone timeline with photos. Multiple child profiles. Partner invite + shared access. Pediatric reference. One-handed operation."
+    },
+    {
+      "id": "scanner-document-manager",
+      "name": "Scanner & Document Manager",
+      "keywords": [
+        "scanner",
+        "document",
+        "ocr",
+        "pdf",
+        "scan",
+        "camera",
+        "file",
+        "archive",
+        "digitize"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Clean white + camera viewfinder accent + file-type color coding",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Camera capture with auto-edge detection. Crop/rotate/enhance. OCR text extraction overlay. PDF multi-page creation. Folder tree organization. Cloud sync. Share/export. Batch scan mode."
+    },
+    {
+      "id": "calendar-scheduling-app",
+      "name": "Calendar & Scheduling App",
+      "keywords": [
+        "calendar",
+        "scheduling",
+        "planner",
+        "agenda",
+        "events",
+        "reminder",
+        "appointment",
+        "organize",
+        "date",
+        "sync"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Clean blue + event category accent colors + success green",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Event color coding. Week/month/day views. Recurring events. Conflict detection. Multi-calendar sync."
+    },
+    {
+      "id": "password-manager",
+      "name": "Password Manager",
+      "keywords": [
+        "password",
+        "security",
+        "vault",
+        "credentials",
+        "login",
+        "secure",
+        "encrypt",
+        "keychain",
+        "2fa",
+        "biometric"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Trust blue + security green + dark neutral",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration",
+        "Color-only indicators"
+      ],
+      "considerations": "Security-first. Zero-knowledge architecture. Biometric unlock. Breach alert dashboard. Password generator."
+    },
+    {
+      "id": "expense-splitter-bill-split",
+      "name": "Expense Splitter / Bill Split",
+      "keywords": [
+        "split",
+        "expense",
+        "bill",
+        "aa",
+        "share",
+        "friends",
+        "group",
+        "settle",
+        "debt",
+        "payment",
+        "owe"
+      ],
+      "style_ids": [
+        "flat-design",
+        "vibrant-and-block-based",
+        "minimal"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Success green + alert red + neutral grey + avatar accent colors",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects",
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Group expense tracking. Debt simplification algorithm. Payment reminders. Multi-currency. Receipt photo import."
+    },
+    {
+      "id": "voice-recorder-memo",
+      "name": "Voice Recorder & Memo",
+      "keywords": [
+        "voice",
+        "recorder",
+        "memo",
+        "audio",
+        "transcription",
+        "dictate",
+        "recording",
+        "microphone",
+        "note",
+        "otter"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Clean white + recording red + waveform accent",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Waveform display. Background recording. Auto-transcription (AI). Tag/organize. Cloud sync."
+    },
+    {
+      "id": "bookmark-read-later",
+      "name": "Bookmark & Read-Later",
+      "keywords": [
+        "bookmark",
+        "read-later",
+        "save",
+        "article",
+        "pocket",
+        "link",
+        "reading",
+        "archive",
+        "collection",
+        "raindrop"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "editorial",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Paper warm white + ink neutral + minimal accent + tag colors",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Fast save via share sheet. Article distraction-free view. Tags and collections. Offline sync. Reading progress."
+    },
+    {
+      "id": "translator-app",
+      "name": "Translator App",
+      "keywords": [
+        "translate",
+        "language",
+        "text",
+        "voice",
+        "ocr",
+        "dictionary",
+        "multilingual",
+        "real-time",
+        "detect",
+        "deepl"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Global blue + neutral grey + language flag accent",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Real-time camera translation (OCR). Voice input and output. Offline mode. Conversation mode. Phrasebook."
+    },
+    {
+      "id": "calculator-unit-converter",
+      "name": "Calculator & Unit Converter",
+      "keywords": [
+        "calculator",
+        "converter",
+        "unit",
+        "math",
+        "currency",
+        "measurement",
+        "scientific",
+        "formula",
+        "percentage"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "minimal-single-column",
+      "color_mood": "Dark functional + orange operation keys + clear button hierarchy",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Dual shadows (light+dark) + Soft press 150ms",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Scientific mode toggle. Live currency rates. Calculation history. Widget support. Gesture input."
+    },
+    {
+      "id": "alarm-world-clock",
+      "name": "Alarm & World Clock",
+      "keywords": [
+        "alarm",
+        "clock",
+        "world",
+        "timezone",
+        "timer",
+        "wake",
+        "sleep",
+        "schedule",
+        "reminder",
+        "bedtime"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "minimal-single-column",
+      "color_mood": "Deep dark + ambient glow accent + timezone gradient",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Excessive decoration",
+        "Pure white backgrounds"
+      ],
+      "considerations": "Gentle wake (gradual volume). Timezone visualizer. Sleep tracking integration. Smart alarm skip. Bedtime mode."
+    },
+    {
+      "id": "file-manager-transfer",
+      "name": "File Manager & Transfer",
+      "keywords": [
+        "file",
+        "manager",
+        "transfer",
+        "folder",
+        "document",
+        "storage",
+        "cloud",
+        "share",
+        "organize",
+        "compress"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Functional neutral + file type color coding (PDF orange, doc blue, image purple)",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Folder tree navigation. File type preview. Wireless P2P transfer. Cloud integration. Compress and extract."
+    },
+    {
+      "id": "email-client",
+      "name": "Email Client",
+      "keywords": [
+        "email",
+        "mail",
+        "inbox",
+        "compose",
+        "thread",
+        "newsletter",
+        "filter",
+        "reply",
+        "gmail",
+        "spark",
+        "superhuman"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Clean white + brand primary + priority red + snooze amber",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Unified inbox. Swipe actions (archive/delete/snooze). Priority sorting. Smart reply. Unsubscribe tool."
+    },
+    {
+      "id": "casual-puzzle-game",
+      "name": "Casual Puzzle Game",
+      "keywords": [
+        "puzzle",
+        "casual",
+        "match",
+        "brain",
+        "game",
+        "relaxing",
+        "level",
+        "tiles",
+        "logic",
+        "block",
+        "three"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Cheerful pastels + progression gradient + reward gold + bright accent",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Satisfying match/clear animations. Progressive difficulty. Daily challenges. No-skip tutorials. Offline play."
+    },
+    {
+      "id": "trivia-quiz-game",
+      "name": "Trivia & Quiz Game",
+      "keywords": [
+        "trivia",
+        "quiz",
+        "knowledge",
+        "question",
+        "answer",
+        "challenge",
+        "leaderboard",
+        "fact",
+        "brain",
+        "compete"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "claymorphism",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Energetic blue + correct green + incorrect red + leaderboard gold",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Haptic feedback + Small 50-100ms animations",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Timer pressure UX. Category selection. Streak system. Real-time multiplayer. Daily quiz mode."
+    },
+    {
+      "id": "card-board-game",
+      "name": "Card & Board Game",
+      "keywords": [
+        "card",
+        "board",
+        "chess",
+        "checkers",
+        "poker",
+        "strategy",
+        "turn-based",
+        "multiplayer",
+        "classic",
+        "tabletop"
+      ],
+      "style_ids": [
+        "flat-design"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Game-theme felt green + dark wood + card back patterns",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Real-time or async multiplayer. Game state sync. Tutorial mode. Match history. ELO rating system."
+    },
+    {
+      "id": "idle-clicker-game",
+      "name": "Idle & Clicker Game",
+      "keywords": [
+        "idle",
+        "clicker",
+        "incremental",
+        "passive",
+        "cookie",
+        "adventure",
+        "progress",
+        "offline",
+        "collect",
+        "prestige"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "claymorphism"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Coin gold + upgrade blue + prestige purple + progress green",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Scroll animations + Parallax + Page transitions",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Offline progress calculation. Satisfying number animations. Upgrade tree clarity. Prestige system. Optional ads."
+    },
+    {
+      "id": "word-crossword-game",
+      "name": "Word & Crossword Game",
+      "keywords": [
+        "word",
+        "crossword",
+        "wordle",
+        "spelling",
+        "vocabulary",
+        "letters",
+        "grid",
+        "puzzle",
+        "dictionary",
+        "daily"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Clean white + warm letter tiles + success green + shake red",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Excessive decoration",
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Daily challenge with shareable results. Physical keyboard feel. Difficulty levels. Dictionary hints. Streak stats."
+    },
+    {
+      "id": "arcade-retro-game",
+      "name": "Arcade & Retro Game",
+      "keywords": [
+        "arcade",
+        "retro",
+        "8bit",
+        "action",
+        "shoot",
+        "runner",
+        "tap",
+        "reflex",
+        "endless",
+        "pixel",
+        "classic",
+        "score"
+      ],
+      "style_ids": [
+        "retro-futurism",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Neon on black + pixel palette + score gold + danger red",
+      "typography_mood": "Nostalgic + Monospace + Neon",
+      "key_effects": "Subtle hover (200ms) + Smooth transitions",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Instant play with no login. Game Center leaderboards. Haptic feedback on collision. Offline. Controller support."
+    },
+    {
+      "id": "photo-editor-filters",
+      "name": "Photo Editor & Filters",
+      "keywords": [
+        "photo",
+        "edit",
+        "filter",
+        "vsco",
+        "snapseed",
+        "enhance",
+        "crop",
+        "retouch",
+        "adjust",
+        "luts",
+        "preset",
+        "adjust"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Dark editor background + vibrant filter preview strip + tool icon accent",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Excessive decoration",
+        "Pure white backgrounds"
+      ],
+      "considerations": "Non-destructive editing. Filter preview carousel. Histogram. RAW support. Batch export. Social share direct."
+    },
+    {
+      "id": "short-video-editor",
+      "name": "Short Video Editor",
+      "keywords": [
+        "video",
+        "edit",
+        "capcut",
+        "inshot",
+        "clip",
+        "reel",
+        "tiktok",
+        "trim",
+        "effects",
+        "transitions",
+        "music",
+        "timeline"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "Dark background + timeline track accent colors + effect preview vivid",
+      "typography_mood": "High contrast + Light on dark",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Pure white backgrounds"
+      ],
+      "considerations": "Multi-track timeline. Licensed music library. Text overlays. Auto-captions. Export 9:16 / 16:9 / 1:1."
+    },
+    {
+      "id": "drawing-sketching-canvas",
+      "name": "Drawing & Sketching Canvas",
+      "keywords": [
+        "drawing",
+        "sketch",
+        "procreate",
+        "canvas",
+        "paint",
+        "illustration",
+        "digital",
+        "brush",
+        "layers",
+        "art",
+        "stylus"
+      ],
+      "style_ids": [
+        "minimal",
+        "anti-polish-raw-aesthetic"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Neutral canvas + full-spectrum color picker + tool panel dark",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Excessive decoration",
+        "Pure white backgrounds"
+      ],
+      "considerations": "Pressure sensitivity. Infinite canvas (pan/zoom). Layer management. Undo history. Export PNG/PSD/SVG."
+    },
+    {
+      "id": "music-creation-beat-maker",
+      "name": "Music Creation & Beat Maker",
+      "keywords": [
+        "music",
+        "beat",
+        "daw",
+        "garageband",
+        "create",
+        "loop",
+        "sample",
+        "instrument",
+        "track",
+        "compose",
+        "record",
+        "midi"
+      ],
+      "style_ids": [
+        "cyberpunk-ui",
+        "glassmorphism"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Dark studio background + track colors rainbow + waveform accent + BPM pulse",
+      "typography_mood": "High contrast + Light on dark",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Pure white backgrounds"
+      ],
+      "considerations": "Touch piano and drum pad. Loop browser. MIDI support. Export MP3/WAV. Low-latency audio engine."
+    },
+    {
+      "id": "meme-sticker-maker",
+      "name": "Meme & Sticker Maker",
+      "keywords": [
+        "meme",
+        "sticker",
+        "maker",
+        "funny",
+        "caption",
+        "template",
+        "edit",
+        "share",
+        "viral",
+        "emoji",
+        "creator",
+        "reaction"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "flat-design",
+        "claymorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Bold primary + comedic yellow + viral red + high saturation accent",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects",
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Template library. Caption text overlay. Font variety. Reaction sticker packs. Share to all platforms. Fast creation."
+    },
+    {
+      "id": "ai-photo-avatar-generator",
+      "name": "AI Photo & Avatar Generator",
+      "keywords": [
+        "ai",
+        "photo",
+        "avatar",
+        "lensa",
+        "portrait",
+        "generate",
+        "selfie",
+        "style",
+        "filter",
+        "prisma",
+        "art"
+      ],
+      "style_ids": [
+        "aurora-ui",
+        "glassmorphism",
+        "minimal"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "AI purple + aurora gradients + before/after neutral",
+      "typography_mood": "Elegant + Gradient-friendly",
+      "key_effects": "Flowing gradients 8-12s + Color morphing",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Style selection. Multiple output variations. Privacy policy prominent. Fast generation. Credits/subscription system."
+    },
+    {
+      "id": "link-in-bio-page-builder",
+      "name": "Link-in-Bio Page Builder",
+      "keywords": [
+        "bio",
+        "link",
+        "linktree",
+        "personal",
+        "page",
+        "creator",
+        "social",
+        "portfolio",
+        "profile",
+        "landing",
+        "custom"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "bento-box-grid",
+        "minimal",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Brand-customizable + accent link color + clean white canvas",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Large section gaps 48px+ + Color shift hover + Scroll-snap",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Drag-drop builder. Theme templates. Click analytics. Custom domain. Social icon integration. QR code export."
+    },
+    {
+      "id": "wardrobe-outfit-planner",
+      "name": "Wardrobe & Outfit Planner",
+      "keywords": [
+        "wardrobe",
+        "outfit",
+        "fashion",
+        "clothes",
+        "closet",
+        "style",
+        "wear",
+        "plan",
+        "capsule",
+        "ootd",
+        "lookbook"
+      ],
+      "style_ids": [
+        "minimal",
+        "aurora-ui",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Clean fashion neutral + full clothes color palette + accent",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Photo catalog of clothes. AI outfit suggestions. Calendar integration. Capsule wardrobe. Season filtering."
+    },
+    {
+      "id": "plant-care-tracker",
+      "name": "Plant Care Tracker",
+      "keywords": [
+        "plant",
+        "care",
+        "water",
+        "garden",
+        "tracker",
+        "reminder",
+        "species",
+        "photo",
+        "grow",
+        "health",
+        "planta"
+      ],
+      "style_ids": [
+        "organic-biophilic",
+        "soft-ui-evolution",
+        "claymorphism",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Nature greens + earth brown + sunny yellow reminder + water blue",
+      "typography_mood": "Warm + Humanist + Natural",
+      "key_effects": "Rounded 16-24px + Natural shadows + Flowing SVG",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Plant database with care guides. Watering reminders. Growth photo timeline. AI health diagnosis. Collection sharing."
+    },
+    {
+      "id": "book-reading-tracker",
+      "name": "Book & Reading Tracker",
+      "keywords": [
+        "book",
+        "reading",
+        "tracker",
+        "goodreads",
+        "library",
+        "shelf",
+        "progress",
+        "review",
+        "notes",
+        "goal",
+        "literature"
+      ],
+      "style_ids": [
+        "swiss-modernism-2-0",
+        "minimal",
+        "e-ink-paper",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Warm paper white + ink brown + reading progress green + book cover colors",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Barcode scan to add. Progress percentage. Annual reading goal. Notes and quotes. Friends activity. Genre stats."
+    },
+    {
+      "id": "couple-relationship-app",
+      "name": "Couple & Relationship App",
+      "keywords": [
+        "couple",
+        "relationship",
+        "partner",
+        "love",
+        "date",
+        "anniversary",
+        "memory",
+        "shared",
+        "intimate",
+        "between"
+      ],
+      "style_ids": [
+        "aurora-ui",
+        "soft-ui-evolution",
+        "claymorphism",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Warm romantic pink/rose + soft gradient + memory photo tones",
+      "typography_mood": "Elegant + Gradient-friendly",
+      "key_effects": "Flowing gradients 8-12s + Color morphing",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Shared timeline. Anniversary countdowns. Secret chat. Photo albums. Love language quiz. Date night ideas."
+    },
+    {
+      "id": "family-calendar-chores",
+      "name": "Family Calendar & Chores",
+      "keywords": [
+        "family",
+        "calendar",
+        "chores",
+        "tasks",
+        "household",
+        "shared",
+        "kids",
+        "schedule",
+        "cozi",
+        "organize",
+        "member"
+      ],
+      "style_ids": [
+        "flat-design",
+        "claymorphism",
+        "accessible-and-ethical",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Warm playful + member color coding + chore completion green",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Complex shadows",
+        "3D effects"
+      ],
+      "considerations": "Member color coding. Chore assignment rotation. Recurring events. Shared shopping list. Allowance tracking."
+    },
+    {
+      "id": "mood-tracker",
+      "name": "Mood Tracker",
+      "keywords": [
+        "mood",
+        "emotion",
+        "feeling",
+        "mental",
+        "daily",
+        "journal",
+        "wellbeing",
+        "check-in",
+        "log",
+        "track",
+        "daylio"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "minimal",
+        "aurora-ui"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Emotion gradient (blue sad to yellow happy) + pastel per mood + insight accent",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "One-tap daily check-in. Emotion wheel selector. Mood calendar heatmap. Pattern insights. Export and share."
+    },
+    {
+      "id": "gift-wishlist",
+      "name": "Gift & Wishlist",
+      "keywords": [
+        "gift",
+        "wishlist",
+        "present",
+        "birthday",
+        "occasion",
+        "registry",
+        "idea",
+        "shop",
+        "list",
+        "share",
+        "surprise"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "soft-ui-evolution",
+        "claymorphism",
+        "flat-design"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Celebration warm pink/gold/red + category colors + surprise accent",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Large section gaps 48px+ + Color shift hover + Scroll-snap",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Add from any URL. Price range filter. Reserved-by-others system. Occasion calendar. Collaborative list. Surprise mode."
+    },
+    {
+      "id": "running-cycling-gps",
+      "name": "Running & Cycling GPS",
+      "keywords": [
+        "running",
+        "cycling",
+        "gps",
+        "strava",
+        "track",
+        "route",
+        "speed",
+        "distance",
+        "cadence",
+        "pace",
+        "workout",
+        "sport"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Energetic orange + map accent + pace zones (green/yellow/red)",
+      "typography_mood": "High contrast + Light on dark",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Pure white backgrounds",
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Live GPS tracking. Route map. Auto-pause detection. Segment leaderboards. Training zones. Social feed. Garmin sync."
+    },
+    {
+      "id": "yoga-stretching-guide",
+      "name": "Yoga & Stretching Guide",
+      "keywords": [
+        "yoga",
+        "stretch",
+        "flexibility",
+        "pose",
+        "asana",
+        "guided",
+        "session",
+        "calm",
+        "routine",
+        "wellness",
+        "down-dog"
+      ],
+      "style_ids": [
+        "organic-biophilic",
+        "soft-ui-evolution",
+        "minimal"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Earth calming sage/terracotta/cream + breathing gradient + warm accent",
+      "typography_mood": "Warm + Humanist + Natural",
+      "key_effects": "Rounded 16-24px + Natural shadows + Flowing SVG",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Pose library with illustrations. Guided sessions with audio. Breathing exercises. Progress calendar. Beginner to advanced."
+    },
+    {
+      "id": "sleep-tracker",
+      "name": "Sleep Tracker",
+      "keywords": [
+        "sleep",
+        "tracker",
+        "alarm",
+        "cycle",
+        "quality",
+        "snore",
+        "analysis",
+        "rem",
+        "deep",
+        "smart",
+        "wake",
+        "insomnia"
+      ],
+      "style_ids": [
+        "glassmorphism",
+        "minimal"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Deep midnight blue + stars/moon accent + sleep quality gradient (poor red to great green)",
+      "typography_mood": "High contrast + Light on dark",
+      "key_effects": "Dual shadows (light+dark) + Soft press 150ms",
+      "avoid": [
+        "Pure white backgrounds"
+      ],
+      "considerations": "Sleep cycle detection. Smart alarm wakes at light sleep. Snore detection. Weekly trends. Apple Health integration."
+    },
+    {
+      "id": "calorie-nutrition-counter",
+      "name": "Calorie & Nutrition Counter",
+      "keywords": [
+        "calorie",
+        "nutrition",
+        "food",
+        "diet",
+        "macro",
+        "protein",
+        "carb",
+        "fat",
+        "log",
+        "fitness",
+        "myfitnesspal"
+      ],
+      "style_ids": [
+        "flat-design",
+        "vibrant-and-block-based",
+        "minimal",
+        "claymorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Healthy green + macro colors (protein blue, carb orange, fat yellow) + progress circle",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects",
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Barcode scanner food log. Large database. Macro goals. Restaurant lookup. Recipe builder. AI photo food logging."
+    },
+    {
+      "id": "period-cycle-tracker",
+      "name": "Period & Cycle Tracker",
+      "keywords": [
+        "period",
+        "cycle",
+        "menstrual",
+        "fertility",
+        "ovulation",
+        "pms",
+        "log",
+        "women",
+        "health",
+        "flo",
+        "clue",
+        "hormone"
+      ],
+      "style_ids": [
+        "soft-ui-evolution",
+        "aurora-ui",
+        "accessible-and-ethical",
+        "claymorphism"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Rose/blush + lavender + fertility green + soft calendar tones",
+      "typography_mood": "Elegant + Gradient-friendly",
+      "key_effects": "Flowing gradients 8-12s + Color morphing",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Cycle prediction. Symptom logging. Fertility window. Personalized insights. Privacy-first. Partner sharing option."
+    },
+    {
+      "id": "medication-pill-reminder",
+      "name": "Medication & Pill Reminder",
+      "keywords": [
+        "medication",
+        "pill",
+        "reminder",
+        "dose",
+        "schedule",
+        "prescription",
+        "drug",
+        "health",
+        "medisafe",
+        "refill"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "flat-design",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Medical trust blue + missed alert red + taken green + clean white",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects",
+        "Color-only indicators"
+      ],
+      "considerations": "Multi-medication schedule. Caregiver sharing. Refill reminders. Drug interaction warnings. Large touch targets."
+    },
+    {
+      "id": "water-hydration-reminder",
+      "name": "Water & Hydration Reminder",
+      "keywords": [
+        "water",
+        "hydration",
+        "drink",
+        "reminder",
+        "daily",
+        "tracker",
+        "glasses",
+        "intake",
+        "health",
+        "cup",
+        "aqua"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Refreshing blue + water wave animation + goal progress accent",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Tap to log quickly. Animated fill visualization. Custom reminders. Goal by weight/weather. Streak system. Widget."
+    },
+    {
+      "id": "fasting-intermittent-timer",
+      "name": "Fasting & Intermittent Timer",
+      "keywords": [
+        "fasting",
+        "intermittent",
+        "16:8",
+        "timer",
+        "fast",
+        "eating",
+        "window",
+        "keto",
+        "diet",
+        "zero",
+        "weight",
+        "protocol"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Fasting deep blue/purple + eating window green + timeline neutral",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Excessive decoration",
+        "Pure white backgrounds"
+      ],
+      "considerations": "Protocol selector (16:8, 18:6, OMAD). Circular countdown timer. Fasting history log. Tips during fast. Electrolytes."
+    },
+    {
+      "id": "anonymous-community-confession",
+      "name": "Anonymous Community / Confession",
+      "keywords": [
+        "anonymous",
+        "community",
+        "confess",
+        "whisper",
+        "secret",
+        "vent",
+        "share",
+        "safe",
+        "private",
+        "social",
+        "yikyak"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Dark protective + subtle gradient + upvote green + empathy warm accent",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Excessive decoration",
+        "Pure white backgrounds"
+      ],
+      "considerations": "Anonymous posting with moderation. Safety reporting. Reaction system. Trending topics. Mental health resources link."
+    },
+    {
+      "id": "local-events-discovery",
+      "name": "Local Events & Discovery",
+      "keywords": [
+        "local",
+        "events",
+        "discovery",
+        "meetup",
+        "nearby",
+        "social",
+        "city",
+        "activities",
+        "calendar",
+        "community",
+        "explore"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism",
+        "flat-design"
+      ],
+      "structure_id": "hero-centric-design",
+      "color_mood": "City vibrant + event category colors + map accent + date highlight",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Scroll animations + Parallax + Page transitions",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Location-based discovery. Category filters. RSVP flow. Map view. Friend attendance. Organizer tools. Reminders."
+    },
+    {
+      "id": "study-together-virtual-coworking",
+      "name": "Study Together / Virtual Coworking",
+      "keywords": [
+        "study",
+        "focus",
+        "cowork",
+        "pomodoro",
+        "virtual",
+        "together",
+        "session",
+        "accountability",
+        "live",
+        "stream",
+        "room"
+      ],
+      "style_ids": [
+        "minimal",
+        "soft-ui-evolution",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Calm focus blue + session progress indicator + ambient warm neutrals",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Live study rooms with video/avatar presence. Shared focus timer. Ambient music. Goals sharing. Streak accountability."
+    },
+    {
+      "id": "coding-challenge-practice",
+      "name": "Coding Challenge & Practice",
+      "keywords": [
+        "coding",
+        "leetcode",
+        "challenge",
+        "algorithm",
+        "practice",
+        "programming",
+        "competitive",
+        "skill",
+        "interview",
+        "problem"
+      ],
+      "style_ids": [
+        "cyberpunk-ui",
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Code editor dark + success green + difficulty gradient (easy green / medium amber / hard red)",
+      "typography_mood": "High contrast + Light on dark",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Pure white backgrounds"
+      ],
+      "considerations": "Code editor with syntax highlight. Multiple languages. Hint system. Solution explanation. Company tags. Contest mode."
+    },
+    {
+      "id": "kids-learning-abc-math",
+      "name": "Kids Learning (ABC & Math)",
+      "keywords": [
+        "kids",
+        "children",
+        "learning",
+        "abc",
+        "math",
+        "phonics",
+        "numbers",
+        "education",
+        "games",
+        "preschool",
+        "early"
+      ],
+      "style_ids": [
+        "claymorphism",
+        "vibrant-and-block-based",
+        "flat-design"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Bright primary + child-safe pastels + reward gold + interactive accent",
+      "typography_mood": "Playful + Rounded + Friendly",
+      "key_effects": "Multi-layer shadows + Spring bounce + Soft press 200ms",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Age-appropriate UI for 2-8. No ads. No dark patterns. Curriculum aligned. Parent progress reports. Reward system."
+    },
+    {
+      "id": "music-instrument-learning",
+      "name": "Music Instrument Learning",
+      "keywords": [
+        "music",
+        "instrument",
+        "piano",
+        "guitar",
+        "learn",
+        "lesson",
+        "tutorial",
+        "notes",
+        "play",
+        "chord",
+        "practice",
+        "simply"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Musical warm deep red/brown + note color system + skill progress bar",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Scroll animations + Parallax + Page transitions",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Interactive instrument on-screen. Sheet music display. Song library. Slow-tempo practice. Recording and playback. Teacher mode."
+    },
+    {
+      "id": "parking-finder",
+      "name": "Parking Finder",
+      "keywords": [
+        "parking",
+        "spot",
+        "finder",
+        "map",
+        "pay",
+        "meter",
+        "garage",
+        "location",
+        "car",
+        "reserve",
+        "spothero"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism",
+        "flat-design"
+      ],
+      "structure_id": "funnel-3-step-conversion",
+      "color_mood": "Trust blue + available green + occupied red + map neutral",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Backdrop blur (10-20px) + Translucent overlays",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "Real-time availability. In-app navigation. Payment integration. Parking timer alert. Favorite spots. Street vs garage."
+    },
+    {
+      "id": "public-transit-guide",
+      "name": "Public Transit Guide",
+      "keywords": [
+        "transit",
+        "bus",
+        "metro",
+        "subway",
+        "train",
+        "route",
+        "schedule",
+        "map",
+        "city",
+        "commute",
+        "trip",
+        "citymapper"
+      ],
+      "style_ids": [
+        "flat-design",
+        "accessible-and-ethical",
+        "minimal"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Transit brand line colors + real-time indicator green/red + map neutral",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects",
+        "Color-only indicators"
+      ],
+      "considerations": "Real-time arrivals. Offline maps. Disruption alerts. Multi-modal routing. Fare calculation. Accessibility features."
+    },
+    {
+      "id": "road-trip-planner",
+      "name": "Road Trip Planner",
+      "keywords": [
+        "road",
+        "trip",
+        "drive",
+        "route",
+        "planner",
+        "travel",
+        "stop",
+        "map",
+        "adventure",
+        "scenic",
+        "car",
+        "wanderlog"
+      ],
+      "style_ids": [
+        "aurora-ui",
+        "organic-biophilic",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Adventure warm sunset orange + map teal + stop markers + road neutral",
+      "typography_mood": "Elegant + Gradient-friendly",
+      "key_effects": "Flowing gradients 8-12s + Color morphing",
+      "avoid": [
+        "Inconsistent styling",
+        "Poor contrast ratios"
+      ],
+      "considerations": "Route planning with stops. Point-of-interest discovery. Gas/food/hotel along route. Offline maps. Trip sharing."
+    },
+    {
+      "id": "vpn-privacy-tool",
+      "name": "VPN & Privacy Tool",
+      "keywords": [
+        "vpn",
+        "privacy",
+        "secure",
+        "anonymous",
+        "encrypt",
+        "proxy",
+        "ip",
+        "protect",
+        "shield",
+        "network",
+        "nordvpn"
+      ],
+      "style_ids": [
+        "minimal",
+        "cyberpunk-ui",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Dark shield blue + connected green + disconnected red + trust accent",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Excessive decoration",
+        "Pure white backgrounds"
+      ],
+      "considerations": "One-tap connect. Server selection by country. No-log policy prominent. Speed indicator. Kill switch. Protocol choice."
+    },
+    {
+      "id": "emergency-sos-safety",
+      "name": "Emergency SOS & Safety",
+      "keywords": [
+        "emergency",
+        "sos",
+        "safety",
+        "alert",
+        "location",
+        "help",
+        "danger",
+        "crisis",
+        "first-aid",
+        "guard",
+        "bsafe"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "flat-design",
+        "minimal"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Alert red + safety blue + location green + high contrast critical",
+      "typography_mood": "Bold + Clean + Sans-serif",
+      "key_effects": "Color shift hover + Fast 150ms transitions + No shadows",
+      "avoid": [
+        "Complex shadows",
+        "3D effects",
+        "Color-only indicators"
+      ],
+      "considerations": "One-tap SOS. Emergency contacts auto-notify. Live location sharing. Fake call feature. Safe walk mode. Local emergency numbers."
+    },
+    {
+      "id": "wallpaper-theme-app",
+      "name": "Wallpaper & Theme App",
+      "keywords": [
+        "wallpaper",
+        "theme",
+        "background",
+        "customize",
+        "aesthetic",
+        "home-screen",
+        "lock-screen",
+        "widget",
+        "design",
+        "zedge"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "aurora-ui",
+        "glassmorphism"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Content-driven + trending aesthetic palettes + download accent",
+      "typography_mood": "Energetic + Bold + Large",
+      "key_effects": "Large section gaps 48px+ + Color shift hover + Scroll-snap",
+      "avoid": [
+        "Muted colors",
+        "Low energy"
+      ],
+      "considerations": "Category browsing. Preview on device. Daily wallpaper auto-set. Widget matching. Creator uploads. Resolution auto-fit."
+    },
+    {
+      "id": "white-noise-ambient-sound",
+      "name": "White Noise & Ambient Sound",
+      "keywords": [
+        "white noise",
+        "ambient",
+        "sound",
+        "sleep",
+        "focus",
+        "rain",
+        "nature",
+        "relax",
+        "concentration",
+        "background",
+        "noisli"
+      ],
+      "style_ids": [
+        "minimal",
+        "organic-biophilic"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Calming dark + ambient texture visual + subtle sound wave + sleep blue",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle glow + Neon accents + High contrast",
+      "avoid": [
+        "Excessive decoration",
+        "Pure white backgrounds"
+      ],
+      "considerations": "Sound mixer with multiple simultaneous layers. Sleep timer with fade. Custom soundscapes. Offline. Background audio."
+    },
+    {
+      "id": "home-decoration-interior-design",
+      "name": "Home Decoration & Interior Design",
+      "keywords": [
+        "home",
+        "interior",
+        "decor",
+        "design",
+        "furniture",
+        "room",
+        "renovation",
+        "ar",
+        "plan",
+        "inspire",
+        "3d",
+        "houzz"
+      ],
+      "style_ids": [
+        "minimal",
+        "organic-biophilic",
+        "aurora-ui"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Neutral interior palette + material texture accent + AR blue",
+      "typography_mood": "Professional + Clean hierarchy",
+      "key_effects": "Subtle hover 200ms + Smooth transitions + Clean",
+      "avoid": [
+        "Excessive decoration"
+      ],
+      "considerations": "AR room visualization. Style quiz. Product catalog with purchase links. 3D room planner. Mood board. Before/after."
+    },
+    {
+      "id": "academic-journal-scholarly-publishing",
+      "name": "Academic Journal / Scholarly Publishing",
+      "keywords": [
+        "academic",
+        "journal",
+        "paper",
+        "research",
+        "peer-review",
+        "open-access",
+        "scholarly",
+        "publication",
+        "citation",
+        "manuscript",
+        "issn",
+        "doi"
+      ],
+      "style_ids": [
+        "swiss-modernism-2-0",
+        "accessible-and-ethical",
+        "minimal",
+        "editorial"
+      ],
+      "structure_id": "newsletter-content-first",
+      "color_mood": "Trust navy + White + Citation blue + Serif accents",
+      "typography_mood": "Serif body + Formal hierarchy",
+      "key_effects": "Search highlight + Smooth scrolling",
+      "avoid": [
+        "Low contrast",
+        "Visual clutter",
+        "motion-heavy chrome"
+      ],
+      "considerations": "Prioritize readability (serif body text). Clear article hierarchy. Abstract/DOI prominence. WCAG AAA. Minimal visual noise. Trust signals: ISSN, indexing badges."
+    },
+    {
+      "id": "api-developer-portal",
+      "name": "API Developer Portal",
+      "keywords": [
+        "api",
+        "developer",
+        "documentation",
+        "sdk",
+        "endpoint",
+        "integration",
+        "rest",
+        "graphql",
+        "webhook",
+        "reference",
+        "getting-started",
+        "auth"
+      ],
+      "style_ids": [
+        "minimal",
+        "glassmorphism",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "faq-documentation-landing",
+      "color_mood": "Dark code theme + Brand accent + Syntax colors",
+      "typography_mood": "Monospace + Clear typography",
+      "key_effects": "Syntax highlighting + Copy-to-clipboard samples",
+      "avoid": [
+        "Buried endpoints",
+        "Broken version switching",
+        "missing rate-limit state"
+      ],
+      "considerations": "Endpoint discoverability. Copy-paste code samples. Auth flow clarity. Version switching. Interactive playground. Rate limit visibility."
+    },
+    {
+      "id": "forum-discussion-board",
+      "name": "Forum / Discussion Board",
+      "keywords": [
+        "forum",
+        "discussion",
+        "thread",
+        "post",
+        "reply",
+        "community",
+        "comment",
+        "moderation",
+        "subreddit",
+        "stackexchange",
+        "topic"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "community-forum-landing",
+      "color_mood": "Dark neutral + topic accent colors + unread indicator + reputation badge",
+      "typography_mood": "Readable + Community-first typography",
+      "key_effects": "Thread expand/collapse + Reply composer cues",
+      "avoid": [
+        "No moderation cues",
+        "cluttered threads",
+        "hidden post state"
+      ],
+      "considerations": "Thread list with pagination. Rich text editor. Quote/mention system. Upvote/downvote. User badges. Moderation tools."
+    },
+    {
+      "id": "directory-listing-site",
+      "name": "Directory / Listing Site",
+      "keywords": [
+        "directory",
+        "listing",
+        "classifieds",
+        "catalogue",
+        "business-directory",
+        "yellow-pages",
+        "venue",
+        "find",
+        "search",
+        "filter",
+        "map"
+      ],
+      "style_ids": [
+        "flat-design",
+        "bento-box-grid",
+        "vibrant-and-block-based",
+        "minimal"
+      ],
+      "structure_id": "marketplace-directory",
+      "color_mood": "Neutral bg + category color chips + map accent + verified badge",
+      "typography_mood": "Scan-friendly + Neutral typography",
+      "key_effects": "Filter chips + Map/list toggle",
+      "avoid": [
+        "No trust cues",
+        "Text-heavy cards",
+        "hidden filters"
+      ],
+      "considerations": "Category tree. Multi-filter sidebar. Map/list toggle. Verified badges. Reviews. Claim listing flow."
+    },
+    {
+      "id": "status-page-incident-management",
+      "name": "Status Page / Incident Management",
+      "keywords": [
+        "status",
+        "incident",
+        "outage",
+        "uptime",
+        "downtime",
+        "statuspage",
+        "monitoring",
+        "sla",
+        "maintenance",
+        "sev1",
+        "postmortem"
+      ],
+      "style_ids": [
+        "data-dense-dashboard",
+        "minimal"
+      ],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Status green + incident red + maintenance amber + neutral dark",
+      "typography_mood": "Functional + Status typography",
+      "key_effects": "Status matrix + incident timeline transitions",
+      "avoid": [
+        "Slow dashboards",
+        "decorative charts",
+        "hidden error states"
+      ],
+      "considerations": "Service status matrix. Incident timeline. Severity badges. Maintenance schedule. SLA uptime history. Email/SMS subscribe."
+    },
+    {
+      "id": "wiki-encyclopedia",
+      "name": "Wiki / Encyclopedia",
+      "keywords": [
+        "wiki",
+        "encyclopedia",
+        "knowledge",
+        "article",
+        "reference",
+        "wikipedia",
+        "documentation",
+        "collaborative",
+        "edit",
+        "version",
+        "citation"
+      ],
+      "style_ids": [
+        "swiss-modernism-2-0",
+        "accessible-and-ethical",
+        "minimal",
+        "flat-design"
+      ],
+      "structure_id": "faq-documentation-landing",
+      "color_mood": "Clean white + link blue + heading hierarchy + citation grey",
+      "typography_mood": "Clear + Hierarchical typography",
+      "key_effects": "Table of contents sticky nav + search highlight",
+      "avoid": [
+        "No search",
+        "flat hierarchy",
+        "noisy page chrome"
+      ],
+      "considerations": "Full-text search bar. Table of contents sidebar. Edit history. Inter-page linking. Mobile responsive. Print-friendly."
+    },
+    {
+      "id": "auction-platform",
+      "name": "Auction Platform",
+      "keywords": [
+        "auction",
+        "bid",
+        "hammer",
+        "lot",
+        "live-auction",
+        "bidding-war",
+        "estate-sale",
+        "proxibid",
+        "gavel",
+        "lot-number",
+        "reserve-price"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Dark bg + bid green + outbid red + countdown amber",
+      "typography_mood": "Bold + Urgent typography",
+      "key_effects": "Countdown timer + live bid updates",
+      "avoid": [
+        "Static design",
+        "No bid state",
+        "poor mobile"
+      ],
+      "considerations": "Real-time bid updates. Countdown timer urgency. Auto-bid ceiling. Outbid notifications. Bid history. Reserve price indicator."
+    },
+    {
+      "id": "changelog-release-notes",
+      "name": "Changelog / Release Notes",
+      "keywords": [
+        "changelog",
+        "release-notes",
+        "version-history",
+        "whats-new",
+        "product-updates",
+        "semver",
+        "patch-notes",
+        "release-tracker"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "swiss-modernism-2-0",
+        "editorial"
+      ],
+      "structure_id": "newsletter-content-first",
+      "color_mood": "Neutral bg + version badge colors + date grey",
+      "typography_mood": "Neutral + Versioned hierarchy",
+      "key_effects": "Timeline transitions + version badges",
+      "avoid": [
+        "No chronological order",
+        "no version tags",
+        "noisy marketing copy"
+      ],
+      "considerations": "Chronological release feed. Semver badges. Breaking change warnings. Copy-paste install commands. Subscribe to feed. Search by version."
+    },
+    {
+      "id": "citizen-science-platform",
+      "name": "Citizen Science Platform",
+      "keywords": [
+        "citizen-science",
+        "zooniverse",
+        "crowdsourced-research",
+        "volunteer-science",
+        "public-participation",
+        "distributed-research",
+        "citizen-researcher"
+      ],
+      "style_ids": [
+        "organic-biophilic",
+        "vibrant-and-block-based",
+        "claymorphism"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Earth green + discovery orange + volunteer badge blue + data neutral",
+      "typography_mood": "Readable + Community-first typography",
+      "key_effects": "Progress badges + contribution feedback",
+      "avoid": [
+        "No progress feedback",
+        "reward-less contributions"
+      ],
+      "considerations": "Project cards with impact metrics. Contribution tracker. Beginner-friendly onboarding. Data quality feedback loop. Leaderboards. Community forums."
+    },
+    {
+      "id": "classifieds-buy-sell",
+      "name": "Classifieds / Buy-Sell",
+      "keywords": [
+        "classifieds",
+        "buy-sell",
+        "craigslist",
+        "secondhand",
+        "marketplace-listing",
+        "for-sale",
+        "trade",
+        "flea-market",
+        "thrift",
+        "resell"
+      ],
+      "style_ids": [
+        "flat-design",
+        "bento-box-grid",
+        "vibrant-and-block-based",
+        "minimal"
+      ],
+      "structure_id": "marketplace-directory",
+      "color_mood": "Neutral bg + price green + category chips + verified seller badge",
+      "typography_mood": "Scan-friendly + Marketplace typography",
+      "key_effects": "Photo-first cards + map/list toggle",
+      "avoid": [
+        "No trust cues",
+        "text-heavy pages",
+        "hidden filters"
+      ],
+      "considerations": "Category tree. Photo-first listing cards. Price negotiation. Location radius filter. Saved searches. Seller reputation. Flag/report."
+    },
+    {
+      "id": "conference-symposium-landing-page",
+      "name": "Conference / Symposium Landing Page",
+      "keywords": [
+        "conference",
+        "symposium",
+        "summit",
+        "cfp",
+        "call-for-papers",
+        "speaker-lineup",
+        "registration",
+        "venue",
+        "proceedings",
+        "keynote",
+        "track"
+      ],
+      "style_ids": [
+        "swiss-modernism-2-0",
+        "accessible-and-ethical",
+        "minimal",
+        "editorial"
+      ],
+      "structure_id": "event-conference-landing",
+      "color_mood": "Academic navy + track color chips + gold keynote + neutral white",
+      "typography_mood": "Academic + Hierarchical typography",
+      "key_effects": "Speaker grid + agenda reveal",
+      "avoid": [
+        "Ornate design",
+        "unclear schedule",
+        "hidden speaker info"
+      ],
+      "considerations": "Speaker grid. Multi-track agenda. CFP deadline countdown. Venue map. Sponsor tiers. Early-bird pricing. Proceedings download."
+    },
+    {
+      "id": "crowdfunding-platform",
+      "name": "Crowdfunding Platform",
+      "keywords": [
+        "crowdfunding",
+        "kickstarter",
+        "indiegogo",
+        "campaign",
+        "backer",
+        "pledge",
+        "funding-goal",
+        "stretch-goal",
+        "reward-tier",
+        "all-or-nothing"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "claymorphism",
+        "editorial"
+      ],
+      "structure_id": "scroll-triggered-storytelling",
+      "color_mood": "Brand primary + funding progress green + urgency amber + reward tier colors",
+      "typography_mood": "Emotional + High-contrast typography",
+      "key_effects": "Progress bar + reward-tier animations",
+      "avoid": [
+        "Static design",
+        "no progress bar",
+        "weak social proof"
+      ],
+      "considerations": "Funding progress bar with % goal. Reward tier selector. Backer count. Countdown timer. Updates feed. Creator profile. Risk/disclaimer section."
+    },
+    {
+      "id": "digital-signage-kiosk",
+      "name": "Digital Signage / Kiosk",
+      "keywords": [
+        "digital-signage",
+        "kiosk",
+        "interactive-display",
+        "touchscreen",
+        "wayfinding",
+        "lobby-display",
+        "menu-board",
+        "point-of-sale-display"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal"
+      ],
+      "structure_id": null,
+      "color_mood": "High contrast + brand accent + touch target emphasis",
+      "typography_mood": "Large + Immediate typography",
+      "key_effects": "Auto-rotate transitions + large touch feedback",
+      "avoid": [
+        "Tiny tap targets",
+        "scroll-heavy layout",
+        "flashy motion"
+      ],
+      "considerations": "Full-screen single-purpose layout. Touch targets ≥56px. Auto-rotate content. Offline fallback. Brightness-aware color palette. No scroll."
+    },
+    {
+      "id": "e-signature-document-workflow",
+      "name": "E-signature / Document Workflow",
+      "keywords": [
+        "esignature",
+        "e-sign",
+        "docusign",
+        "digital-signature",
+        "document-workflow",
+        "approval-chain",
+        "contract-signing",
+        "signing-ceremony"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "flat-design"
+      ],
+      "structure_id": "enterprise-gateway",
+      "color_mood": "Trust navy + signature green + pending amber + neutral grey",
+      "typography_mood": "Professional + Document-readable typography",
+      "key_effects": "Signature placement highlights + audit trail states",
+      "avoid": [
+        "Confusing signing flow",
+        "weak audit trail",
+        "hidden consent"
+      ],
+      "considerations": "Document preview with annotation. Signature placement UI. Multi-signer workflow. Audit trail. Compliance badges. Mobile signing. Expiry reminders."
+    },
+    {
+      "id": "feature-flag-config-management",
+      "name": "Feature Flag / Config Management",
+      "keywords": [
+        "feature-flag",
+        "config",
+        "launchdarkly",
+        "feature-toggle",
+        "experiment",
+        "rollout",
+        "kill-switch",
+        "a-b-test-config",
+        "percentage-rollout"
+      ],
+      "style_ids": [
+        "data-dense-dashboard",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Dark bg + enabled green + disabled grey + experimental amber + kill-switch red",
+      "typography_mood": "Functional + Technical typography",
+      "key_effects": "Toggle state transitions + rollout sliders",
+      "avoid": [
+        "Decorative visuals",
+        "ambiguous toggle states",
+        "slow performance"
+      ],
+      "considerations": "Feature list with on/off toggles. Percentage rollout slider. Environment selector (prod/staging). User targeting rules. Kill switch. Audit log."
+    },
+    {
+      "id": "government-portal-civic-services",
+      "name": "Government Portal / Civic Services",
+      "keywords": [
+        "government-portal",
+        "civic-services",
+        "city-hall",
+        "permit-application",
+        "tax-payment",
+        "voter-registration",
+        "public-records",
+        "municipal-online"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "flat-design"
+      ],
+      "structure_id": "enterprise-gateway",
+      "color_mood": "Professional blue + accessibility high contrast + service category colors",
+      "typography_mood": "Clear + Large typography",
+      "key_effects": "Skip-link focus states + save-progress forms",
+      "avoid": [
+        "Ornate design",
+        "low contrast",
+        "motion effects",
+        "AI purple/pink gradients"
+      ],
+      "considerations": "Multilingual toggle. Service A-Z index. Form wizard with save-progress. Document upload. Appointment booking. Status tracker. WCAG AAA. Plain language."
+    },
+    {
+      "id": "grant-funding-portal",
+      "name": "Grant / Funding Portal",
+      "keywords": [
+        "grant",
+        "funding",
+        "rfp",
+        "proposal",
+        "research-grant",
+        "foundation",
+        "fellowship",
+        "award",
+        "application-portal",
+        "funding-opportunity"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "swiss-modernism-2-0",
+        "minimal"
+      ],
+      "structure_id": "marketplace-directory",
+      "color_mood": "Institution navy + funding green + deadline red + neutral white",
+      "typography_mood": "Formal + Clear typography",
+      "key_effects": "Deadline countdown + status tracking",
+      "avoid": [
+        "No deadlines",
+        "no eligibility clarity",
+        "buried docs"
+      ],
+      "considerations": "Funding opportunity cards. Eligibility checker. Deadline countdown. Application form wizard. Document checklist. Review status tracker. Award announcement feed."
+    },
+    {
+      "id": "lms-learning-management-system",
+      "name": "LMS (Learning Management System)",
+      "keywords": [
+        "lms",
+        "course-management",
+        "learning-management",
+        "canvas",
+        "moodle",
+        "blackboard",
+        "enrollment",
+        "gradebook",
+        "syllabus",
+        "assignment-submit"
+      ],
+      "style_ids": [
+        "flat-design",
+        "accessible-and-ethical",
+        "minimal",
+        "vibrant-and-block-based"
+      ],
+      "structure_id": "feature-rich-showcase",
+      "color_mood": "Calm blue + course category colors + grade green + alert red",
+      "typography_mood": "Readable + Instructional typography",
+      "key_effects": "Course progress + calendar reminders",
+      "avoid": [
+        "Hidden assignments",
+        "poor mobile",
+        "cluttered navigation"
+      ],
+      "considerations": "Dashboard with enrolled courses. Assignment deadlines. Gradebook view. Discussion forums. File upload. Calendar integration. Mobile offline sync."
+    },
+    {
+      "id": "no-code-low-code-builder",
+      "name": "No-code / Low-code Builder",
+      "keywords": [
+        "no-code",
+        "low-code",
+        "builder",
+        "bubble",
+        "webflow",
+        "drag-drop",
+        "visual-builder",
+        "app-builder",
+        "workflow-builder",
+        "logic-blocks"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "bento-box-grid",
+        "glassmorphism"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Brand primary + component palette colors + canvas neutral + connect blue",
+      "typography_mood": "Functional + UI-focused typography",
+      "key_effects": "Drag-drop canvas + live preview sync",
+      "avoid": [
+        "No live preview",
+        "hidden logic",
+        "sluggish canvas"
+      ],
+      "considerations": "Drag-drop canvas. Component library sidebar. Logic flow visual editor. Preview pane. Template gallery. Publish button. Version history."
+    },
+    {
+      "id": "open-source-project-landing",
+      "name": "Open Source Project Landing",
+      "keywords": [
+        "open-source",
+        "github-project",
+        "oss",
+        "contributor",
+        "star",
+        "fork",
+        "pull-request",
+        "maintainer",
+        "sponsoring",
+        "readme",
+        "repository"
+      ],
+      "style_ids": [
+        "flat-design",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "hero-features-cta",
+      "color_mood": "Dark bg + language color bar + star gold + fork silver + sponsor purple",
+      "typography_mood": "Technical + Clear typography",
+      "key_effects": "Install-command copy + contributor stats",
+      "avoid": [
+        "No install command",
+        "weak contributor proof",
+        "marketing fluff"
+      ],
+      "considerations": "Star/fork count badges. Install command (copy-paste). Language breakdown bar. Top contributors grid. Sponsor CTA. Documentation link. Issue/pr status."
+    },
+    {
+      "id": "patient-portal-health-records",
+      "name": "Patient Portal / Health Records",
+      "keywords": [
+        "patient-portal",
+        "health-records",
+        "ehr",
+        "emr",
+        "mychart",
+        "lab-results",
+        "prescription-refill",
+        "medical-history",
+        "test-results",
+        "care-team"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "flat-design"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Clinical blue + health green + alert red + calm white + accessible contrast",
+      "typography_mood": "Professional + Readable typography",
+      "key_effects": "Labs timeline + message status states",
+      "avoid": [
+        "Confusing booking",
+        "low contrast",
+        "missing lab hierarchy"
+      ],
+      "considerations": "Labs and results timeline. Medication list with refill. Appointment scheduling. Message care team. Immunization records. Allergy alerts. Family access proxy."
+    },
+    {
+      "id": "patent-ip-database",
+      "name": "Patent / IP Database",
+      "keywords": [
+        "patent",
+        "intellectual-property",
+        "trademark",
+        "prior-art",
+        "uspto",
+        "wipo",
+        "invention",
+        "ip-portfolio",
+        "patent-search",
+        "claims"
+      ],
+      "style_ids": [
+        "swiss-modernism-2-0",
+        "data-dense-dashboard",
+        "minimal",
+        "editorial"
+      ],
+      "structure_id": "marketplace-directory",
+      "color_mood": "Formal neutral + patent type chips + status badges",
+      "typography_mood": "Formal + Search-friendly typography",
+      "key_effects": "Full-text search highlight + citation graph",
+      "avoid": [
+        "No search",
+        "no citation graph",
+        "visual clutter"
+      ],
+      "considerations": "Full-text patent search. Classification tree. Citation graph. Prior art comparison. Patent family view. PDF download. Legal status tracker."
+    },
+    {
+      "id": "q-a-community-platform",
+      "name": "Q&A Community Platform",
+      "keywords": [
+        "qa",
+        "stack-overflow",
+        "question-answer",
+        "knowledge-sharing",
+        "community-qa",
+        "expert-answer",
+        "upvote",
+        "accepted-answer",
+        "reputation"
+      ],
+      "style_ids": [
+        "minimal",
+        "flat-design",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "community-forum-landing",
+      "color_mood": "Clean white + upvote orange + accepted green + reputation gold + tag colors",
+      "typography_mood": "Readable + Code-friendly typography",
+      "key_effects": "Vote count emphasis + code-block highlighting",
+      "avoid": [
+        "No code support",
+        "poor vote clarity",
+        "hidden accepted answer"
+      ],
+      "considerations": "Question list with vote count. Rich code blocks. Tag filter. Reputation system. Accepted answer highlight. Comment threads. Bookmark/save."
+    },
+    {
+      "id": "research-lab-university-department",
+      "name": "Research Lab / University Department",
+      "keywords": [
+        "research-lab",
+        "university-department",
+        "academic-lab",
+        "principal-investigator",
+        "lab-members",
+        "publications",
+        "research-group",
+        "pi-page"
+      ],
+      "style_ids": [
+        "swiss-modernism-2-0",
+        "editorial",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "portfolio-grid",
+      "color_mood": "Institutional navy + white + research-area accents + serif headings",
+      "typography_mood": "Academic + Clear typography",
+      "key_effects": "Publication cards + people grid",
+      "avoid": [
+        "Low hierarchy",
+        "no publication filtering",
+        "cluttered visuals"
+      ],
+      "considerations": "PI bio and research focus. Current members grid. Publication list with links. Open positions. Lab facilities photos. Funding acknowledgments."
+    },
+    {
+      "id": "resume-cv-builder",
+      "name": "Resume / CV Builder",
+      "keywords": [
+        "resume",
+        "cv",
+        "builder",
+        "job-search",
+        "curriculum-vitae",
+        "portfolio-resume",
+        "cover-letter",
+        "career-builder",
+        "ats-friendly"
+      ],
+      "style_ids": [
+        "minimal",
+        "accessible-and-ethical",
+        "flat-design",
+        "swiss-modernism-2-0"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Professional navy + section accent + success green + clean white",
+      "typography_mood": "Professional + Resume-friendly typography",
+      "key_effects": "Real-time preview + ATS score indicator",
+      "avoid": [
+        "No live preview",
+        "weak ATS signals",
+        "decorative clutter"
+      ],
+      "considerations": "Template picker. Section-by-section editor. Real-time preview. ATS score indicator. PDF export. Cover letter generator. Import from LinkedIn."
+    },
+    {
+      "id": "review-platform",
+      "name": "Review Platform",
+      "keywords": [
+        "review",
+        "rating",
+        "yelp",
+        "trustpilot",
+        "testimonial",
+        "customer-review",
+        "star-rating",
+        "verified-purchase",
+        "pros-cons"
+      ],
+      "style_ids": [
+        "bento-box-grid",
+        "vibrant-and-block-based",
+        "flat-design",
+        "accessible-and-ethical",
+        "minimal"
+      ],
+      "structure_id": "product-review-ratings-focused",
+      "color_mood": "Brand primary + star gold + positive green + negative red + verified blue",
+      "typography_mood": "Readable + Review-first typography",
+      "key_effects": "Rating distribution + verified badge emphasis",
+      "avoid": [
+        "No verified badges",
+        "text-heavy pages",
+        "hidden filter controls"
+      ],
+      "considerations": "Star rating summary with distribution. Verified purchase badge. Photo/video reviews. Helpful/upvote. Filter by rating. Response from business. Sort by recency."
+    },
+    {
+      "id": "rpa-automation-dashboard",
+      "name": "RPA / Automation Dashboard",
+      "keywords": [
+        "rpa",
+        "robotic-process-automation",
+        "uipath",
+        "automation-anywhere",
+        "bot-orchestrator",
+        "process-discovery",
+        "attended-bot",
+        "unattended-bot"
+      ],
+      "style_ids": [
+        "data-dense-dashboard",
+        "minimal",
+        "accessible-and-ethical"
+      ],
+      "structure_id": "real-time-operations-landing",
+      "color_mood": "Dark bg + running green + failed red + queued amber + completed blue",
+      "typography_mood": "Functional + Operational typography",
+      "key_effects": "Status matrix + alert transitions",
+      "avoid": [
+        "Slow dashboards",
+        "decorative charts",
+        "hidden error states"
+      ],
+      "considerations": "Bot status grid (running/idle/failed). Queue depth. Process flow visualization. Exception handling alert. ROI metrics. Bot scheduling calendar. Audit trail."
+    },
+    {
+      "id": "survey-form-builder",
+      "name": "Survey / Form Builder",
+      "keywords": [
+        "survey",
+        "form-builder",
+        "questionnaire",
+        "typeform",
+        "survey-monkey",
+        "poll",
+        "feedback-form",
+        "multi-step-form",
+        "nps-survey",
+        "logic-jump"
+      ],
+      "style_ids": [
+        "minimal",
+        "claymorphism",
+        "flat-design"
+      ],
+      "structure_id": "product-demo-features",
+      "color_mood": "Clean white + question accent + progress green + submit blue",
+      "typography_mood": "Clear + Form-first typography",
+      "key_effects": "Conditional-logic flow + progress animation",
+      "avoid": [
+        "Static forms",
+        "hidden conditional logic",
+        "weak progress cues"
+      ],
+      "considerations": "Drag-drop form builder. Question type library. Conditional logic visualizer. Theme picker. Response dashboard with charts. Export CSV. Share link/QR/embed."
+    },
+    {
+      "id": "telemedicine-platform",
+      "name": "Telemedicine Platform",
+      "keywords": [
+        "telemedicine",
+        "telehealth",
+        "virtual-visit",
+        "remote-consultation",
+        "video-doctor",
+        "remote-patient-monitoring",
+        "telehealth-app"
+      ],
+      "style_ids": [
+        "accessible-and-ethical",
+        "minimal",
+        "soft-ui-evolution"
+      ],
+      "structure_id": "trust-authority-conversion",
+      "color_mood": "Calm medical blue + video green + waiting amber + trust white",
+      "typography_mood": "Professional + Calm typography",
+      "key_effects": "Video-call state transitions + waiting-room ETA",
+      "avoid": [
+        "Low trust cues",
+        "confusing waiting state",
+        "tiny controls"
+      ],
+      "considerations": "Video call UI with screen share. Appointment queue. Symptom intake form. Prescription e-delivery. Waiting room with ETA. Post-visit summary. Insurance verification."
+    },
+    {
+      "id": "testimonial-social-proof-widget",
+      "name": "Testimonial & Social Proof Widget",
+      "keywords": [
+        "testimonial",
+        "social-proof",
+        "wall-of-love",
+        "customer-quote",
+        "case-study",
+        "review-widget",
+        "trust-signal",
+        "user-story"
+      ],
+      "style_ids": [
+        "bento-box-grid",
+        "vibrant-and-block-based",
+        "flat-design",
+        "minimal"
+      ],
+      "structure_id": "hero-testimonials-cta",
+      "color_mood": "Brand primary + quote accent + star gold + verified blue",
+      "typography_mood": "Readable + Social-proof typography",
+      "key_effects": "Card carousel + photo/video cards",
+      "avoid": [
+        "No evidence badges",
+        "static layout",
+        "tiny media"
+      ],
+      "considerations": "Testimonial cards with photo. Star ratings. Video testimonials. Case study summaries. Filter by industry/product. Embeddable widget code. Auto-rotate carousel."
+    },
+    {
+      "id": "ticketing-box-office",
+      "name": "Ticketing / Box Office",
+      "keywords": [
+        "ticketing",
+        "box-office",
+        "eventbrite",
+        "ticket-sales",
+        "seat-selection",
+        "will-call",
+        "qr-ticket",
+        "venue-capacity",
+        "will-call-pickup"
+      ],
+      "style_ids": [
+        "vibrant-and-block-based",
+        "glassmorphism"
+      ],
+      "structure_id": "event-conference-landing",
+      "color_mood": "Event theme colors + available green + sold-out red + seat map neutral",
+      "typography_mood": "Bold + Event typography",
+      "key_effects": "Seat-map hover states + countdown urgency",
+      "avoid": [
+        "No seat-map feedback",
+        "hidden fees",
+        "weak mobile"
+      ],
+      "considerations": "Event cards with date/venue. Interactive seat map. Cart with countdown. QR code ticket. Will-call pickup. Group discounts. Refund policy."
+    }
+  ]
+}

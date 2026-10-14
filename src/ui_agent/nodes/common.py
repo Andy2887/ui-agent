@@ -14,7 +14,7 @@ from .. import settings
 
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
 # The visual half of a DirectionBrief; the rest (concept, sections, layout) is the UX bet.
-MOOD_FIELDS = ("reference_style", "mood", "theme", "heading_font", "body_font", "palette", "density", "shape",
+MOOD_FIELDS = ("style_id", "reference_style", "mood", "theme", "heading_font", "body_font", "palette", "density", "shape",
                "motion", "imagery", "signature_element")
 
 

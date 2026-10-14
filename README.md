@@ -2,6 +2,57 @@
 
 You brief it like a PM briefs a UI/UX designer: the problem and the users, never the colors, fonts or layout. The designer agent may ask a few kickoff questions, then sketches N low-fidelity directions (default 3), each a different bet on solving the problem with a proposed visual mood. You pick one; it is designed in full, then a reviewer/executor loop refines it against a rubric, and you get a handoff package (`index.html`, `tokens.json`, `HANDOFF.md`, screenshots, PDF) for a coding agent. See `plan.md` for the full design.
 
+## How the agents work together
+
+Each LLM role is its own agent with its own prompt and model (set in `config.yaml`). They share one LangGraph state and never call each other directly; the graph passes the state from one to the next. Rounded boxes are LLM agents, square boxes run code only, and hexagons pause the run for the PM.
+
+```mermaid
+flowchart TD
+    brief([PM brief]) --> intake
+
+    intake("<b>Intake</b><br/>Haiku · reads the brief,<br/>drafts kickoff questions")
+    kickoff{{"<b>Kickoff</b><br/>PM answers questions"}}
+    memory["load_memory<br/>taste + lessons from the Store"]
+    planner("<b>Planner</b><br/>Haiku · plans N distinct directions")
+    sketcher("<b>Sketcher</b> ×N, in parallel<br/>Haiku · low-fi sketch per direction")
+    gallery{{"<b>Gallery</b><br/>PM picks a sketch (+ optional mood)"}}
+    generator("<b>Generator</b><br/>Sonnet · designs the pick in full (v1)")
+    stylelock("<b>Style lock</b><br/>Haiku · records the direction's character")
+    approval{{"<b>Final approval</b><br/>PM approves or requests changes"}}
+    handoff("<b>Handoff</b><br/>Haiku · HANDOFF.md, tokens.json")
+    export["export + update_memory<br/>screenshots, PDF, zip; save lessons"]
+
+    intake --> kickoff
+    kickoff -- answers given --> intake
+    kickoff -- no questions / skipped --> memory
+    memory --> planner
+    planner -- "Send fan-out" --> sketcher
+    sketcher --> gallery
+    gallery -- regenerate with feedback --> planner
+    gallery -- pick --> generator
+    generator --> stylelock
+    subgraph refine ["Refine loop (refine_graph.py)"]
+        direction TB
+        render["render<br/>Playwright, 3 viewports"]
+        audit["audit<br/>Layer A checks"]
+        reviewer("<b>Reviewer</b><br/>Sonnet · scores Layer B,<br/>lists top issues")
+        gate["gate<br/>pass / continue / revert /<br/>plateau / budget"]
+        executor("<b>Executor</b><br/>Haiku · str_replace edits<br/>in the sandbox")
+        render --> audit --> reviewer --> gate
+        gate -- continue / revert --> executor
+        executor --> render
+    end
+
+    stylelock --> render
+    gate -- "done (best version)" --> approval
+    approval -- request changes --> executor
+    approval -- approve --> handoff
+    handoff --> export
+    export --> done([handoff.zip])
+```
+
+The fan-out runs at most `max_parallel_generations` sketchers at once. The gate always carries forward the best-scoring version, so a revert or a stop never loses ground. Change requests from final approval enter the refine loop at the executor, then go through review again.
+
 ## Why not just use Claude Design?
 
 Claude Design turns a prompt into a design. This project adds two things it doesn't do:
@@ -36,7 +87,7 @@ cd frontend && npm install && npm run dev   # http://localhost:3000
 ```bash
 .venv/bin/python scripts/audit.py page.html                       # Layer-A report for one file
 .venv/bin/python scripts/refine.py page.html --problem "…" --audience "…"   # refine loop only
-.venv/bin/python -m pytest -q                                     # 31 tests: presets CI, M0 checks, units, full mock pipeline
+.venv/bin/python -m pytest -q                                     # 37 tests: presets CI, M0 checks, units, full mock pipeline
 .venv/bin/python scripts/eval.py run --label <name>               # full pipeline on the 5 fixed briefs in evals/briefs.yaml (~$0.50 each)
 .venv/bin/python scripts/eval.py compare evals/results/<a> evals/results/<b>
 .venv/bin/python scripts/replay_executor.py --label <name> runs/<id> …   # executor only, on recorded refine rounds (cents)
@@ -45,13 +96,15 @@ cd frontend && npm install && npm run dev   # http://localhost:3000
 ## Layout
 
 ```
-presets/            the designer's library: styles, layouts, colors (OKLCH ranges + AA-validated examples), typography, options
+presets/            the designer's library: styles (with build recipes), layouts, page structures, industries, colors (OKLCH ranges
+                    + AA-validated examples), typography, options; much of it adapted from ui-ux-pro-max (THIRD_PARTY.md)
 config.yaml         role → model/effort, thresholds, viewports, budget
 rubric/rubric.yaml  Layer A gates + Layer B anchored criteria and weights
 prompts/            intake, planner, sketcher (+ sketch_contract, sketch_kit.css), generator, html_contract, style_lock, reviewer, executor, handoff
 src/ui_agent/
   graph.py          top-level graph (plan §3.1)        refine_graph.py  refine-loop subgraph
   llm.py            the one Claude wrapper             mock.py          offline stand-ins
+  library.py        industry priors + a per-run sample of the presets for the planner
   nodes/            intake (+ kickoff), planner, sketch, gallery, generator (design), style_lock, reviewer, gate, executor, final_approval, handoff
   tools/            browser.py (Playwright, tiles, DOM facts), checks/ (A1–A8), text_editor.py (sandbox)
   memory/store.py   taste / lessons / runs on the LangGraph Store (SQLite)
@@ -64,7 +117,7 @@ runs/<id>/          sketches/, refine/ (vN.html, shots, review JSON), output/ (h
 
 Implemented as planned:
 - The whole graph: `Send` fan-out with a parallelism cap, all three interrupts (kickoff questions, sketch pick, final approval), SQLite checkpointer (runs resume after a page reload), and SQLite Store memory.
-- Code-enforced direction diversity (concept, layout, type, palette, density, style, section order, theme) and contrast repair. The gate does pass, revert-to-best, plateau, max iterations and budget, and always outputs the best version.
+- Code-enforced direction diversity (concept, layout, type, palette, density, style, section order, theme, variance; no font family, library style or page structure shared between directions) and contrast repair. The planner sees industry priors for the brief and a fresh sample of the library each run, and the slots (taste, neutral, bold, wildcard) never put two safe directions side by side. The gate does pass, revert-to-best, plateau, max iterations and budget, and always outputs the best version.
 - The Claude call shape from §10: structured outputs, adaptive thinking with per-role effort, streaming, a cached system prefix, `fallbacks: "default"`, refusal and max-token handling, and per-node usage and cost tracking.
 - The Brief screen (problem, users, optional name, goal and context), kickoff questions with one-click suggested answers, and sketch cards that show each direction's concept, trade-off and a style tile (a hero sample, a card and the palette in the direction's fonts and colors). When picking, the PM can pair a sketch with another direction's look.
 

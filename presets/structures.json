@@ -1,0 +1,525 @@
+{
+  "version": 1,
+  "source": {
+    "name": "ui-ux-pro-max",
+    "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "commit": "7246805",
+    "license": "MIT, see presets/THIRD_PARTY.md"
+  },
+  "structures": [
+    {
+      "id": "hero-features-cta",
+      "name": "Hero + Features + CTA",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero with headline/image",
+        "Value prop",
+        "Key features (3-5)",
+        "CTA section",
+        "Footer"
+      ],
+      "cta_placement": "Hero (sticky) + Bottom",
+      "color_strategy": "Hero: Brand primary or vibrant. Features: Card bg #FAFAFA. CTA: Contrasting accent color",
+      "notes": "Deep CTA placement. For CTA label text, verify at least 4.5:1 against the button fill; use 7:1 only when the product explicitly targets AAA normal-text contrast.",
+      "source": "ui-ux-pro-max:hero-features-cta"
+    },
+    {
+      "id": "hero-testimonials-cta",
+      "name": "Hero + Testimonials + CTA",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero",
+        "Problem statement",
+        "Solution overview",
+        "Testimonials carousel",
+        "CTA"
+      ],
+      "cta_placement": "Hero (sticky) + Post-testimonials",
+      "color_strategy": "Hero: Brand color. Testimonials: Light bg #F5F5F5. Quotes: Italic, muted color #666. CTA: Vibrant",
+      "notes": "Social proof before CTA. Use a concise set of verified testimonials with photo, name, and role.",
+      "source": "ui-ux-pro-max:hero-testimonials-cta"
+    },
+    {
+      "id": "product-demo-features",
+      "name": "Product Demo + Features",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero",
+        "Product video/mockup (center)",
+        "Feature breakdown per section",
+        "Comparison (optional)",
+        "CTA"
+      ],
+      "cta_placement": "Video center + CTA right/bottom",
+      "color_strategy": "Video surround: Brand color overlay. Features: Icon color #0080FF. Text: Dark #222",
+      "notes": "Use an interactive demo only when it explains value better than static media. Provide captions, transcript, visible play/pause controls, and a non-video fallback; do not autoplay under reduced motion.",
+      "source": "ui-ux-pro-max:product-demo-features"
+    },
+    {
+      "id": "minimal-single-column",
+      "name": "Minimal Single Column",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero headline",
+        "Short description",
+        "Benefit bullets (3 max)",
+        "CTA",
+        "Footer"
+      ],
+      "cta_placement": "Center, large CTA button",
+      "color_strategy": "Minimalist: Brand + white #FFFFFF + accent. Verify CTA label text against its button fill at 4.5:1 minimum; use 7:1 only for an explicit AAA normal-text target.",
+      "notes": "Single CTA focus. Large typography.",
+      "source": "ui-ux-pro-max:minimal-single-column"
+    },
+    {
+      "id": "funnel-3-step-conversion",
+      "name": "Funnel (3-Step Conversion)",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero",
+        "Step 1 (problem)",
+        "Step 2 (solution)",
+        "Step 3 (action)",
+        "CTA progression"
+      ],
+      "cta_placement": "Each step: mini-CTA. Final: main CTA",
+      "color_strategy": "Step colors: 1 (Red/Problem), 2 (Orange/Process), 3 (Green/Solution). CTA: Brand color",
+      "notes": "Progressive disclosure. Show only essential info per step.",
+      "source": "ui-ux-pro-max:funnel-3-step-conversion"
+    },
+    {
+      "id": "comparison-table-cta",
+      "name": "Comparison Table + CTA",
+      "page_types": [
+        "landing",
+        "pricing"
+      ],
+      "sections": [
+        "Hero",
+        "Problem intro",
+        "Comparison table (product vs competitors)",
+        "Pricing (optional)",
+        "CTA"
+      ],
+      "cta_placement": "Table: Right column. CTA: Below table",
+      "color_strategy": "Table: Alternating rows (white/light grey). Your product: Highlight #FFFACD (light yellow) or green. Text: Dark",
+      "notes": "Use comparison to show unique value. Highlight your product row.",
+      "source": "ui-ux-pro-max:comparison-table-cta"
+    },
+    {
+      "id": "lead-magnet-form",
+      "name": "Lead Magnet + Form",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (benefit headline)",
+        "Lead magnet preview (ebook cover, checklist, etc)",
+        "Form (minimal fields)",
+        "CTA submit"
+      ],
+      "cta_placement": "Form CTA: Submit button",
+      "color_strategy": "Lead magnet: Professional design. Form: Clean white bg. Inputs: Light border #CCCCCC. CTA: Brand color",
+      "notes": "Ask only for information necessary to deliver the lead magnet. Preview its value and show submission progress.",
+      "source": "ui-ux-pro-max:lead-magnet-form"
+    },
+    {
+      "id": "pricing-page-cta",
+      "name": "Pricing Page + CTA",
+      "page_types": [
+        "pricing",
+        "landing"
+      ],
+      "sections": [
+        "Hero (pricing headline)",
+        "Price comparison cards",
+        "Feature comparison table",
+        "FAQ section",
+        "Final CTA"
+      ],
+      "cta_placement": "Each card: CTA button. Sticky CTA in nav",
+      "color_strategy": "Free: Grey, Starter: Blue, Pro: Green/Gold, Enterprise: Dark. Cards: 1px border, shadow",
+      "notes": "Highlight the plan that matches the intended audience and show actual annual savings transparently. Use FAQs to address concerns.",
+      "source": "ui-ux-pro-max:pricing-page-cta"
+    },
+    {
+      "id": "video-first-hero",
+      "name": "Video-First Hero",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero with video background",
+        "Key features overlay",
+        "Benefits section",
+        "CTA"
+      ],
+      "cta_placement": "Overlay on video (center/bottom) + Bottom section",
+      "color_strategy": "Use an overlay strong enough for text contrast. Brand accent for CTA. Light text only when the measured contrast passes.",
+      "notes": "Use video only when it demonstrates value better than static media. Add captions for accessibility.",
+      "source": "ui-ux-pro-max:video-first-hero"
+    },
+    {
+      "id": "scroll-triggered-storytelling",
+      "name": "Scroll-Triggered Storytelling",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Intro hook",
+        "Chapter 1 (problem)",
+        "Chapter 2 (journey)",
+        "Chapter 3 (solution)",
+        "Climax CTA"
+      ],
+      "cta_placement": "End of each chapter (mini) + Final climax CTA",
+      "color_strategy": "Progressive reveal. Each chapter has distinct color. Building intensity.",
+      "notes": "Keep the narrative understandable without scroll-driven effects. Use progress indicator.",
+      "source": "ui-ux-pro-max:scroll-triggered-storytelling"
+    },
+    {
+      "id": "waitlist-coming-soon",
+      "name": "Waitlist/Coming Soon",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero with countdown",
+        "Product teaser/preview",
+        "Email capture form",
+        "Social proof (waitlist count)"
+      ],
+      "cta_placement": "Email form prominent (above fold) + Sticky form on scroll",
+      "color_strategy": "Anticipation: Dark + accent highlights. Countdown in brand color. Urgency indicators.",
+      "notes": "Explain early-access benefits without fabricated scarcity. Show a waitlist count only when it is current, verified, and dated.",
+      "source": "ui-ux-pro-max:waitlist-coming-soon"
+    },
+    {
+      "id": "comparison-table-focus",
+      "name": "Comparison Table Focus",
+      "page_types": [
+        "landing",
+        "pricing"
+      ],
+      "sections": [
+        "Hero (problem statement)",
+        "Comparison matrix (you vs competitors)",
+        "Feature deep-dive",
+        "Winner CTA"
+      ],
+      "cta_placement": "After comparison table (highlighted row) + Bottom",
+      "color_strategy": "Your product column highlighted (accent bg or green). Competitors neutral. Checkmarks green.",
+      "notes": "Show value vs competitors. Measure comparison performance with product-specific analytics.",
+      "source": "ui-ux-pro-max:comparison-table-focus"
+    },
+    {
+      "id": "pricing-focused-landing",
+      "name": "Pricing-Focused Landing",
+      "page_types": [
+        "pricing",
+        "landing"
+      ],
+      "sections": [
+        "Hero (value proposition)",
+        "Pricing cards (3 tiers)",
+        "Feature comparison",
+        "FAQ",
+        "Final CTA"
+      ],
+      "cta_placement": "Each pricing card + Sticky CTA in nav + Bottom",
+      "color_strategy": "Popular plan highlighted (brand color border/bg). Free: grey. Enterprise: dark/premium.",
+      "notes": "Show actual monthly and annual totals and savings transparently. Explain plan differences and address objections in the FAQ.",
+      "source": "ui-ux-pro-max:pricing-focused-landing"
+    },
+    {
+      "id": "app-store-style-landing",
+      "name": "App Store Style Landing",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero with device mockup",
+        "Screenshots carousel",
+        "Features with icons",
+        "Reviews/ratings",
+        "Download CTAs"
+      ],
+      "cta_placement": "Download buttons prominent (App Store + Play Store) throughout",
+      "color_strategy": "Dark/light matching app store feel. Star ratings in gold. Screenshots with device frames.",
+      "notes": "Show real screenshots and only current verified ratings. Provide platform-specific CTAs, buttons and keyboard controls in addition to swipe, and pause any auto-rotation.",
+      "source": "ui-ux-pro-max:app-store-style-landing"
+    },
+    {
+      "id": "faq-documentation-landing",
+      "name": "FAQ/Documentation Landing",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero with search bar",
+        "Popular categories",
+        "FAQ accordion",
+        "Contact/support CTA"
+      ],
+      "cta_placement": "Search bar prominent + Contact CTA for unresolved questions",
+      "color_strategy": "Clean, high readability. Minimal color. Category icons in brand color. Success green for resolved.",
+      "notes": "Reduce support tickets. Track search analytics.",
+      "source": "ui-ux-pro-max:faq-documentation-landing"
+    },
+    {
+      "id": "event-conference-landing",
+      "name": "Event/Conference Landing",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (date/location/countdown)",
+        "Speakers grid",
+        "Agenda/schedule",
+        "Sponsors",
+        "Register CTA"
+      ],
+      "cta_placement": "Register CTA sticky + After speakers + Bottom",
+      "color_strategy": "Urgency colors (countdown). Event branding. Speaker cards professional. Sponsor logos neutral.",
+      "notes": "Early bird pricing with deadline. Social proof (past attendees).",
+      "source": "ui-ux-pro-max:event-conference-landing"
+    },
+    {
+      "id": "product-review-ratings-focused",
+      "name": "Product Review/Ratings Focused",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (product + aggregate rating)",
+        "Rating breakdown",
+        "Individual reviews",
+        "Buy/CTA"
+      ],
+      "cta_placement": "After reviews summary + Buy button alongside reviews",
+      "color_strategy": "Trust colors. Star ratings gold. Verified badge green. Review sentiment colors.",
+      "notes": "User-generated content builds trust. Show verified purchases.",
+      "source": "ui-ux-pro-max:product-review-ratings-focused"
+    },
+    {
+      "id": "community-forum-landing",
+      "name": "Community/Forum Landing",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (community value prop)",
+        "Popular topics/categories",
+        "Active members showcase",
+        "Join CTA"
+      ],
+      "cta_placement": "Join button prominent + After member showcase",
+      "color_strategy": "Warm, welcoming. Member photos add humanity. Topic badges in brand colors. Activity indicators green.",
+      "notes": "Preview real community value and simplify onboarding. Show member and activity counts only when current, verified, and dated; label activity as live only when backed by an active real-time source.",
+      "source": "ui-ux-pro-max:community-forum-landing"
+    },
+    {
+      "id": "before-after-transformation",
+      "name": "Before-After Transformation",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (problem state)",
+        "Transformation slider/comparison",
+        "How it works",
+        "Results CTA"
+      ],
+      "cta_placement": "After transformation reveal + Bottom",
+      "color_strategy": "Contrast: muted/grey (before) vs vibrant/colorful (after). Success green for results.",
+      "notes": "Visual proof of value. Measure the outcome with product-specific analytics.",
+      "source": "ui-ux-pro-max:before-after-transformation"
+    },
+    {
+      "id": "marketplace-directory",
+      "name": "Marketplace / Directory",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (Search focused)",
+        "Categories",
+        "Featured Listings",
+        "Trust/Safety",
+        "CTA (Become a host/seller)"
+      ],
+      "cta_placement": "Hero Search Bar + Navbar 'List your item'",
+      "color_strategy": "Search: High contrast. Categories: Visual icons. Trust: Blue/Green.",
+      "notes": "Search is the primary CTA. Reduce friction with useful suggestions.",
+      "source": "ui-ux-pro-max:marketplace-directory"
+    },
+    {
+      "id": "newsletter-content-first",
+      "name": "Newsletter / Content First",
+      "page_types": [
+        "landing",
+        "blog"
+      ],
+      "sections": [
+        "Hero (Value Prop + Form)",
+        "Recent Issues/Archives",
+        "Social Proof (Subscriber count)",
+        "About Author"
+      ],
+      "cta_placement": "Hero inline form + Sticky header form",
+      "color_strategy": "Minimalist. Paper-like background. Text focus. Accent color for Subscribe.",
+      "notes": "Keep the form to the fields actually required and link to a sample issue. Show a subscriber count only when it is current, verified, and dated; otherwise use qualitative social proof.",
+      "source": "ui-ux-pro-max:newsletter-content-first"
+    },
+    {
+      "id": "webinar-registration",
+      "name": "Webinar Registration",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (Topic + Timer + Form)",
+        "What you'll learn",
+        "Speaker Bio",
+        "Urgency/Bonuses",
+        "Form (again)"
+      ],
+      "cta_placement": "Hero (Right side form) + Bottom anchor",
+      "color_strategy": "Urgency: Red/Orange. Professional: Blue/Navy. Form: High contrast white.",
+      "notes": "State the event time and timezone in text. Claim limited seats or live status only when current capacity or stream state is verified and timestamped.",
+      "source": "ui-ux-pro-max:webinar-registration"
+    },
+    {
+      "id": "enterprise-gateway",
+      "name": "Enterprise Gateway",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (Video/Mission)",
+        "Solutions by Industry",
+        "Solutions by Role",
+        "Client Logos",
+        "Contact Sales"
+      ],
+      "cta_placement": "Contact Sales (Primary) + Login (Secondary)",
+      "color_strategy": "Corporate: Navy/Grey. High integrity. Conservative accents.",
+      "notes": "Path selection (I am a...). Mega menu navigation.",
+      "source": "ui-ux-pro-max:enterprise-gateway"
+    },
+    {
+      "id": "portfolio-grid",
+      "name": "Portfolio Grid",
+      "page_types": [
+        "portfolio"
+      ],
+      "sections": [
+        "Hero (Name/Role)",
+        "Project Grid (Masonry)",
+        "About/Philosophy",
+        "Contact"
+      ],
+      "cta_placement": "Project Card Hover + Footer Contact",
+      "color_strategy": "Neutral background (let work shine). Text: Black/White. Accent: Minimal.",
+      "notes": "Visuals first. Filter by category.",
+      "source": "ui-ux-pro-max:portfolio-grid"
+    },
+    {
+      "id": "bento-grid-showcase",
+      "name": "Bento Grid Showcase",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero",
+        "Bento Grid (Key Features)",
+        "Detail Cards",
+        "Tech Specs",
+        "CTA"
+      ],
+      "cta_placement": "Floating Action Button or Bottom of Grid",
+      "color_strategy": "Card backgrounds: #F5F5F7 or Glass. Icons: Vibrant brand colors. Text: Dark.",
+      "notes": "Scannable value props. High information density without clutter.",
+      "source": "ui-ux-pro-max:bento-grid-showcase"
+    },
+    {
+      "id": "feature-rich-showcase",
+      "name": "Feature-Rich Showcase",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (value prop)",
+        "Feature grid/cards (4-6)",
+        "Use cases or benefits",
+        "Social proof or logos",
+        "CTA"
+      ],
+      "cta_placement": "Hero (sticky) + After features + Bottom",
+      "color_strategy": "Brand primary + card bg #FAFAFA. Feature icons accent. CTA contrasting.",
+      "notes": "Clear feature hierarchy. One key message per card.",
+      "source": "ui-ux-pro-max:feature-rich-showcase"
+    },
+    {
+      "id": "hero-centric-design",
+      "name": "Hero-Centric Design",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Full-bleed Hero (headline + visual)",
+        "Single value prop strip",
+        "Key benefit or proof",
+        "Primary CTA"
+      ],
+      "cta_placement": "Hero dominant (center/bottom) + Sticky nav CTA",
+      "color_strategy": "Hero: High-impact visual. Minimal text. Verify CTA label text against the button fill at 4.5:1 minimum; use 7:1 only for an explicit AAA normal-text target.",
+      "notes": "One primary CTA. Let the hero dominate the initial viewport without hiding the next content cue.",
+      "source": "ui-ux-pro-max:hero-centric-design"
+    },
+    {
+      "id": "trust-authority-conversion",
+      "name": "Trust & Authority + Conversion",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (mission/credibility)",
+        "Proof (logos, certs, stats)",
+        "Solution overview",
+        "Clear CTA path"
+      ],
+      "cta_placement": "Contact Sales / Get Quote (primary) + Nav",
+      "color_strategy": "Navy/Grey corporate. Trust blue. Accent for CTA only.",
+      "notes": "Security badges. Case studies.",
+      "source": "ui-ux-pro-max:trust-authority-conversion"
+    },
+    {
+      "id": "real-time-operations-landing",
+      "name": "Real-Time / Operations Landing",
+      "page_types": [
+        "landing"
+      ],
+      "sections": [
+        "Hero (product + live preview or status)",
+        "Key metrics/indicators",
+        "How it works",
+        "CTA (Start trial / Contact)"
+      ],
+      "cta_placement": "Primary CTA in nav + After metrics",
+      "color_strategy": "Dark or neutral. Status colors (green/amber/red). Data-dense but scannable.",
+      "notes": "Offer a demo or sandbox and show trust signals. Label telemetry as live only when backed by a current source, with update time and stale state.",
+      "source": "ui-ux-pro-max:real-time-operations-landing"
+    }
+  ]
+}

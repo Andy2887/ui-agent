@@ -34,9 +34,25 @@ def test_every_layout_and_default_section_is_defined():
 
 def test_every_preset_is_described_for_the_planner():
     p = settings.presets()
-    assert all(s.get("guidance") for s in p["styles"]["styles"])
+    for s in p["styles"]["styles"]:
+        assert s.get("guidance") and s.get("best_for") and s.get("avoid_for"), s["id"]
+        assert s["recipe"]["css"] and s["recipe"]["checklist"], s["id"]
+    assert all(s["sections"] and s["page_types"] for s in p["structures"]["structures"])
     assert all(l.get("brief") for l in p["layouts"]["layouts"])
     assert all(d.get("hint") and len(d["examples"]) >= 2 for d in p["colors"]["directions"])
     assert all(t.get("heading") and t.get("body") for t in p["typography"]["pairings"])
     for group in ("density", "shapes", "motion", "imagery"):
         assert all(o.get("hint") for o in p["options"][group]), group
+
+
+def test_catalog_ids_are_unique_and_cross_references_resolve():
+    p = settings.presets()
+    for name, key in (("styles", "styles"), ("typography", "pairings"), ("structures", "structures"),
+                      ("industries", "industries")):
+        ids = [x["id"] for x in p[name][key]]
+        assert len(ids) == len(set(ids)), name
+    page_types = {pt["id"] for pt in p["layouts"]["page_types"]}
+    assert all(set(s["page_types"]) <= page_types for s in p["structures"]["structures"])
+    for i in p["industries"]["industries"]:
+        assert all(settings.style(sid) for sid in i["style_ids"]), i["id"]
+        assert i["structure_id"] is None or settings.structure(i["structure_id"]), i["id"]

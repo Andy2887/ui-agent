@@ -9,6 +9,7 @@ from langgraph.types import Send
 
 from .. import mock, settings
 from ..color import check_palette, repair_palette
+from ..library import design_library, industry_priors
 from ..llm import LLMError, get_llm, over_budget
 from ..state import AgentState, DirectionBrief, Palette, PlanResult, usage_reducer as add_usage
 from .common import emit
@@ -18,28 +19,20 @@ MIN_DIFFERING_AXES = 3
 
 
 def slots_for(n: int, has_taste: bool) -> list[str]:
-    """Composition rule (§4.4)."""
+    """Composition rule (§4.4). After the first neutral, the middle slots alternate bold and neutral, so a
+    run never offers two safe answers side by side."""
     if n == 1:
         return ["taste" if has_taste else "neutral"]
     if n == 2:
-        return ["taste" if has_taste else "neutral", "neutral"]
+        return ["taste", "neutral"] if has_taste else ["neutral", "bold"]
     taste = max(1, round(0.4 * n)) if has_taste else 0
     taste = min(taste, n - 1)
-    neutral = n - taste - 1
-    return ["taste"] * taste + ["neutral"] * neutral + ["wildcard"]
+    middle = ["neutral" if i % 2 == 0 else "bold" for i in range(n - taste - 1)]
+    return ["taste"] * taste + middle + ["wildcard"]
 
 
-def design_library(page_type: str) -> dict:
-    """The designer's reference library: vocabulary and starting points, never constraints."""
-    p = settings.presets()
-    return {
-        "layouts_for_page_type": [{"id": l["id"], "name": l["name"], "brief": l["brief"]}
-                                  for l in p["layouts"]["layouts"] if l["page_type"] == page_type],
-        "reference_styles": [{"id": s["id"], "name": s["name"], "guidance": s["guidance"]} for s in p["styles"]["styles"]],
-        "color_directions": [{"id": d["id"], "name": d["name"], "hint": d["hint"]} for d in p["colors"]["directions"]],
-        "type_pairings": [{"name": t["name"], "heading": t["heading"]["family"], "body": t["body"]["family"], "hint": t["hint"]}
-                          for t in p["typography"]["pairings"]],
-    }
+def _fonts(b: DirectionBrief) -> set[str]:
+    return {b.heading_font.strip().lower(), b.body_font.strip().lower()}
 
 
 def diversity_problems(briefs: list[DirectionBrief]) -> list[str]:
@@ -53,6 +46,7 @@ def diversity_problems(briefs: list[DirectionBrief]) -> list[str]:
                 a.layout_archetype != b.layout_archetype, (a.heading_font, a.body_font) != (b.heading_font, b.body_font),
                 a.palette.primary.lower() != b.palette.primary.lower(), a.density != b.density,
                 a.reference_style != b.reference_style, a.sections != b.sections, a.theme != b.theme,
+                a.variance != b.variance,
             ])
             if differing < MIN_DIFFERING_AXES:
                 problems.append(f"Briefs {a.id} and {b.id} differ on only {differing} axes (need {MIN_DIFFERING_AXES}).")
@@ -60,6 +54,17 @@ def diversity_problems(briefs: list[DirectionBrief]) -> list[str]:
                 problems.append(f"Briefs {a.id} and {b.id} have the same signature element.")
             if a.concept.strip().lower() == b.concept.strip().lower():
                 problems.append(f"Briefs {a.id} and {b.id} have the same concept.")
+            if shared := _fonts(a) & _fonts(b):
+                problems.append(f"Briefs {a.id} and {b.id} both use {', '.join(sorted(shared))}; every direction needs its own fonts.")
+            if a.style_id and a.style_id == b.style_id:
+                problems.append(f"Briefs {a.id} and {b.id} use the same library style ({a.style_id}).")
+            if a.structure_id and a.structure_id == b.structure_id:
+                problems.append(f"Briefs {a.id} and {b.id} use the same page structure ({a.structure_id}).")
+    need = min(len(briefs), 3)
+    levels = sorted({b.variance for b in briefs})
+    if len(levels) < need:
+        problems.append(f"The directions use variance {', '.join(levels)}; {need} directions need {need} different "
+                        "levels (low, mid, high).")
     return problems
 
 
@@ -81,6 +86,12 @@ async def plan_directions(state: AgentState) -> dict:
     if over_budget(state.get("usage")):
         raise LLMError("Per-run budget exhausted before planning.")
 
+    priors = industry_priors(state["brief"], intake)
+    # A fresh sample per run and per regenerate, fixed across retries within one planning call.
+    library = design_library(state["brief"], intake, priors, seed=f"{state['run_id']}:{state.get('regenerate_feedback') or ''}")
+    emit("library", industries=[p["name"] for p in priors], styles=[s["id"] for s in library["reference_styles"]],
+         structures=[s["id"] for s in library["page_structures"]])
+
     usage_total: dict = {}
     feedback: list[str] = []
     result: PlanResult | None = None
@@ -91,7 +102,8 @@ async def plan_directions(state: AgentState) -> dict:
             "kickoff_answers": (state.get("kickoff") or {}).get("answers") or None,
             "n": n,
             "slots": [{"id": chr(ord('a') + i), "slot": slots[i]} for i in range(n)],
-            "library": design_library(intake["page_type"]),
+            "industry_priors": priors or None,
+            "library": library,
             "remembered_taste": taste if taste.get("has_signal") else None,
             "regenerate_feedback": state.get("regenerate_feedback"),
             "previous_directions_to_move_away_from": [

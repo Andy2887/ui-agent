@@ -59,6 +59,7 @@ class KickoffQuestion(BaseModel):
 class IntakeResult(BaseModel):
     product_name: str
     page_type: str
+    product_category: str  # e.g. "physiotherapy clinic"; looks up industry priors (library.py)
     problem: str  # restated as a design problem
     audience: str  # who they are, their context, what they already know
     user_needs: list[str]  # what the user must understand, feel or do on this page
@@ -85,12 +86,15 @@ class DirectionBrief(BaseModel):
     id: str  # short slug, e.g. "a", "b"
     name: str  # e.g. "Snap and Forget"
     description: str  # one plain-English line for the sketch gallery
-    slot: Literal["taste", "neutral", "wildcard"]
+    slot: Literal["taste", "neutral", "bold", "wildcard"]
     concept: str  # how this direction solves the problem for these users
     tradeoff: str  # what it gives up compared with other directions
     sections: list[str]  # page sections in order
     layout_archetype: str
     layout_id: Optional[str]
+    structure_id: Optional[str]  # page structure from the library (presets/structures.json)
+    variance: Literal["low", "mid", "high"]  # composition: centered/symmetric → conventional → asymmetric/bold
+    style_id: Optional[str]  # reference style from the library; its recipe goes to the designer
     reference_style: str
     mood: list[str]  # 2–4 words, e.g. ["calm", "trustworthy"]
     theme: Literal["light", "dark"]

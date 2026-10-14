@@ -73,6 +73,7 @@ def intake(brief: dict, answers: list[dict]) -> IntakeResult:
         suggestions=["Start a free trial", "Book a demo", "Join the waitlist"])]
     return IntakeResult(
         product_name=name, page_type=page_type,
+        product_category=" ".join(brief.get("problem", "").split()[:6]) or "software product",
         problem=brief.get("problem", ""), audience=brief.get("audience", ""),
         user_needs=["Understand what the product does in one glance", "Believe it works for someone like them",
                     "Know exactly what to do next"],
@@ -124,7 +125,8 @@ def plan(n: int, intake_d: dict, slots: list[str], attempt: int = 0) -> PlanResu
             tradeoff=["Less room for detail.", "Asks users to read more.", "Depends on having real proof.",
                       "Takes longer to reach the action.", "Feels less distinctive."][shift % 5],
             sections=_sections_for(intake_d.get("sections") or ["hero", "features", "cta", "footer"], shift),
-            layout_archetype=archetype, layout_id=None, reference_style=ref,
+            layout_archetype=archetype, layout_id=None, structure_id=None,
+            variance=["mid", "high", "low"][shift % 3], style_id=ref if settings.style(ref) else None, reference_style=ref,
             mood=MOODS[shift % len(MOODS)], theme=theme, heading_font=hf, body_font=bf, palette=Palette(**pal),
             density=["airy", "balanced", "compact"][shift % 3], shape=["soft", "sharp", "rounded"][shift % 3],
             motion="subtle", imagery=["abstract", "illustrations", "photos", "none"][shift % 4],

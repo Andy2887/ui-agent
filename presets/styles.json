@@ -1,53 +1,1109 @@
 {
-  "version": 1,
+  "version": 2,
+  "source": {
+    "name": "ui-ux-pro-max",
+    "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "commit": "7246805",
+    "license": "MIT, see presets/THIRD_PARTY.md"
+  },
   "styles": [
     {
       "id": "minimal",
       "name": "Minimal",
       "hint": "Lots of white space, few colors, nothing extra. The content does the talking.",
-      "guidance": "Restraint above all: generous whitespace, a near-monochrome palette with one accent used sparingly, thin 1px rules instead of boxes, no gradients, no decorative shadows. Typography carries the hierarchy."
+      "guidance": "Restraint above all: generous whitespace, a near-monochrome palette with one accent used sparingly, thin 1px rules instead of boxes, no gradients, no decorative shadows. Typography carries the hierarchy.",
+      "keywords": [
+        "Clean",
+        "simple",
+        "spacious",
+        "functional",
+        "white space",
+        "high contrast",
+        "geometric",
+        "sans-serif",
+        "grid-based",
+        "essential"
+      ],
+      "best_for": "Enterprise apps, dashboards, documentation sites, SaaS platforms, professional tools",
+      "avoid_for": "Creative portfolios, entertainment, playful brands, artistic experiments",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Subtle hover (200-250ms), smooth transitions, sharp shadows if any, clear type hierarchy, fast loading",
+        "css": "display: grid, gap: 2rem, font-family: sans-serif, color: #000 or #FFF, max-width: 1200px, clean borders, no box-shadow unless necessary",
+        "tokens": "--spacing: 2rem, --border-radius: 0px, --font-weight: 400-700, --shadow: none, --accent-color: single primary only",
+        "checklist": [
+          "Grid-based layout 12-16 columns",
+          "Typography hierarchy clear",
+          "No unnecessary decorations",
+          "text contrast measured against the chosen project target",
+          "Mobile responsive grid"
+        ]
+      },
+      "source": "ui-ux-pro-max:minimalism-and-swiss-style"
     },
     {
       "id": "modern-saas",
       "name": "Modern SaaS",
       "hint": "Clean product look with soft gradients, cards and a product screenshot. Familiar and polished.",
-      "guidance": "Polished product marketing: a soft gradient or glow behind the hero, a framed product screenshot, rounded cards with subtle shadows, a clear primary CTA plus a secondary ghost button, logo strip for social proof."
+      "guidance": "Polished product marketing: a soft gradient or glow behind the hero, a framed product screenshot, rounded cards with subtle shadows, a clear primary CTA plus a secondary ghost button, logo strip for social proof.",
+      "keywords": [
+        "product marketing",
+        "soft gradient glow",
+        "framed product screenshot",
+        "rounded cards",
+        "logo strip"
+      ],
+      "best_for": "SaaS, B2B tools, productivity apps, startups",
+      "avoid_for": "Luxury, editorial publishing, playful consumer brands, audiences wary of tech polish",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Hover lift (translateY(-2px) plus one shadow step, 150-200ms), gentle fade-up entrance",
+        "css": "Hero: one radial-gradient glow (primary/accent at 10-20% alpha) behind a framed product screenshot; frame: 1px border, large radius, layered shadow; cards: 12-16px radius, shadow 0 1px 2px + 0 8px 24px at 6-8% alpha; filled primary button + ghost secondary; sections alternate bg and surface bands",
+        "tokens": "--radius-lg: 16px, --shadow-card: 0 1px 2px rgb(0 0 0 / .06), 0 8px 24px rgb(0 0 0 / .06), --glow: radial-gradient(60% 50% at 50% 0%, primary 15%, transparent)",
+        "checklist": [
+          "One glow or gradient field in the hero, not several",
+          "Product screenshot framed and dominant",
+          "Filled primary CTA plus ghost secondary",
+          "Logo or social-proof strip right under the hero",
+          "All cards share one radius and shadow"
+        ]
+      }
     },
     {
       "id": "editorial",
       "name": "Editorial",
       "hint": "Feels like a well-designed magazine: big serif headlines, strong columns, confident type.",
-      "guidance": "Magazine layout: large expressive serif display type, asymmetric columns, pull quotes, small-caps labels, hairline rules, generous measure control (60–75ch). Color is mostly paper and ink with one accent."
+      "guidance": "Magazine layout: large expressive serif display type, asymmetric columns, pull quotes, small-caps labels, hairline rules, generous measure control (60–75ch). Color is mostly paper and ink with one accent.",
+      "keywords": [
+        "Magazine layout",
+        "asymmetric grid",
+        "editorial typography",
+        "pull quotes",
+        "drop caps",
+        "column layout",
+        "print-inspired"
+      ],
+      "best_for": "News sites, blogs, magazines, editorial content, long-form articles, journalism, publishing",
+      "avoid_for": "Dashboards, apps, e-commerce catalogs, real-time data, short-form content",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Smooth scroll, reveal on scroll, parallax images, text animations, page-flip transitions",
+        "css": "display: grid with named areas, column-count for text, ::first-letter for drop caps, blockquote styling, figure/figcaption, gap variations, font: serif for body, variable widths",
+        "tokens": "--grid-cols: asymmetric, --body-font: Georgia/Merriweather, --heading-font: bold sans, --drop-cap-size: 4em, --pull-quote-size: 1.5em, --column-gap: 2rem",
+        "checklist": [
+          "Grid asymmetric",
+          "Typography editorial",
+          "Pull quotes styled",
+          "Drop caps present",
+          "Images large/impactful",
+          "Mobile reflows well"
+        ]
+      },
+      "source": "ui-ux-pro-max:editorial-grid-magazine"
     },
     {
       "id": "playful",
       "name": "Playful",
       "hint": "Bright, rounded and friendly, with fun shapes. Makes a product feel approachable.",
-      "guidance": "Friendly and bouncy: rounded shapes, blob or squiggle decorations, two cheerful accent colors, chunky rounded buttons, slight rotations on stickers/badges, warm conversational copy."
+      "guidance": "Friendly and bouncy: rounded shapes, blob or squiggle decorations, two cheerful accent colors, chunky rounded buttons, slight rotations on stickers/badges, warm conversational copy.",
+      "keywords": [
+        "rounded",
+        "blobs",
+        "squiggles",
+        "pill buttons",
+        "stickers",
+        "two cheerful accents"
+      ],
+      "best_for": "Consumer apps, education, family, community, food and hobby products",
+      "avoid_for": "Finance, legal, healthcare, enterprise, grief or crisis contexts",
+      "modes": {
+        "light": "supported",
+        "dark": "conditional"
+      },
+      "recipe": {
+        "effects": "Bouncy hover (translateY(-2px) rotate(-1deg), cubic-bezier(.34,1.56,.64,1), 180ms), small wiggle on icons",
+        "css": "border-radius 20-28px and pill buttons; decorative SVG blobs/squiggles (aria-hidden) behind sections; badges and stickers rotated -4deg to 4deg; tinted section backgrounds in the two accents; chunky buttons with a solid bottom shadow (0 4px 0 a darker shade of the fill)",
+        "tokens": "--radius-lg: 28px, --radius-button: 999px, --shadow-chunky: 0 4px 0 <darker primary>, --tilt: -3deg",
+        "checklist": [
+          "Rounded everywhere, pill buttons",
+          "At least one hand-made decoration (blob, squiggle, sticker)",
+          "Two accents with clear roles",
+          "Copy reads warm and conversational",
+          "Bounce respects reduced motion"
+        ]
+      }
     },
     {
       "id": "brutalist",
       "name": "Bold / Brutalist",
       "hint": "Raw and loud: thick borders, hard shadows, huge type. Memorable and opinionated.",
-      "guidance": "Neo-brutalist: thick black borders, hard offset shadows (no blur), oversized uppercase type, flat saturated blocks of color, visible grid, no rounded corners, deliberately blunt."
+      "guidance": "Neo-brutalist: thick black borders, hard offset shadows (no blur), oversized uppercase type, flat saturated blocks of color, visible grid, no rounded corners, deliberately blunt.",
+      "keywords": [
+        "Bold borders",
+        "black outlines",
+        "primary colors",
+        "thick shadows",
+        "no gradients",
+        "flat colors",
+        "45° shadows",
+        "playful",
+        "Gen Z"
+      ],
+      "best_for": "Gen Z brands, startups, creative agencies, Figma-style apps, Notion-style interfaces, tech blogs",
+      "avoid_for": "Luxury brands, finance, healthcare, conservative industries (too playful)",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "box-shadow: 4px 4px 0 #000, border: 3px solid #000, no gradients, sharp corners (0px), bold typography",
+        "css": "border: 3px solid black, box-shadow: 5px 5px 0px black, colors: #FFDB58 #FF6B6B #4ECDC4, font-weight: 700, no gradients",
+        "tokens": "--border-width: 3px, --shadow-offset: 4px, --shadow-color: #000, --colors: high saturation, --font: bold sans",
+        "checklist": [
+          "Hard borders (2-4px)",
+          "Hard offset shadows",
+          "High saturation colors",
+          "Bold typography",
+          "No blurs/gradients",
+          "Distinctive 'ugly-cute' look"
+        ]
+      },
+      "source": "ui-ux-pro-max:neubrutalism"
     },
     {
       "id": "corporate",
       "name": "Corporate / Trustworthy",
       "hint": "Conservative and reassuring. Good for finance, B2B, healthcare and legal.",
-      "guidance": "Reassuring and orderly: a structured 12-column grid, navy or deep-blue primary, restrained imagery, trust markers (logos, certifications, numbers), modest radii, clear secondary navigation."
+      "guidance": "Reassuring and orderly: a structured 12-column grid, navy or deep-blue primary, restrained imagery, trust markers (logos, certifications, numbers), modest radii, clear secondary navigation.",
+      "keywords": [
+        "structured grid",
+        "deep blue or navy",
+        "trust markers",
+        "modest radii",
+        "hairline borders"
+      ],
+      "best_for": "Finance, insurance, legal, B2B services, healthcare providers, government",
+      "avoid_for": "Youth brands, entertainment, creative studios, playful consumer products",
+      "modes": {
+        "light": "supported",
+        "dark": "conditional"
+      },
+      "recipe": {
+        "effects": "150ms color and underline hovers; at most a short fade on entrance",
+        "css": "12-column grid, max-width ~1200px; radius 4-8px; 1px borders preferred over shadows; stat blocks with font-variant-numeric: tabular-nums; trust strip (logos, certifications, ratings); restrained imagery; clear secondary navigation",
+        "tokens": "--radius-md: 6px, --border: 1px solid border, --container: 1200px",
+        "checklist": [
+          "Trust markers above the fold",
+          "Numbers set in tabular figures",
+          "One primary action per screen",
+          "Modest radii and borders, no playful decoration"
+        ]
+      }
     },
     {
       "id": "luxury",
       "name": "Luxury",
       "hint": "Dark, elegant and spacious, with refined serif type. Premium and unhurried.",
-      "guidance": "Premium and quiet: deep backgrounds or ivory, thin elegant serif display, wide letter-spacing on small caps labels, gold/champagne accent used sparingly, lots of breathing room, slow subtle motion."
+      "guidance": "Premium and quiet: deep backgrounds or ivory, thin elegant serif display, wide letter-spacing on small caps labels, gold/champagne accent used sparingly, lots of breathing room, slow subtle motion.",
+      "keywords": [
+        "thin high-contrast serif",
+        "small caps",
+        "generous space",
+        "hairline gold rules",
+        "deep or ivory grounds"
+      ],
+      "best_for": "Premium brands, hospitality, fashion, real estate, fine dining, jewelry",
+      "avoid_for": "Budget or discount offers, data-heavy tools, urgent conversion pages",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Slow fades (600-900ms ease-out); image scale 1.03 on hover; nothing bounces",
+        "css": "Display serif at large sizes (clamp up to ~6rem), weight 300-500; small-caps or uppercase labels with letter-spacing .2em; section padding 8-12rem on desktop; 1px hairline rules in the accent; full-bleed image placeholders; very few elements per screen",
+        "tokens": "--tracking-label: .2em, --space-section: clamp(6rem, 12vw, 12rem), --rule: 1px solid accent",
+        "checklist": [
+          "One idea per screen",
+          "Labels in tracked small caps",
+          "Accent used only for hairlines and one action",
+          "Motion slow and quiet"
+        ]
+      }
     },
     {
       "id": "technical",
       "name": "Technical / Dev-tool",
       "hint": "Dark UI, monospace accents and code snippets. Speaks the language of developers.",
-      "guidance": "Developer-native: dark surfaces, monospace labels and code blocks, terminal motifs, grid/dot backgrounds, crisp 1px borders, keyboard-shortcut chips, precise data and changelog-style details."
+      "guidance": "Developer-native: dark surfaces, monospace labels and code blocks, terminal motifs, grid/dot backgrounds, crisp 1px borders, keyboard-shortcut chips, precise data and changelog-style details.",
+      "keywords": [
+        "dark surfaces",
+        "monospace labels",
+        "code blocks",
+        "dot grid",
+        "keyboard chips",
+        "1px borders"
+      ],
+      "best_for": "Developer tools, APIs, infrastructure, security, data products",
+      "avoid_for": "Consumer lifestyle, older or non-technical audiences, wellness",
+      "modes": {
+        "light": "conditional",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "120ms hovers, blinking cursor via steps() keyframes, no bounce",
+        "css": "Dark surfaces separated by 1px borders; monospace for labels, numbers and code; dot or line grid background (radial-gradient/linear-gradient at 6-10% alpha); code blocks with syntax tints; kbd chips (1px border plus a 2px bottom border); terminal window frame with three dots",
+        "tokens": "--font-mono: ui-monospace stack, --grid-bg: radial-gradient(border 1px, transparent 1px) 0 0 / 24px 24px",
+        "checklist": [
+          "Real commands or code in the hero",
+          "Monospace only for code, numbers and labels",
+          "Borders, not shadows, separate surfaces",
+          "Changelog-style precision in details"
+        ]
+      }
+    },
+    {
+      "id": "swiss-modernism-2-0",
+      "name": "Swiss modernism",
+      "hint": "A strict grid, big clean type and one bright accent. Rational and confident.",
+      "guidance": "International style: a visible 12-column grid, asymmetric but mathematical placement, large grotesque headlines, flush-left ragged-right text, one vivid accent, no decoration.",
+      "keywords": [
+        "Grid system",
+        "Helvetica",
+        "modular",
+        "asymmetric",
+        "international style",
+        "rational",
+        "clean",
+        "mathematical spacing"
+      ],
+      "best_for": "Corporate sites, architecture, editorial, SaaS, museums, professional services, documentation",
+      "avoid_for": "Playful brands, children's sites, entertainment, gaming, emotional storytelling",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "display: grid, grid-template-columns: repeat(12 1fr), gap: 1rem, mathematical ratios, clear hierarchy",
+        "css": "display: grid, grid-template-columns: repeat(12, 1fr), gap: 1rem (8px base unit), font-family: Inter/Helvetica, font-weight: 400-700, color: #000/#FFF, single accent",
+        "tokens": "--grid-columns: 12, --grid-gap: 1rem, --base-unit: 8px, --font-primary: Inter, --color-text: #000000, --color-bg: #FFFFFF, --accent: single vibrant",
+        "checklist": [
+          "12-column grid strict",
+          "Spacing mathematical",
+          "Typography hierarchy clear",
+          "Single accent only",
+          "No decorations",
+          "High contrast verified"
+        ]
+      },
+      "source": "ui-ux-pro-max:swiss-modernism-2-0"
+    },
+    {
+      "id": "exaggerated-minimalism",
+      "name": "Exaggerated minimalism",
+      "hint": "Huge statement type and lots of empty space. Loud by saying very little.",
+      "guidance": "Oversized display type (up to 10vw) carries the page; extreme negative space; black/white plus one accent; almost no other elements.",
+      "keywords": [
+        "Bold minimalism",
+        "oversized typography",
+        "high contrast",
+        "negative space",
+        "loud minimal",
+        "statement design"
+      ],
+      "best_for": "Fashion, architecture, portfolios, agency landing pages, luxury brands, editorial",
+      "avoid_for": "E-commerce catalogs, dashboards, forms, data-heavy, elderly users, complex apps",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "font-size: clamp(3rem 10vw 12rem), font-weight: 900, letter-spacing: -0.05em, massive whitespace",
+        "css": "font-size: clamp(3rem, 10vw, 12rem), font-weight: 900, letter-spacing: -0.05em, color: #000 or #FFF, padding: 8rem+, single accent, no decorations",
+        "tokens": "--type-giant: clamp(3rem, 10vw, 12rem), --type-weight: 900, --spacing-huge: 8rem, --color-primary: #000000, --color-bg: #FFFFFF, --accent: single color only",
+        "checklist": [
+          "Typography oversized",
+          "White space extreme",
+          "Black/white dominant",
+          "Single accent only",
+          "Elements minimal",
+          "Statement clear"
+        ]
+      },
+      "source": "ui-ux-pro-max:exaggerated-minimalism"
+    },
+    {
+      "id": "bento-box-grid",
+      "name": "Bento grid",
+      "hint": "Features as a mosaic of tiles in different sizes. Modern and easy to scan.",
+      "guidance": "Modular tiles of varied spans (2x2, 2x1, 1x1) on a neutral ground, each tile one idea with a visual inside, consistent large radius.",
+      "keywords": [
+        "Modular cards",
+        "asymmetric grid",
+        "varied sizes",
+        "Apple-style",
+        "dashboard tiles",
+        "negative space",
+        "clean hierarchy",
+        "cards"
+      ],
+      "best_for": "Dashboards, product pages, portfolios, Apple-style marketing, feature showcases, SaaS",
+      "avoid_for": "Dense data tables, text-heavy content, real-time monitoring",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "grid-template with varied spans, rounded-xl (16px), subtle shadows, hover scale (1.02), smooth transitions",
+        "css": "display: grid, grid-template-columns: repeat(4, 1fr), grid-auto-rows: 200px, gap: 16px, border-radius: 24px, background: #FFFFFF, box-shadow: 0 4px 6px rgba(0,0,0,0.05)",
+        "tokens": "--grid-gap: 16px, --card-radius: 24px, --card-bg: #FFFFFF, --page-bg: #F5F5F7, --shadow: 0 4px 6px rgba(0,0,0,0.05), --hover-scale: 1.02",
+        "checklist": [
+          "Grid responsive (4→2→1 cols)",
+          "Card spans varied",
+          "Rounded corners consistent",
+          "Shadows subtle",
+          "Content fits cards",
+          "Hover scale (1.02)"
+        ]
+      },
+      "source": "ui-ux-pro-max:bento-box-grid"
+    },
+    {
+      "id": "glassmorphism",
+      "name": "Glass",
+      "hint": "Frosted translucent panels over a colorful background. Light, layered and modern.",
+      "guidance": "Translucent blurred panels over a vivid gradient or shape field; thin light borders; depth from layering. Contrast must be checked on every panel.",
+      "keywords": [
+        "Frosted glass",
+        "transparent",
+        "blurred background",
+        "layered",
+        "vibrant background",
+        "light source",
+        "depth",
+        "multi-layer"
+      ],
+      "best_for": "Modern SaaS, financial dashboards, high-end corporate, lifestyle apps, modal overlays, navigation",
+      "avoid_for": "Low-contrast backgrounds, critical accessibility, performance-limited, dark text on dark",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Backdrop blur (10-20px), subtle border (1px solid rgba white 0.2), light reflection, Z-depth",
+        "css": "backdrop-filter: blur(15px), background: rgba(255, 255, 255, 0.15), border: 1px solid rgba(255,255,255,0.2), -webkit-backdrop-filter: blur(15px), z-index layering for depth",
+        "tokens": "--blur-amount: 15px, --glass-opacity: 0.15, --border-color: rgba(255,255,255,0.2), --background: vibrant color, --text-color: light/dark based on BG",
+        "checklist": [
+          "Backdrop-filter blur 10-20px",
+          "Translucent white 15-30% opacity",
+          "Subtle border 1px light",
+          "Vibrant background verified",
+          "Text contrast 4.5:1 checked"
+        ]
+      },
+      "source": "ui-ux-pro-max:glassmorphism"
+    },
+    {
+      "id": "aurora-ui",
+      "name": "Aurora gradients",
+      "hint": "Soft glowing color fields like northern lights. Atmospheric and premium.",
+      "guidance": "Large blended mesh/radial gradients as the atmosphere behind calm content; slow drifting motion; content panels stay solid and readable.",
+      "keywords": [
+        "Vibrant gradients",
+        "smooth blend",
+        "Northern Lights effect",
+        "mesh gradient",
+        "luminous",
+        "atmospheric",
+        "abstract"
+      ],
+      "best_for": "Modern SaaS, creative agencies, branding, music platforms, lifestyle, premium products, hero sections",
+      "avoid_for": "Data-heavy dashboards, critical accessibility, content-heavy where distraction issues",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Large flowing CSS/SVG gradients, subtle 8-12s animations, depth via color layering, smooth morph",
+        "css": "background: conic-gradient or radial-gradient with multiple stops, animation: @keyframes gradient (8-12s), background-size: 200% 200%, filter: saturate(1.2), blend-mode: screen or multiply",
+        "tokens": "--gradient-colors: complementary pairs, --animation-duration: 8-12s, --blend-mode: screen, --color-saturation: 1.2, --effect: iridescent, --loop-smooth: true",
+        "checklist": [
+          "Mesh/flowing gradients applied",
+          "8-12s animation loop",
+          "Complementary colors used",
+          "Smooth color transitions",
+          "Iridescent effect subtle",
+          "Text contrast verified"
+        ]
+      },
+      "source": "ui-ux-pro-max:aurora-ui"
+    },
+    {
+      "id": "claymorphism",
+      "name": "Clay",
+      "hint": "Chunky, soft 3D shapes like modelling clay. Friendly and tactile.",
+      "guidance": "Puffy rounded surfaces with inner+outer shadows, thick soft borders, pastel fills, squishy press states.",
+      "keywords": [
+        "Soft 3D",
+        "chunky",
+        "playful",
+        "toy-like",
+        "bubbly",
+        "thick borders (3-4px)",
+        "double shadows",
+        "rounded (16-24px)"
+      ],
+      "best_for": "Educational apps, children's apps, SaaS platforms, creative tools, fun-focused, onboarding, casual games",
+      "avoid_for": "Formal corporate, professional services, data-critical, serious/medical, legal apps, finance",
+      "modes": {
+        "light": "supported",
+        "dark": "conditional"
+      },
+      "recipe": {
+        "effects": "Inner+outer shadows (subtle, no hard lines), soft press (200ms ease-out), fluffy elements, smooth transitions",
+        "css": "border-radius: 16-24px, border: 3-4px solid, box-shadow: inset -2px -2px 8px, 4px 4px 8px, background: pastel-gradient, animation: soft bounce (cubic-bezier 0.34, 1.56)",
+        "tokens": "--border-radius: 20px, --border-width: 3-4px, --shadow-inner: inset -2px -2px 8px, --shadow-outer: 4px 4px 8px, --color-palette: pastels, --animation: bounce",
+        "checklist": [
+          "Border-radius 16-24px",
+          "Thick borders 3-4px",
+          "Double shadows (inner+outer)",
+          "Pastel colors used",
+          "Soft bounce animations",
+          "Playful interactions"
+        ]
+      },
+      "source": "ui-ux-pro-max:claymorphism"
+    },
+    {
+      "id": "organic-biophilic",
+      "name": "Organic / biophilic",
+      "hint": "Natural curves, greens and earthy textures. Calm and alive.",
+      "guidance": "Flowing organic shapes and blob dividers, earthy greens and naturals, varied soft radii, subtle natural textures.",
+      "keywords": [
+        "Nature",
+        "organic shapes",
+        "green",
+        "sustainable",
+        "rounded",
+        "flowing",
+        "wellness",
+        "earthy",
+        "natural textures"
+      ],
+      "best_for": "Wellness apps, sustainability brands, eco products, health apps, meditation, organic food brands",
+      "avoid_for": "Tech-focused products, gaming, industrial, urban brands",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Rounded corners (16-24px), organic curves (border-radius variations), natural shadows, flowing SVG shapes",
+        "css": "border-radius: 16-24px (varied), background: earth tones, SVG organic shapes (blob), box-shadow: natural soft, color: #228B22 #8B4513 #87CEEB, texture overlays (subtle)",
+        "tokens": "--forest-green: #228B22, --earth-brown: #8B4513, --sky-blue: #87CEEB, --cream-bg: #F5F5DC, --organic-radius: 24px, --shadow-soft: 0 8px 32px rgba(0,0,0,0.08)",
+        "checklist": [
+          "Earth tones dominant",
+          "Organic curves present",
+          "Natural textures subtle",
+          "Green accents",
+          "Rounded everywhere",
+          "Calming feel"
+        ]
+      },
+      "source": "ui-ux-pro-max:organic-biophilic"
+    },
+    {
+      "id": "nature-distilled",
+      "name": "Nature distilled",
+      "hint": "Terracotta, sand, clay and wood tones. Warm, handmade and grounded.",
+      "guidance": "Muted earth palette, humanist type, grain texture, soft natural shadows and crafted details; quiet and tactile.",
+      "keywords": [
+        "Muted earthy",
+        "skin tones",
+        "wood",
+        "soil",
+        "sand",
+        "terracotta",
+        "warmth",
+        "organic materials",
+        "handmade warmth"
+      ],
+      "best_for": "Wellness brands, sustainable products, artisan goods, organic food, spa/beauty, home decor",
+      "avoid_for": "Tech startups, gaming, nightlife, corporate finance, high-energy brands",
+      "modes": {
+        "light": "supported",
+        "dark": "conditional"
+      },
+      "recipe": {
+        "effects": "Subtle parallax, natural easing (ease-out), texture overlays, grain effects, soft shadows",
+        "css": "background: warm earth tones, color: #C67B5C #D4C4A8 #6B7B3C, border-radius: organic (varied), box-shadow: soft natural, texture overlays (grain), font: humanist sans-serif",
+        "tokens": "--terracotta: #C67B5C, --sand-beige: #D4C4A8, --warm-clay: #B5651D, --soft-cream: #F5F0E1, --olive-green: #6B7B3C, --grain-opacity: 0.1",
+        "checklist": [
+          "Earth tones dominant",
+          "Warm feel achieved",
+          "Textures subtle",
+          "Handmade quality",
+          "Sustainable messaging",
+          "Calming aesthetic"
+        ]
+      },
+      "source": "ui-ux-pro-max:nature-distilled"
+    },
+    {
+      "id": "e-ink-paper",
+      "name": "Paper / e-ink",
+      "hint": "Like reading a printed page: matte paper, ink-black type, no distractions.",
+      "guidance": "Paper-white ground, ink-black serif reading type, hairline rules, no gradients or motion, print-like calm.",
+      "keywords": [
+        "Paper-like",
+        "matte",
+        "high contrast",
+        "texture",
+        "reading",
+        "calm",
+        "slow tech",
+        "monochrome"
+      ],
+      "best_for": "Reading apps, digital newspapers, minimal journals, distraction-free writing, slow-living brands",
+      "avoid_for": "Gaming, video platforms, high-energy marketing, dark mode dependent apps",
+      "modes": {
+        "light": "supported",
+        "dark": "not-recommended"
+      },
+      "recipe": {
+        "effects": "No motion blur, distinct page turns, grain/noise texture, sharp transitions (no fade)",
+        "css": "background: #FDFBF7 (paper white), color: #1A1A1A, transition: none, font-family: serif for reading, no gradients, border: 1px solid #E0E0E0, texture overlay (noise)",
+        "tokens": "--paper-bg: #FDFBF7, --ink-color: #1A1A1A, --pencil-grey: #4A4A4A, --border-color: #E0E0E0, --font-reading: Georgia, --transition: none",
+        "checklist": [
+          "Paper background color",
+          "High contrast text",
+          "No animations",
+          "Reading optimized",
+          "Distraction-free",
+          "Print-friendly"
+        ]
+      },
+      "source": "ui-ux-pro-max:e-ink-paper"
+    },
+    {
+      "id": "flat-design",
+      "name": "Flat",
+      "hint": "Solid colors, simple shapes, no shadows. Clear and direct.",
+      "guidance": "Solid color blocks, no shadows or gradients, simple geometric icons, bold sans type, small radii.",
+      "keywords": [
+        "2D",
+        "minimalist",
+        "bold colors",
+        "no shadows",
+        "clean lines",
+        "simple shapes",
+        "typography-focused",
+        "modern",
+        "icon-heavy"
+      ],
+      "best_for": "Web apps, mobile apps, cross-platform, startup MVPs, user-friendly, SaaS, dashboards, corporate",
+      "avoid_for": "Complex 3D, premium/luxury, artistic portfolios, immersive experiences, high-detail",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "No gradients/shadows, simple hover (color/opacity shift), fast loading, clean transitions (150-200ms ease), minimal icons",
+        "css": "box-shadow: none, background: solid color, border-radius: 0-4px, color: solid (no gradients), fill: solid, stroke: 1-2px, font: bold sans-serif, icons: simplified SVG",
+        "tokens": "--shadow: none, --color-palette: 4-6 solid, --border-radius: 2px, --gradient: none, --icons: simplified SVG, --animation: minimal 150-200ms",
+        "checklist": [
+          "No shadows/gradients",
+          "4-6 solid colors max",
+          "Clean lines consistent",
+          "Simple shapes used",
+          "Icon-heavy layout",
+          "High saturation colors",
+          "Fast loading verified"
+        ]
+      },
+      "source": "ui-ux-pro-max:flat-design"
+    },
+    {
+      "id": "vibrant-and-block-based",
+      "name": "Vibrant blocks",
+      "hint": "Big saturated color blocks and large type. Energetic and youthful.",
+      "guidance": "Full-width saturated color blocks, oversized type, duotone sections, bold color-shift hovers, generous gaps.",
+      "keywords": [
+        "Bold",
+        "energetic",
+        "playful",
+        "block layout",
+        "geometric shapes",
+        "high color contrast",
+        "duotone",
+        "modern",
+        "energetic"
+      ],
+      "best_for": "Startups, creative agencies, gaming, social media, youth-focused, entertainment, consumer",
+      "avoid_for": "Financial institutions, healthcare, formal business, government, conservative, elderly",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Large sections (48px+ gaps), animated patterns, bold hover (color shift), scroll-snap, large type (32px+), 200-300ms",
+        "css": "display: flex/grid with large gaps (48px+), font-size: 32px+, background: animated patterns (CSS), color: neon/vibrant colors, animation: continuous pattern movement",
+        "tokens": "--block-gap: 48px, --typography-size: 32px+, --color-palette: 4-6 vibrant colors, --animation: continuous pattern, --contrast-ratio: 7:1+",
+        "checklist": [
+          "Block layout with 48px+ gaps",
+          "Large typography 32px+",
+          "4-6 vibrant colors max",
+          "Text contrast checked on every block"
+        ]
+      },
+      "source": "ui-ux-pro-max:vibrant-and-block-based"
+    },
+    {
+      "id": "memphis-design",
+      "name": "Memphis",
+      "hint": "80s geometric shapes, squiggles and clashing colors. Loud and fun.",
+      "guidance": "Scattered geometric shapes (triangles, zigzags, dots) via clip-path and patterns, tilted elements, clashing brights, asymmetric layout.",
+      "keywords": [
+        "80s",
+        "geometric",
+        "playful",
+        "postmodern",
+        "shapes",
+        "patterns",
+        "squiggles",
+        "triangles",
+        "neon",
+        "abstract",
+        "bold"
+      ],
+      "best_for": "Creative agencies, music sites, youth brands, event promotion, artistic portfolios, entertainment",
+      "avoid_for": "Corporate finance, healthcare, legal, elderly users, conservative brands",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "transform: rotate(), clip-path: polygon(), mix-blend-mode, repeating patterns, bold shapes",
+        "css": "clip-path: polygon() for shapes, background: repeating patterns, transform: rotate() for tilted elements, mix-blend-mode for overlays, border: dashed/dotted patterns, bold sans-serif",
+        "tokens": "--memphis-pink: #FF71CE, --memphis-yellow: #FFCE5C, --memphis-teal: #86CCCA, --memphis-purple: #6A7BB4, --pattern-size: 20px, --shape-rotation: 15deg",
+        "checklist": [
+          "Geometric shapes visible",
+          "Colors bold/clashing",
+          "Patterns present",
+          "Layout asymmetric",
+          "Playful decorations",
+          "80s vibe achieved"
+        ]
+      },
+      "source": "ui-ux-pro-max:memphis-design"
+    },
+    {
+      "id": "bauhaus",
+      "name": "Bauhaus",
+      "hint": "Circles, squares and primary colors with hard shadows. Poster-like and architectural.",
+      "guidance": "Primary color blocking, circles and squares as structure, heavy uppercase geometric headlines, hard offset shadows, mechanical press states.",
+      "keywords": [
+        "bauhaus",
+        "geometric",
+        "constructivist",
+        "primary colors",
+        "hard shadow",
+        "bold",
+        "tactile",
+        "functional",
+        "poster",
+        "mechanical",
+        "architectural"
+      ],
+      "best_for": "Mobile-first apps needing high personality, onboarding flows, branding-forward product screens, artisan/design brands, editorial mobile experiences",
+      "avoid_for": "Enterprise dashboards, accessibility-critical contexts (requires extra a11y work), data-heavy screens, conservative industries",
+      "modes": {
+        "light": "supported",
+        "dark": "conditional"
+      },
+      "recipe": {
+        "effects": "Hard offset shadows (4px 4px 0px black), mechanical press active:translate, no smooth hover — instant 0ms transitions, dot grid pattern on sections, slide-over transitions",
+        "css": "border-radius 0 for blocks and inputs, 999px for buttons; box-shadow: 4px 4px 0 0 ink; 2px solid ink borders; active state translates 2px and drops the shadow; heavy uppercase geometric headlines with tight tracking; circles and squares as layout elements; dot-grid section backgrounds",
+        "tokens": "--color-red: #D02020, --color-blue: #1040C0, --color-yellow: #F0C020, --color-bg: #F0F0F0, --color-fg: #121212, --border-width: 2px, --shadow-hard: 4px 4px 0px 0px #121212, --radius-block: 0px, --radius-pill: 9999px, --font-display: Outfit, --font-weight-hero: 900",
+        "checklist": [
+          "Geometric shapes only (circle, square)",
+          "Primary color blocking",
+          "Hard 4px offset shadows",
+          "2px ink borders on components",
+          "Mechanical press active state",
+          "Heavy uppercase headlines"
+        ]
+      },
+      "source": "ui-ux-pro-max:bauhaus"
+    },
+    {
+      "id": "retro-futurism",
+      "name": "Retro-futurism",
+      "hint": "80s sci-fi: neon glow, grids and scanlines. Nostalgic and electric.",
+      "guidance": "Synthwave neon on deep backgrounds, perspective grids, CRT scanline overlay, glow text, chrome accents.",
+      "keywords": [
+        "Vintage sci-fi",
+        "80s aesthetic",
+        "neon glow",
+        "geometric patterns",
+        "CRT scanlines",
+        "pixel art",
+        "cyberpunk",
+        "synthwave"
+      ],
+      "best_for": "Gaming, entertainment, music platforms, tech brands, artistic projects, nostalgic, cyberpunk",
+      "avoid_for": "Conservative industries, critical accessibility, professional/corporate, elderly, legal/finance",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "CRT scanlines (::before overlay), neon glow (text-shadow+box-shadow), glitch effects (skew/offset keyframes)",
+        "css": "color: neon colors (#0080FF, #FF006E, #00FFFF), text-shadow: 0 0 10px neon, background: #000 or #1A1A2E, font-family: monospace, animation: glitch (skew+offset), filter: hue-rotate",
+        "tokens": "--neon-colors: #0080FF #FF006E #00FFFF, --background: #000000, --font-family: monospace, --effect: glitch+glow, --scanline-opacity: 0.3, --crt-effect: true",
+        "checklist": [
+          "Neon accents on a deep background",
+          "Scanline overlay subtle (aria-hidden)",
+          "Glow effects on headlines only",
+          "Glitch animation subtle and off under reduced motion"
+        ]
+      },
+      "source": "ui-ux-pro-max:retro-futurism"
+    },
+    {
+      "id": "cyberpunk-ui",
+      "name": "Cyberpunk",
+      "hint": "Dark, neon and glitchy, like a sci-fi interface.",
+      "guidance": "Near-black HUD panels, neon accents, monospace readouts, subtle glitch and scanlines, angular frames.",
+      "keywords": [
+        "Neon",
+        "dark mode",
+        "terminal",
+        "HUD",
+        "sci-fi",
+        "glitch",
+        "dystopian",
+        "futuristic",
+        "matrix",
+        "tech noir"
+      ],
+      "best_for": "Gaming platforms, tech products, crypto apps, sci-fi applications, developer tools, entertainment",
+      "avoid_for": "Corporate enterprise, healthcare, family apps, conservative brands, elderly users",
+      "modes": {
+        "light": "not-recommended",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Neon glow (text-shadow), glitch animations (skew/offset), scanlines (::before overlay), terminal fonts",
+        "css": "background: #0D0D0D, color: #00FF00 or #FF00FF, font-family: monospace, text-shadow: 0 0 10px neon, animation: glitch (transform skew), ::before scanlines (repeating-linear-gradient)",
+        "tokens": "--bg-dark: #0D0D0D, --neon-green: #00FF00, --neon-magenta: #FF00FF, --neon-cyan: #00FFFF, --scanline-opacity: 0.1, --glitch-duration: 0.3s",
+        "checklist": [
+          "Dark background only",
+          "Neon accents visible",
+          "Glitch effect subtle",
+          "Scanlines optional",
+          "Monospace font",
+          "Terminal aesthetic"
+        ]
+      },
+      "source": "ui-ux-pro-max:cyberpunk-ui"
+    },
+    {
+      "id": "y2k-aesthetic",
+      "name": "Y2K",
+      "hint": "Chrome, bubbles and glossy pinks from the 2000s. Playful nostalgia.",
+      "guidance": "Glossy chrome and iridescent gradients, bubble shapes, sparkles, candy colors, retro-futurist type.",
+      "keywords": [
+        "Neon pink",
+        "chrome",
+        "metallic",
+        "bubblegum",
+        "iridescent",
+        "glossy",
+        "retro-futurism",
+        "2000s",
+        "futuristic nostalgia"
+      ],
+      "best_for": "Fashion brands, music platforms, Gen Z brands, nostalgia marketing, entertainment, youth-focused",
+      "avoid_for": "B2B enterprise, healthcare, finance, conservative industries, elderly users",
+      "modes": {
+        "light": "supported",
+        "dark": "conditional"
+      },
+      "recipe": {
+        "effects": "linear-gradient metallic, glossy buttons, 3D chrome effects, glow animations, bubble shapes",
+        "css": "background: linear-gradient(135deg, #FF69B4, #00FFFF), filter: drop-shadow for glow, border-radius: 50% for bubbles, metallic gradients (silver/chrome), text-shadow: neon glow, ::before for sparkles",
+        "tokens": "--neon-pink: #FF69B4, --neon-cyan: #00FFFF, --chrome-silver: #C0C0C0, --glossy-gradient: linear-gradient(180deg, white 0%, transparent 50%), --glow-blur: 10px",
+        "checklist": [
+          "Neon colors balanced",
+          "Chrome effects visible",
+          "Glossy buttons styled",
+          "Bubble shapes decorative",
+          "Sparkle animations",
+          "Retro fonts loaded"
+        ]
+      },
+      "source": "ui-ux-pro-max:y2k-aesthetic"
+    },
+    {
+      "id": "dimensional-layering",
+      "name": "Layered depth",
+      "hint": "Cards and panels that float and overlap. Rich and spatial.",
+      "guidance": "Deliberate overlaps and a 4-level elevation scale; panels float over each other to show hierarchy.",
+      "keywords": [
+        "Depth",
+        "overlapping",
+        "z-index",
+        "layers",
+        "3D",
+        "shadows",
+        "elevation",
+        "floating",
+        "cards",
+        "spatial hierarchy"
+      ],
+      "best_for": "Dashboards, card layouts, modals, navigation, product showcases, SaaS interfaces",
+      "avoid_for": "Print-style layouts, simple blogs, low-end devices, flat design requirements",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "z-index stacking, box-shadow elevation (4 levels), transform: translateZ(), backdrop-filter, parallax",
+        "css": "z-index: 1-4 levels, box-shadow: elevation scale (sm/md/lg/xl), transform: translateZ(), backdrop-filter: blur(), position: relative for stacking, parallax on scroll",
+        "tokens": "--elevation-1: 0 1px 3px rgba(0,0,0,0.1), --elevation-2: 0 4px 6px rgba(0,0,0,0.1), --elevation-3: 0 10px 20px rgba(0,0,0,0.1), --elevation-4: 0 20px 40px rgba(0,0,0,0.15), --blur-amount: 8px",
+        "checklist": [
+          "Layers clearly defined",
+          "Shadows show depth",
+          "Overlaps intentional",
+          "Hierarchy clear",
+          "Performance optimized",
+          "Mobile depth maintained"
+        ]
+      },
+      "source": "ui-ux-pro-max:dimensional-layering"
+    },
+    {
+      "id": "kinetic-typography",
+      "name": "Kinetic type",
+      "hint": "Type that moves and morphs. Headline-first and dynamic.",
+      "guidance": "Typography is the visual: animated or clipped gradient headlines, marquee or staggered letter reveals (CSS only), strong static fallback.",
+      "keywords": [
+        "Motion text",
+        "animated type",
+        "moving letters",
+        "dynamic",
+        "typing effect",
+        "morphing",
+        "scroll-triggered text"
+      ],
+      "best_for": "Hero sections, marketing sites, video platforms, storytelling, creative portfolios, landing pages",
+      "avoid_for": "Long-form content, accessibility-critical, data interfaces, forms, elderly users",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "@keyframes text animation, typing effect, background-clip: text, GSAP ScrollTrigger, split text",
+        "css": "@keyframes on headline words (CSS only, no JS libraries), background-clip: text gradients, typing effect with steps(), staggered animation-delay per word, variable font weight transitions",
+        "tokens": "--text-animation-duration: 1s, --letter-delay: 0.05s, --typing-speed: 100ms, --gradient-text: linear-gradient(90deg, #color1, #color2), --morph-duration: 0.5s",
+        "checklist": [
+          "Headline readable with animation off",
+          "prefers-reduced-motion shows the final state",
+          "Only the hero and section titles move",
+          "No layout shift while animating"
+        ]
+      },
+      "source": "ui-ux-pro-max:kinetic-typography"
+    },
+    {
+      "id": "vintage-analog-retro-film",
+      "name": "Analog film",
+      "hint": "Film grain, faded color and polaroid frames. Warm nostalgia.",
+      "guidance": "Warm faded palette, grain overlay, polaroid/film frames around images, light-leak gradients, typewriter or retro serif accents.",
+      "keywords": [
+        "Film grain",
+        "VHS",
+        "cassette tape",
+        "polaroid",
+        "analog warmth",
+        "faded colors",
+        "light leaks",
+        "vintage photography"
+      ],
+      "best_for": "Photography portfolios, music/vinyl brands, vintage fashion, nostalgia marketing, film industry, cafes",
+      "avoid_for": "Modern tech, SaaS, healthcare, children's apps, corporate enterprise",
+      "modes": {
+        "light": "supported",
+        "dark": "conditional"
+      },
+      "recipe": {
+        "effects": "Film grain overlay, VHS tracking effect, polaroid shake, fade-in transitions, light leak animations",
+        "css": "filter: sepia() contrast() saturate(0.8), background: noise texture overlay, animation: VHS tracking (transform skew), light leak gradient overlay, border for polaroid frame, grain via SVG filter",
+        "tokens": "--sepia-amount: 20%, --contrast: 1.1, --saturation: 0.8, --grain-opacity: 0.15, --light-leak-color: rgba(255,200,100,0.2), --warm-tint: #F5E6C8",
+        "checklist": [
+          "Film grain visible",
+          "Colors faded/warm",
+          "Light leaks present",
+          "Nostalgic feel achieved",
+          "Performance with filters",
+          "Images look vintage"
+        ]
+      },
+      "source": "ui-ux-pro-max:vintage-analog-retro-film"
+    },
+    {
+      "id": "anti-polish-raw-aesthetic",
+      "name": "Raw / hand-made",
+      "hint": "Hand-drawn marks, collage and scribbles. Human and imperfect on purpose.",
+      "guidance": "Hand-drawn SVG underlines and arrows, collage placement with small rotations, paper texture, marker annotations; imperfection is intentional.",
+      "keywords": [
+        "Hand-drawn",
+        "collage",
+        "scanned textures",
+        "unfinished",
+        "imperfect",
+        "authentic",
+        "human",
+        "sketch",
+        "raw marks",
+        "creative process"
+      ],
+      "best_for": "Creative portfolios, artist sites, indie brands, handmade products, authentic storytelling, editorial",
+      "avoid_for": "Corporate enterprise, fintech, healthcare, government, polished SaaS",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "No smooth transitions, hand-drawn animations, paper texture overlays, jitter effects, sketch reveal",
+        "css": "background: url(paper-texture.png), filter: grayscale() contrast(), border: hand-drawn SVG, transform: rotate(small random), no smooth transitions, sketch-style fonts, opacity variations",
+        "tokens": "--paper-bg: #FAFAF8, --pencil-color: #4A4A4A, --marker-black: #1A1A1A, --kraft-brown: #C4A77D, --sketch-rotation: random(-3deg, 3deg), --texture-opacity: 0.3",
+        "checklist": [
+          "Textures loaded",
+          "Hand-drawn elements present",
+          "Imperfections intentional",
+          "Authentic feel achieved",
+          "Performance ok with textures",
+          "Accessibility maintained"
+        ]
+      },
+      "source": "ui-ux-pro-max:anti-polish-raw-aesthetic"
+    },
+    {
+      "id": "accessible-and-ethical",
+      "name": "Accessible first",
+      "hint": "Large clear text, strong contrast, obvious controls. Easy for everyone.",
+      "guidance": "Large type (18px+ body), 7:1 contrast where possible, big obvious buttons, thick focus rings, plain language, no motion dependence.",
+      "keywords": [
+        "Accessible",
+        "inclusive interface",
+        "high contrast",
+        "large text (16px+)",
+        "keyboard navigation",
+        "screen reader friendly",
+        "accessibility standards aware",
+        "focus state",
+        "semantic"
+      ],
+      "best_for": "Government, healthcare, education, inclusive products, large audience, legal compliance, public",
+      "avoid_for": "None - accessibility universal",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Clear focus rings (3-4px), ARIA labels, skip links, responsive design, reduced motion, 44x44px touch targets",
+        "css": "color-contrast: 7:1+, font-size: 16px+, outline: 3-4px on :focus-visible, aria-label, role attributes, @media (prefers-reduced-motion), touch-target: 44x44px, cursor: pointer",
+        "tokens": "--contrast-ratio: 7:1, --font-size-min: 16px, --focus-ring: 3-4px, --touch-target: 44x44px, --wcag-target: enhanced, --keyboard-accessible: true, --sr-test-required: true",
+        "checklist": [
+          "complete-page conformance tested against the chosen target",
+          "7:1+ contrast checked",
+          "Keyboard navigation tested",
+          "Screen reader tested",
+          "Focus visible 3-4px",
+          "Semantic HTML used",
+          "Touch targets 44x44px"
+        ]
+      },
+      "source": "ui-ux-pro-max:accessible-and-ethical"
+    },
+    {
+      "id": "data-dense-dashboard",
+      "name": "Data-dense",
+      "hint": "Lots of information per screen, neatly organized. For power users.",
+      "guidance": "Compact 12-column grid of KPI cards, charts and tables; small gaps, sticky headers, tabular numbers, minimal decoration.",
+      "keywords": [
+        "Multiple charts/widgets",
+        "data tables",
+        "KPI cards",
+        "minimal padding",
+        "grid layout",
+        "space-efficient",
+        "maximum data visibility"
+      ],
+      "best_for": "Business intelligence dashboards, financial analytics, enterprise reporting, operational dashboards, data warehousing",
+      "avoid_for": "Marketing dashboards, consumer-facing analytics, simple reporting",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Hover tooltips, chart zoom on click, row highlighting on hover, smooth filter animations, data loading spinners",
+        "css": "display: grid, grid-template-columns: repeat(12, 1fr), gap: 8-12px, card padding 12-16px, 14px labels and table cells on desktop (16px body on mobile), tables scroll inside their own container, sticky table headers, tabular numbers",
+        "tokens": "--grid-gap: 8px, --card-padding: 12px, --font-size-small: 12px, --table-row-height: 36px, --sidebar-width: 240px, --header-height: 56px",
+        "checklist": [
+          "Grid layout 12 columns",
+          "KPI cards responsive",
+          "Tables sortable",
+          "Filters functional",
+          "Loading states for data",
+          "Export functionality"
+        ]
+      },
+      "source": "ui-ux-pro-max:data-dense-dashboard"
+    },
+    {
+      "id": "soft-ui-evolution",
+      "name": "Soft UI",
+      "hint": "Gentle depth and soft shadows with clear contrast. Calm and modern.",
+      "guidance": "Soft multi-layer shadows, 10-12px radii, pale tinted surfaces with real contrast, calm 200-300ms transitions.",
+      "keywords": [
+        "Evolved soft UI",
+        "better contrast",
+        "modern aesthetics",
+        "subtle depth",
+        "accessibility-focused",
+        "improved shadows",
+        "hybrid"
+      ],
+      "best_for": "Modern enterprise apps, SaaS platforms, health/wellness, modern business tools, professional, hybrid",
+      "avoid_for": "Extreme minimalism, critical performance, systems without modern OS",
+      "modes": {
+        "light": "supported",
+        "dark": "supported"
+      },
+      "recipe": {
+        "effects": "Improved shadows (softer than flat, clearer than neumorphism), modern (200-300ms), focus visible, measured contrast targets",
+        "css": "box-shadow: softer multi-layer (0 2px 4px), background: improved contrast pastels, border-radius: 8-12px, animation: 200-300ms smooth, outline: 2-3px on focus, contrast: 4.5:1+",
+        "tokens": "--shadow-soft: modern blend, --border-radius: 10px, --animation-duration: 200-300ms, --contrast-ratio: 4.5:1+, --color-hierarchy: improved, --wcag-target: project-defined",
+        "checklist": [
+          "Contrast measured against the chosen project target",
+          "Soft shadows modern",
+          "Border-radius 8-12px",
+          "Animations 200-300ms",
+          "Focus states visible",
+          "Color hierarchy clear"
+        ]
+      },
+      "source": "ui-ux-pro-max:soft-ui-evolution"
     }
   ]
 }

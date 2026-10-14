@@ -29,9 +29,10 @@ export type Score = { criterion: string; score: number; evidence: string };
 
 /** One direction: a UX concept plus the visual mood the designer proposes. */
 export type Brief = {
-  id: string; name: string; description: string; slot: "taste" | "neutral" | "wildcard";
+  id: string; name: string; description: string; slot: "taste" | "neutral" | "bold" | "wildcard";
   concept: string; tradeoff: string; sections: string[];
-  reference_style: string; layout_archetype: string; layout_id: string | null;
+  layout_archetype: string; layout_id: string | null; structure_id: string | null; variance: "low" | "mid" | "high";
+  style_id: string | null; reference_style: string;
   mood: string[]; theme: "light" | "dark"; heading_font: string; body_font: string; palette: Palette;
   density: string; shape: string; motion: string; imagery: string; signature_element: string; avoid: string[];
 };

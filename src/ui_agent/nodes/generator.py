@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 
 from .. import mock, settings
+from ..library import style_recipe
 from ..llm import get_llm
 from ..state import AgentState, DirectionBrief, brief_text
 from .common import chosen_direction, emit, extract_html, image_block, run_dir, with_base_layer
@@ -28,8 +29,10 @@ def designer_content(state: AgentState, direction: dict, sketch: dict, notes: st
     ]
     if answers:
         parts.append(f"<kickoff_answers>\n{json.dumps(answers, indent=1)}\n</kickoff_answers>")
+    parts.append(f"<direction>\n{json.dumps(direction, indent=1)}\n</direction>")
+    if recipe := style_recipe(direction.get("style_id")):
+        parts.append(f"<style_recipe>\n{json.dumps(recipe, indent=1)}\n</style_recipe>")
     parts += [
-        f"<direction>\n{json.dumps(direction, indent=1)}\n</direction>",
         f"<approved_sketch>\n{(root / sketch['html_path']).read_text()}\n</approved_sketch>",
         f"<pm_notes>{notes or '(none)'}</pm_notes>",
     ]

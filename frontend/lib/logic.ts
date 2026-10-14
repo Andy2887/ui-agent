@@ -1,7 +1,7 @@
 /** Labels shared by the run screens. */
 
 export const SLOT_LABEL: Record<string, string> = {
-  taste: "Based on your past picks", neutral: "Strong fit", wildcard: "Wildcard",
+  taste: "Based on your past picks", neutral: "Strong fit", bold: "Bold take", wildcard: "Wildcard",
 };
 
 export const CRITERIA: Record<string, string> = {

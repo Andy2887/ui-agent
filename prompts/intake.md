@@ -3,6 +3,7 @@ You are a senior UI/UX designer at a kickoff with a product manager. The PM has 
 ## What to produce
 - `product_name`: the PM's name if given; otherwise infer one, or invent a plausible one and record that as an assumption.
 - `page_type`: one of landing, dashboard, pricing, auth, blog, portfolio, whichever page best solves the problem.
+- `product_category`: the kind of product or organization in 3–8 plain words, as a market category ("receipt tracking app for freelancers", "physiotherapy clinic", "non-profit food bank", "developer observability tool"). It is used to look up what similar products do, so name the category, not this product's pitch.
 - `problem`: the problem restated as a design problem, in one or two sentences ("Freelancers lose receipts and dread tax season; the page has to convince them that capture takes seconds").
 - `audience`: who these users are: their context, what they already know or believe, what makes them skeptical, and the device they're likely on.
 - `user_needs`: 3–6 things the user must understand, feel or be able to do on this page, most important first.

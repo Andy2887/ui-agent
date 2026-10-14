@@ -1,13 +1,37 @@
 {
-  "version": 1,
-  "font_allowlist_hosts": ["fonts.googleapis.com", "fonts.gstatic.com"],
+  "version": 2,
+  "source": {
+    "name": "ui-ux-pro-max",
+    "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "commit": "7246805",
+    "license": "MIT, see presets/THIRD_PARTY.md"
+  },
+  "font_allowlist_hosts": [
+    "fonts.googleapis.com",
+    "fonts.gstatic.com"
+  ],
   "pairings": [
     {
       "id": "clean-sans",
       "name": "Clean sans",
       "hint": "Neutral and highly readable. Works for almost anything.",
-      "heading": { "family": "Inter", "weights": [600, 700], "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif", "letter_spacing": "-0.02em" },
-      "body": { "family": "Inter", "weights": [400, 500], "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif" },
+      "heading": {
+        "family": "Inter",
+        "weights": [
+          600,
+          700
+        ],
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif",
+        "letter_spacing": "-0.02em"
+      },
+      "body": {
+        "family": "Inter",
+        "weights": [
+          400,
+          500
+        ],
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
       "scale_ratio": 1.25,
       "google": "family=Inter:wght@400;500;600;700"
     },
@@ -15,8 +39,23 @@
       "id": "geometric",
       "name": "Geometric",
       "hint": "Circles and straight lines. Modern, confident and a little techy.",
-      "heading": { "family": "Outfit", "weights": [600, 700], "fallback": "system-ui, sans-serif", "letter_spacing": "-0.02em" },
-      "body": { "family": "DM Sans", "weights": [400, 500], "fallback": "system-ui, sans-serif" },
+      "heading": {
+        "family": "Outfit",
+        "weights": [
+          600,
+          700
+        ],
+        "fallback": "system-ui, sans-serif",
+        "letter_spacing": "-0.02em"
+      },
+      "body": {
+        "family": "DM Sans",
+        "weights": [
+          400,
+          500
+        ],
+        "fallback": "system-ui, sans-serif"
+      },
       "scale_ratio": 1.333,
       "google": "family=Outfit:wght@600;700&family=DM+Sans:wght@400;500"
     },
@@ -24,8 +63,23 @@
       "id": "friendly",
       "name": "Friendly / rounded",
       "hint": "Soft, rounded letters. Warm and approachable.",
-      "heading": { "family": "Nunito", "weights": [700, 800], "fallback": "ui-rounded, system-ui, sans-serif", "letter_spacing": "-0.01em" },
-      "body": { "family": "Nunito Sans", "weights": [400, 600], "fallback": "system-ui, sans-serif" },
+      "heading": {
+        "family": "Nunito",
+        "weights": [
+          700,
+          800
+        ],
+        "fallback": "ui-rounded, system-ui, sans-serif",
+        "letter_spacing": "-0.01em"
+      },
+      "body": {
+        "family": "Nunito Sans",
+        "weights": [
+          400,
+          600
+        ],
+        "fallback": "system-ui, sans-serif"
+      },
       "scale_ratio": 1.25,
       "google": "family=Nunito:wght@700;800&family=Nunito+Sans:wght@400;600"
     },
@@ -33,8 +87,23 @@
       "id": "elegant-serif",
       "name": "Elegant serif",
       "hint": "Classic serif headlines with a clean body font. Editorial and premium.",
-      "heading": { "family": "Playfair Display", "weights": [600, 700], "fallback": "Georgia, 'Times New Roman', serif", "letter_spacing": "-0.01em" },
-      "body": { "family": "Source Sans 3", "weights": [400, 600], "fallback": "system-ui, sans-serif" },
+      "heading": {
+        "family": "Playfair Display",
+        "weights": [
+          600,
+          700
+        ],
+        "fallback": "Georgia, 'Times New Roman', serif",
+        "letter_spacing": "-0.01em"
+      },
+      "body": {
+        "family": "Source Sans 3",
+        "weights": [
+          400,
+          600
+        ],
+        "fallback": "system-ui, sans-serif"
+      },
       "scale_ratio": 1.333,
       "google": "family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600"
     },
@@ -42,10 +111,889 @@
       "id": "technical-mono",
       "name": "Technical mono",
       "hint": "Monospace headings like a code editor. Precise and developer-flavored.",
-      "heading": { "family": "JetBrains Mono", "weights": [600, 700], "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace", "letter_spacing": "-0.03em" },
-      "body": { "family": "IBM Plex Sans", "weights": [400, 500], "fallback": "system-ui, sans-serif" },
+      "heading": {
+        "family": "JetBrains Mono",
+        "weights": [
+          600,
+          700
+        ],
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace",
+        "letter_spacing": "-0.03em"
+      },
+      "body": {
+        "family": "IBM Plex Sans",
+        "weights": [
+          400,
+          500
+        ],
+        "fallback": "system-ui, sans-serif"
+      },
       "scale_ratio": 1.2,
       "google": "family=JetBrains+Mono:wght@600;700&family=IBM+Plex+Sans:wght@400;500"
+    },
+    {
+      "id": "classic-elegant",
+      "name": "Classic Elegant",
+      "hint": "elegant, luxury, sophisticated, timeless, premium, editorial",
+      "best_for": "Luxury brands, fashion, spa, beauty, editorial, magazines, high-end e-commerce",
+      "heading": {
+        "family": "Playfair Display",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Inter",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Classic Elegant"
+    },
+    {
+      "id": "modern-professional",
+      "name": "Modern Professional",
+      "hint": "modern, professional, clean, corporate, friendly, approachable",
+      "best_for": "SaaS, corporate sites, business apps, startups, professional services",
+      "heading": {
+        "family": "Poppins",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Open Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Modern Professional"
+    },
+    {
+      "id": "tech-startup",
+      "name": "Tech Startup",
+      "hint": "tech, startup, modern, innovative, bold, futuristic",
+      "best_for": "Tech companies, startups, SaaS, developer tools, AI products",
+      "heading": {
+        "family": "Space Grotesk",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "DM Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Tech Startup"
+    },
+    {
+      "id": "editorial-classic",
+      "name": "Editorial Classic",
+      "hint": "editorial, classic, literary, traditional, refined, bookish",
+      "best_for": "Publishing, blogs, news sites, literary magazines, book covers",
+      "heading": {
+        "family": "Cormorant Garamond",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Libre Baskerville",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "google": "family=Cormorant+Garamond:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700",
+      "source": "ui-ux-pro-max:Editorial Classic"
+    },
+    {
+      "id": "playful-creative",
+      "name": "Playful Creative",
+      "hint": "playful, friendly, fun, creative, warm, approachable",
+      "best_for": "Children's apps, educational, gaming, creative tools, entertainment",
+      "heading": {
+        "family": "Fredoka",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Nunito",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Playful Creative"
+    },
+    {
+      "id": "bold-statement",
+      "name": "Bold Statement",
+      "hint": "bold, impactful, strong, dramatic, modern, headlines",
+      "best_for": "Marketing sites, portfolios, agencies, event pages, sports",
+      "heading": {
+        "family": "Bebas Neue",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Source Sans 3",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Bebas+Neue&family=Source+Sans+3:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Bold Statement"
+    },
+    {
+      "id": "wellness-calm",
+      "name": "Wellness Calm",
+      "hint": "calm, wellness, health, relaxing, natural, organic",
+      "best_for": "Health apps, wellness, spa, meditation, yoga, organic brands",
+      "heading": {
+        "family": "Lora",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Raleway",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Lora:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Wellness Calm"
+    },
+    {
+      "id": "retro-vintage",
+      "name": "Retro Vintage",
+      "hint": "retro, vintage, nostalgic, dramatic, decorative, bold",
+      "best_for": "Vintage brands, breweries, restaurants, creative portfolios, posters",
+      "heading": {
+        "family": "Abril Fatface",
+        "fallback": "system-ui, sans-serif"
+      },
+      "body": {
+        "family": "Merriweather",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "google": "family=Abril+Fatface&family=Merriweather:wght@300;400;700",
+      "source": "ui-ux-pro-max:Retro Vintage"
+    },
+    {
+      "id": "geometric-modern",
+      "name": "Geometric Modern",
+      "hint": "geometric, modern, clean, balanced, contemporary, versatile",
+      "best_for": "General purpose, portfolios, agencies, modern brands, landing pages",
+      "heading": {
+        "family": "Outfit",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Work Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Geometric Modern"
+    },
+    {
+      "id": "luxury-serif",
+      "name": "Luxury Serif",
+      "hint": "luxury, high-end, fashion, elegant, refined, premium",
+      "best_for": "Fashion brands, luxury e-commerce, jewelry, high-end services",
+      "heading": {
+        "family": "Cormorant",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Montserrat",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Cormorant:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Luxury Serif"
+    },
+    {
+      "id": "friendly-saas",
+      "name": "Friendly SaaS",
+      "hint": "friendly, modern, saas, clean, approachable, professional",
+      "best_for": "SaaS products, web apps, dashboards, B2B, productivity tools",
+      "heading": {
+        "family": "Plus Jakarta Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Plus Jakarta Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Plus+Jakarta+Sans:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Friendly SaaS"
+    },
+    {
+      "id": "news-editorial",
+      "name": "News Editorial",
+      "hint": "news, editorial, journalism, trustworthy, readable, informative",
+      "best_for": "News sites, blogs, magazines, journalism, content-heavy sites",
+      "heading": {
+        "family": "Newsreader",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Roboto",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Newsreader:wght@400;500;600;700&family=Roboto:wght@300;400;500;700",
+      "source": "ui-ux-pro-max:News Editorial"
+    },
+    {
+      "id": "handwritten-charm",
+      "name": "Handwritten Charm",
+      "hint": "handwritten, personal, friendly, casual, warm, charming",
+      "best_for": "Personal blogs, invitations, creative portfolios, lifestyle brands",
+      "heading": {
+        "family": "Caveat",
+        "fallback": "'Comic Sans MS', cursive, sans-serif"
+      },
+      "body": {
+        "family": "Quicksand",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Caveat:wght@400;500;600;700&family=Quicksand:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Handwritten Charm"
+    },
+    {
+      "id": "corporate-trust",
+      "name": "Corporate Trust",
+      "hint": "corporate, trustworthy, accessible, readable, professional, clean",
+      "best_for": "Enterprise, government, healthcare, finance, accessibility-focused",
+      "heading": {
+        "family": "Lexend",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Source Sans 3",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Lexend:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Corporate Trust"
+    },
+    {
+      "id": "brutalist-raw",
+      "name": "Brutalist Raw",
+      "hint": "brutalist, raw, technical, monospace, minimal, stark",
+      "best_for": "Brutalist designs, developer portfolios, experimental, tech art",
+      "heading": {
+        "family": "Space Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "body": {
+        "family": "Space Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "google": "family=Space+Mono:wght@400;700",
+      "source": "ui-ux-pro-max:Brutalist Raw"
+    },
+    {
+      "id": "fashion-forward",
+      "name": "Fashion Forward",
+      "hint": "fashion, avant-garde, creative, bold, artistic, edgy",
+      "best_for": "Fashion brands, creative agencies, art galleries, design studios",
+      "heading": {
+        "family": "Syne",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Manrope",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Manrope:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Fashion Forward"
+    },
+    {
+      "id": "soft-rounded",
+      "name": "Soft Rounded",
+      "hint": "soft, rounded, friendly, approachable, warm, gentle",
+      "best_for": "Children's products, pet apps, friendly brands, wellness, soft UI",
+      "heading": {
+        "family": "Varela Round",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Nunito Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Nunito+Sans:wght@300;400;500;600;700&family=Varela+Round",
+      "source": "ui-ux-pro-max:Soft Rounded"
+    },
+    {
+      "id": "premium-sans",
+      "name": "Premium Sans",
+      "hint": "premium, modern, clean, sophisticated, versatile, balanced",
+      "best_for": "Premium brands, modern agencies, SaaS, portfolios, startups",
+      "heading": {
+        "family": "DM Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "DM Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=DM+Sans:wght@400;500;700",
+      "source": "ui-ux-pro-max:Premium Sans (DM Sans)"
+    },
+    {
+      "id": "vietnamese-friendly",
+      "name": "Vietnamese Friendly",
+      "hint": "vietnamese, international, readable, clean, multilingual, accessible",
+      "best_for": "Vietnamese sites, multilingual apps, international products",
+      "heading": {
+        "family": "Be Vietnam Pro",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Noto Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Vietnamese Friendly"
+    },
+    {
+      "id": "legal-professional",
+      "name": "Legal Professional",
+      "hint": "legal, professional, traditional, trustworthy, formal, authoritative",
+      "best_for": "Law firms, legal services, contracts, formal documents, government",
+      "heading": {
+        "family": "EB Garamond",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Lato",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700",
+      "source": "ui-ux-pro-max:Legal Professional"
+    },
+    {
+      "id": "medical-clean",
+      "name": "Medical Clean",
+      "hint": "medical, clean, accessible, professional, healthcare, trustworthy",
+      "best_for": "Healthcare, medical clinics, pharma, health apps, accessibility",
+      "heading": {
+        "family": "Figtree",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Noto Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Figtree:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;700",
+      "source": "ui-ux-pro-max:Medical Clean"
+    },
+    {
+      "id": "financial-trust",
+      "name": "Financial Trust",
+      "hint": "financial, trustworthy, professional, corporate, banking, serious",
+      "best_for": "Banks, finance, insurance, investment, fintech, enterprise",
+      "heading": {
+        "family": "IBM Plex Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "IBM Plex Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=IBM+Plex+Sans:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Financial Trust"
+    },
+    {
+      "id": "real-estate-luxury",
+      "name": "Real Estate Luxury",
+      "hint": "real estate, luxury, elegant, sophisticated, property, premium",
+      "best_for": "Real estate, luxury properties, architecture, interior design",
+      "heading": {
+        "family": "Cinzel",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Josefin Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Real Estate Luxury"
+    },
+    {
+      "id": "art-deco",
+      "name": "Art Deco",
+      "hint": "art deco, vintage, 1920s, elegant, decorative, gatsby",
+      "best_for": "Vintage events, art deco themes, luxury hotels, classic cocktails",
+      "heading": {
+        "family": "Poiret One",
+        "fallback": "system-ui, sans-serif"
+      },
+      "body": {
+        "family": "Didact Gothic",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Didact+Gothic&family=Poiret+One",
+      "source": "ui-ux-pro-max:Art Deco"
+    },
+    {
+      "id": "magazine-style",
+      "name": "Magazine Style",
+      "hint": "magazine, editorial, publishing, refined, journalism, print",
+      "best_for": "Magazines, online publications, editorial content, journalism",
+      "heading": {
+        "family": "Libre Bodoni",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Public Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Libre+Bodoni:wght@400;500;600;700&family=Public+Sans:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Magazine Style"
+    },
+    {
+      "id": "crypto-web3",
+      "name": "Crypto/Web3",
+      "hint": "crypto, web3, futuristic, tech, blockchain, digital",
+      "best_for": "Crypto platforms, NFT, blockchain, web3, futuristic tech",
+      "heading": {
+        "family": "Orbitron",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Exo 2",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Crypto/Web3"
+    },
+    {
+      "id": "gaming-bold",
+      "name": "Gaming Bold",
+      "hint": "gaming, bold, action, esports, competitive, energetic",
+      "best_for": "Gaming, esports, action games, competitive sports, entertainment",
+      "heading": {
+        "family": "Russo One",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Chakra Petch",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One",
+      "source": "ui-ux-pro-max:Gaming Bold"
+    },
+    {
+      "id": "startup-bold",
+      "name": "Startup Bold",
+      "hint": "startup, bold, modern, innovative, confident, dynamic",
+      "best_for": "Startups, pitch decks, product launches, bold brands",
+      "heading": {
+        "family": "Outfit",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Rubik",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Outfit:wght@400;500;600;700&family=Rubik:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Startup Bold (Outfit + Rubik)"
+    },
+    {
+      "id": "e-commerce-clean",
+      "name": "E-commerce Clean",
+      "hint": "ecommerce, clean, shopping, product, retail, conversion",
+      "best_for": "E-commerce, online stores, product pages, retail, shopping",
+      "heading": {
+        "family": "Rubik",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Nunito Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Nunito+Sans:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:E-commerce Clean"
+    },
+    {
+      "id": "academic-research",
+      "name": "Academic/Research",
+      "hint": "academic, research, scholarly, accessible, readable, educational",
+      "best_for": "Universities, research papers, academic journals, educational",
+      "heading": {
+        "family": "Crimson Pro",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Atkinson Hyperlegible",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Pro:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Academic/Research"
+    },
+    {
+      "id": "dashboard-data",
+      "name": "Dashboard Data",
+      "hint": "dashboard, data, analytics, code, technical, precise",
+      "best_for": "Dashboards, analytics, data visualization, admin panels",
+      "heading": {
+        "family": "Fira Code",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "body": {
+        "family": "Fira Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Dashboard Data"
+    },
+    {
+      "id": "music-entertainment",
+      "name": "Music/Entertainment",
+      "hint": "music, entertainment, fun, energetic, bold, performance",
+      "best_for": "Music platforms, entertainment, events, festivals, performers",
+      "heading": {
+        "family": "Righteous",
+        "fallback": "system-ui, sans-serif"
+      },
+      "body": {
+        "family": "Poppins",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Poppins:wght@300;400;500;600;700&family=Righteous",
+      "source": "ui-ux-pro-max:Music/Entertainment"
+    },
+    {
+      "id": "minimalist-portfolio",
+      "name": "Minimalist Portfolio",
+      "hint": "minimal, portfolio, designer, creative, clean, artistic",
+      "best_for": "Design portfolios, creative professionals, minimalist brands",
+      "heading": {
+        "family": "Archivo",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Space Grotesk",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Minimalist Portfolio"
+    },
+    {
+      "id": "wedding-romance",
+      "name": "Wedding/Romance",
+      "hint": "wedding, romance, elegant, script, invitation, feminine",
+      "best_for": "Wedding sites, invitations, romantic brands, bridal",
+      "heading": {
+        "family": "Great Vibes",
+        "fallback": "'Comic Sans MS', cursive, sans-serif"
+      },
+      "body": {
+        "family": "Cormorant Infant",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "google": "family=Cormorant+Infant:wght@300;400;500;600;700&family=Great+Vibes",
+      "source": "ui-ux-pro-max:Wedding/Romance"
+    },
+    {
+      "id": "science-tech",
+      "name": "Science/Tech",
+      "hint": "science, technology, research, data, futuristic, precise",
+      "best_for": "Science, research, tech documentation, data-heavy sites",
+      "heading": {
+        "family": "Exo",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Roboto Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "google": "family=Exo:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400;500;700",
+      "source": "ui-ux-pro-max:Science/Tech"
+    },
+    {
+      "id": "accessibility-first",
+      "name": "Accessibility First",
+      "hint": "accessible, readable, inclusive, WCAG, dyslexia-friendly, clear",
+      "best_for": "Accessibility-critical sites, government, healthcare, inclusive design",
+      "heading": {
+        "family": "Atkinson Hyperlegible",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Atkinson Hyperlegible",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Atkinson+Hyperlegible:wght@400;700",
+      "source": "ui-ux-pro-max:Accessibility First"
+    },
+    {
+      "id": "sports-fitness",
+      "name": "Sports/Fitness",
+      "hint": "sports, fitness, athletic, energetic, condensed, action",
+      "best_for": "Sports, fitness, gyms, athletic brands, competition",
+      "heading": {
+        "family": "Barlow Condensed",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Barlow",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Sports/Fitness"
+    },
+    {
+      "id": "luxury-minimalist",
+      "name": "Luxury Minimalist",
+      "hint": "luxury, minimalist, high-end, sophisticated, refined, premium",
+      "best_for": "Luxury minimalist brands, high-end fashion, premium products",
+      "heading": {
+        "family": "Bodoni Moda",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Jost",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Bodoni+Moda:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:Luxury Minimalist"
+    },
+    {
+      "id": "tech-hud-mono",
+      "name": "Tech/HUD Mono",
+      "hint": "tech, futuristic, hud, sci-fi, data, monospaced",
+      "best_for": "Sci-fi interfaces, developer tools, cybersecurity, dashboards",
+      "heading": {
+        "family": "Share Tech Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "body": {
+        "family": "Fira Code",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "google": "family=Fira+Code:wght@300;400;500;600;700&family=Share+Tech+Mono",
+      "source": "ui-ux-pro-max:Tech/HUD Mono"
+    },
+    {
+      "id": "neubrutalist-bold",
+      "name": "Neubrutalist Bold",
+      "hint": "bold, neubrutalist, loud, strong, geometric, quirky",
+      "best_for": "Neubrutalist designs, Gen Z brands, bold marketing",
+      "heading": {
+        "family": "Lexend Mega",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Public Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Lexend+Mega:wght@100..900&family=Public+Sans:wght@100..900",
+      "source": "ui-ux-pro-max:Neubrutalist Bold"
+    },
+    {
+      "id": "academic-archival",
+      "name": "Academic/Archival",
+      "hint": "academic, old-school, university, research, serious, traditional",
+      "best_for": "University sites, archives, research papers, history",
+      "heading": {
+        "family": "EB Garamond",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Crimson Text",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "google": "family=Crimson+Text:wght@400;600;700&family=EB+Garamond:wght@400;500;600;700;800",
+      "source": "ui-ux-pro-max:Academic/Archival"
+    },
+    {
+      "id": "kinetic-motion",
+      "name": "Kinetic Motion",
+      "hint": "kinetic, motion, futuristic, speed, wide, tech",
+      "best_for": "Music festivals, automotive, high-energy brands",
+      "heading": {
+        "family": "Syncopate",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Space Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "google": "family=Space+Mono:wght@400;700&family=Syncopate:wght@400;700",
+      "source": "ui-ux-pro-max:Kinetic Motion"
+    },
+    {
+      "id": "gen-z-brutal",
+      "name": "Gen Z Brutal",
+      "hint": "brutal, loud, shouty, meme, internet, bold",
+      "best_for": "Gen Z marketing, streetwear, viral campaigns",
+      "heading": {
+        "family": "Anton",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Epilogue",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Anton&family=Epilogue:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Gen Z Brutal"
+    },
+    {
+      "id": "bauhaus-geometric",
+      "name": "Bauhaus Geometric",
+      "hint": "bauhaus, geometric, constructivist, bold, uppercase, architectural",
+      "best_for": "Bauhaus mobile apps, bold editorial mobile, design-forward branding apps, art/culture platforms",
+      "heading": {
+        "family": "Outfit",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Outfit",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Outfit:wght@400;500;700;900",
+      "source": "ui-ux-pro-max:Bauhaus Geometric"
+    },
+    {
+      "id": "minimalist-monochrome-editorial",
+      "name": "Minimalist Monochrome Editorial",
+      "hint": "monochrome, editorial, austere, typographic, pocket manifesto, luxury",
+      "best_for": "Luxury fashion mobile apps, editorial publications, digital exhibitions, portfolio apps, high-contrast e-reader aesthetics",
+      "heading": {
+        "family": "Playfair Display",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Source Serif 4",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "google": "family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300",
+      "source": "ui-ux-pro-max:Minimalist Monochrome Editorial"
+    },
+    {
+      "id": "saas-boutique",
+      "name": "SaaS Boutique",
+      "hint": "saas, boutique, electric, warm, editorial, bold",
+      "best_for": "B2B SaaS mobile, fintech apps, analytics dashboards, marketing tools, operations platforms",
+      "heading": {
+        "family": "Calistoga",
+        "fallback": "system-ui, sans-serif"
+      },
+      "body": {
+        "family": "Inter",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Calistoga:ital@0;1&family=Inter:wght@300;400;500;600;700",
+      "source": "ui-ux-pro-max:SaaS Mobile Boutique (Calistoga + Inter)"
+    },
+    {
+      "id": "terminal-cli-monospace",
+      "name": "Terminal CLI Monospace",
+      "hint": "terminal, cli, hacker, monospace, matrix, developer",
+      "best_for": "Developer tools, Web3/blockchain apps, hacker aesthetic, sci-fi games, ARG, security tools, geek-culture portfolios",
+      "heading": {
+        "family": "JetBrains Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "body": {
+        "family": "JetBrains Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "google": "family=JetBrains+Mono:ital,wght@0,400;0,500;1,400",
+      "source": "ui-ux-pro-max:Terminal CLI Monospace"
+    },
+    {
+      "id": "kinetic-brutalism",
+      "name": "Kinetic Brutalism",
+      "hint": "kinetic, brutalist, aggressive, uppercase, oversized, display",
+      "best_for": "Music/culture apps, sports platforms, brand flagship mobile, performance dashboards, underground product drops",
+      "heading": {
+        "family": "Space Grotesk",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Space Grotesk",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Space+Grotesk:wght@400;500;600;700",
+      "source": "ui-ux-pro-max:Kinetic Brutalism (Space Grotesk)"
+    },
+    {
+      "id": "material-you-md3",
+      "name": "Material You MD3",
+      "hint": "material design 3, md3, android, google, tonal, friendly",
+      "best_for": "Android apps, cross-platform tools, productivity software, data-heavy B2B dashboards, enterprise mobile",
+      "heading": {
+        "family": "Roboto",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Roboto",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400",
+      "source": "ui-ux-pro-max:Material You MD3 (Roboto System)"
+    },
+    {
+      "id": "bold-typography",
+      "name": "Bold Typography",
+      "hint": "bold typography, editorial, poster, near-black, vermillion, luxury",
+      "best_for": "Creative brand flagships, reading platforms, event apps, flash pages, luxury mobile experiences",
+      "heading": {
+        "family": "Inter",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Playfair Display",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "google": "family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital@1",
+      "source": "ui-ux-pro-max:Bold Typography Mobile (Inter Poster)"
+    },
+    {
+      "id": "academia",
+      "name": "Academia",
+      "hint": "academia, library, mahogany, parchment, brass, scholarly",
+      "best_for": "Knowledge management apps, scholarly reading tools, personal brand portfolios, RPG games, cultural community platforms",
+      "heading": {
+        "family": "Cormorant Garamond",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "body": {
+        "family": "Crimson Pro",
+        "fallback": "Georgia, 'Times New Roman', serif"
+      },
+      "google": "family=Cormorant+Garamond:ital,wght@0,300;0,500;0,700;1,300;1,500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400",
+      "source": "ui-ux-pro-max:Academia Mobile (Cormorant + Crimson + Cinzel)"
+    },
+    {
+      "id": "cyberpunk",
+      "name": "Cyberpunk",
+      "hint": "cyberpunk, neon, glitch, hud, sci-fi, dark",
+      "best_for": "Gaming companion apps, fintech/crypto, data visualization, dark brand apps, cyberpunk narrative games",
+      "heading": {
+        "family": "Orbitron",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "JetBrains Mono",
+        "fallback": "ui-monospace, 'SFMono-Regular', Menlo, monospace"
+      },
+      "google": "family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@700;900",
+      "source": "ui-ux-pro-max:Cyberpunk Mobile (Orbitron + JetBrains Mono)"
+    },
+    {
+      "id": "web3-bitcoin-defi",
+      "name": "Web3 Bitcoin DeFi",
+      "hint": "web3, bitcoin, defi, digital gold, fintech, crypto",
+      "best_for": "DeFi protocols and wallets, NFT platforms, metaverse social apps, high-tech brand landing pages",
+      "heading": {
+        "family": "Space Grotesk",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "Inter",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700",
+      "source": "ui-ux-pro-max:Web3 Bitcoin DeFi (Space Grotesk + Inter + Mono)"
+    },
+    {
+      "id": "claymorphism",
+      "name": "Claymorphism",
+      "hint": "claymorphism, clay, rounded, playful, candy, bubbly",
+      "best_for": "Children education apps, teen social, brand mascot apps, creative tools, fintech gamification",
+      "heading": {
+        "family": "Nunito",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "body": {
+        "family": "DM Sans",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif"
+      },
+      "google": "family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Nunito:ital,wght@0,700;0,800;0,900;1,700",
+      "source": "ui-ux-pro-max:Claymorphism Mobile (Nunito + DM Sans)"
     }
   ]
 }

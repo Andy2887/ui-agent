@@ -2,9 +2,10 @@
 
 from pathlib import Path
 
-from ui_agent import mock
+from ui_agent import mock, settings
 from ui_agent.color import check_palette, repair_palette
 from ui_agent.nodes.gate import gate
+from ui_agent.library import design_library, industry_priors, style_recipe
 from ui_agent.nodes.handoff import w3c_tokens
 from ui_agent.nodes.planner import diversity_problems, slots_for
 from ui_agent.nodes.sketch import with_kit
@@ -16,18 +17,61 @@ from ui_agent.tools.text_editor import TextEditor
 def test_slots_composition():
     assert slots_for(1, False) == ["neutral"]
     assert slots_for(2, True) == ["taste", "neutral"]
+    assert slots_for(2, False) == ["neutral", "bold"]
     s = slots_for(5, True)
-    assert s.count("wildcard") == 1 and s.count("taste") == 2
-    assert slots_for(3, False) == ["neutral", "neutral", "wildcard"]
+    assert s == ["taste", "taste", "neutral", "bold", "wildcard"]
+    assert slots_for(3, False) == ["neutral", "bold", "wildcard"]
     assert slots_for(10, True).count("taste") == 4
+    for n in range(2, 11):
+        s = slots_for(n, False)
+        assert all(not (x == y == "neutral") for x, y in zip(s, s[1:])), s
 
 
 def test_diversity_check_flags_identical_briefs():
     intake = {"sections": ["hero", "features", "testimonials", "cta", "footer"]}
-    b = mock.plan(3, intake, ["neutral", "neutral", "wildcard"]).briefs
+    b = mock.plan(3, intake, ["neutral", "bold", "wildcard"]).briefs
     assert not diversity_problems(b)
     b[1] = b[0].model_copy(update={"id": "b"})
     assert diversity_problems(b)
+
+
+def test_diversity_check_flags_shared_fonts_styles_and_variance():
+    intake = {"sections": ["hero", "features", "testimonials", "cta", "footer"]}
+    b = mock.plan(3, intake, ["neutral", "bold", "wildcard"]).briefs
+    shared_font = [b[0], b[1].model_copy(update={"body_font": b[0].heading_font}), b[2]]
+    assert any("both use" in p for p in diversity_problems(shared_font))
+    same_style = [b[0], b[1].model_copy(update={"style_id": "editorial"}), b[2].model_copy(update={"style_id": "editorial"})]
+    assert any("same library style" in p for p in diversity_problems(same_style))
+    same_variance = [x.model_copy(update={"variance": "mid"}) for x in b]
+    assert any("variance" in p for p in diversity_problems(same_variance))
+
+
+def test_industry_priors_follow_the_product_category():
+    brief = {"problem": "A city food bank cannot fill weekend sorting shifts.", "audience": "Local residents and students."}
+    names = [p["name"] for p in industry_priors(brief, {"product_category": "non-profit food bank volunteering"})]
+    assert names[0] == "Non-profit/Charity"
+    clinic = industry_priors({"problem": "Patients phone to book.", "audience": "Adults with injuries."},
+                             {"product_category": "physiotherapy clinic"})
+    assert clinic[0]["name"] == "Medical Clinic" and clinic[0]["avoid"]
+
+
+def test_library_sample_is_seeded_and_mixes_typical_with_random():
+    brief = {"problem": "Patients phone to book.", "audience": "Adults with injuries."}
+    intake = {"page_type": "landing", "product_category": "physiotherapy clinic"}
+    priors = industry_priors(brief, intake)
+    a = design_library(brief, intake, priors, seed="run-1")
+    assert a == design_library(brief, intake, priors, seed="run-1")
+    assert a != design_library(brief, intake, priors, seed="run-2")
+    fits = {s["fit"] for s in a["reference_styles"]}
+    assert fits == {"typical for products like this", "a less obvious option"}
+    typical = {s["id"] for s in a["reference_styles"] if s["fit"].startswith("typical")}
+    assert "accessible-and-ethical" in typical and "claymorphism" not in typical  # its avoid_for names medical
+    assert all("landing" in settings.structure(s["id"])["page_types"] for s in a["page_structures"])
+
+
+def test_style_recipe_reaches_the_designer():
+    assert style_recipe("bento-box-grid")["recipe"]["css"]
+    assert style_recipe(None) is None and style_recipe("not-a-style") is None
 
 
 def test_sketch_kit_is_injected_once():
