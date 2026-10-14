@@ -37,6 +37,9 @@ cd frontend && npm install && npm run dev   # http://localhost:3000
 .venv/bin/python scripts/audit.py page.html                       # Layer-A report for one file
 .venv/bin/python scripts/refine.py page.html --problem "…" --audience "…"   # refine loop only
 .venv/bin/python -m pytest -q                                     # 31 tests: presets CI, M0 checks, units, full mock pipeline
+.venv/bin/python scripts/eval.py run --label <name>               # full pipeline on the 5 fixed briefs in evals/briefs.yaml (~$0.50 each)
+.venv/bin/python scripts/eval.py compare evals/results/<a> evals/results/<b>
+.venv/bin/python scripts/replay_executor.py --label <name> runs/<id> …   # executor only, on recorded refine rounds (cents)
 ```
 
 ## Layout
