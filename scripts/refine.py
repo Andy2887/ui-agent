@@ -1,6 +1,6 @@
 """Internal dev tool (M1): run only the refine loop on an existing HTML file.
 
-    python scripts/refine.py page.html --problem "Freelancers lose receipts" --audience "Solo freelancers" [--max-iters 5]
+    python scripts/refine.py page.html --problem "Freelancers lose receipts" [--audience "Solo freelancers"] [--max-iters 5]
 
 Writes everything under runs/<run_id>/refine/ and prints the score trajectory.
 Set UI_AGENT_MOCK=1 to exercise the loop without API calls."""
@@ -24,7 +24,7 @@ async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("html")
     ap.add_argument("--problem", required=True)
-    ap.add_argument("--audience", required=True)
+    ap.add_argument("--audience", default="")
     ap.add_argument("--max-iters", type=int, default=settings.config()["refine"]["max_iterations"])
     a = ap.parse_args()
     run_id = "refine-" + time.strftime("%Y%m%d-%H%M%S")

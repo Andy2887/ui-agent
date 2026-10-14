@@ -1,5 +1,5 @@
 "use client";
-// Screen 1 — Brief (§5): the PM describes the problem and the users. The look is the designer's job.
+// Screen 1 — Brief (§5): the PM describes the problem. The users and the look are the designer's to work out.
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
@@ -10,7 +10,7 @@ const MAX_COUNT = 10;
 
 export function BriefScreen() {
   const router = useRouter();
-  const [brief, setBrief] = useState<ProductBrief>({ problem: "", audience: "", product_name: "", goal: "", context: "" });
+  const [brief, setBrief] = useState<ProductBrief>({ problem: "", product_name: "", goal: "", context: "" });
   const [count, setCount] = useState(3);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export function BriefScreen() {
   }, []);
 
   const set = (k: keyof ProductBrief) => (e: { target: { value: string } }) => setBrief((b) => ({ ...b, [k]: e.target.value }));
-  const ready = brief.problem.trim() && brief.audience.trim();
+  const ready = brief.problem.trim();
 
   const submit = async () => {
     if (!ready) return;
@@ -42,8 +42,8 @@ export function BriefScreen() {
       <div className="brief__main">
         <header className="page-head">
           <h1>Brief the designer</h1>
-          <p>Tell the designer what problem you're solving and who you're solving it for, as you would at a kickoff.
-            Colors, fonts and layout are the designer's job, so you won't be asked about them.</p>
+          <p>Tell the designer what problem you're solving, as you would at a kickoff. The designer works out who it&apos;s for
+            and may ask. Colors, fonts and layout are the designer's job, so you won't be asked about them.</p>
           {mock && <p className="note">Backend is in mock mode (UI_AGENT_MOCK=1): no API calls are made.</p>}
         </header>
         {error && <div className="callout callout--error">{error}</div>}
@@ -52,11 +52,6 @@ export function BriefScreen() {
           <span>What problem are we solving?</span>
           <textarea rows={4} value={brief.problem} onChange={set("problem")} required
             placeholder="Freelancers lose receipts and dread tax season. Tracking expenses feels like a chore they put off until it's too late." />
-        </label>
-        <label className="field field--lead">
-          <span>Who are we solving it for?</span>
-          <textarea rows={3} value={brief.audience} onChange={set("audience")} required
-            placeholder="Solo freelancers (designers, writers, developers) who do their own books, mostly on their phone between jobs. Skeptical of yet another finance app." />
         </label>
 
         <div className="field-row">
@@ -88,7 +83,7 @@ export function BriefScreen() {
               <button aria-label="More directions" onClick={() => setCount((c) => Math.min(MAX_COUNT, c + 1))} disabled={count >= MAX_COUNT}>+</button>
             </div>
             <button className="btn btn--primary generate-row__btn" disabled={!ready || submitting} onClick={submit}>
-              {submitting ? "Starting…" : !ready ? "Add the problem and users" : `Sketch ${count} direction${count > 1 ? "s" : ""}`}
+              {submitting ? "Starting…" : !ready ? "Add the problem" : `Sketch ${count} direction${count > 1 ? "s" : ""}`}
             </button>
           </div>
           <p className="caption caption--tight">Directions to sketch. Sketches are quick; only the one you pick is designed in full.</p>

@@ -52,7 +52,7 @@ function reduceEvent(s: RunState, e: RunEvent): RunState {
       if (e.kind === "kickoff") return { ...s, kickoff: e.payload, activity: "" };
       return e.kind === "gallery" ? { ...s, gallery: e.payload, activity: "" } : { ...s, final: e.payload, activity: "" };
     case "picked": return { ...s, picked: { id: e.id, notes: e.notes, mood_from: e.mood_from },
-                            activity: `Designing ${e.id.toUpperCase()} in full from the sketch${e.mood_from ? ` with ${e.mood_from.toUpperCase()}'s look` : ""}…` };
+                            activity: `Designing ${e.id.toUpperCase()} in full from the sketch${e.mood_from ? ` with ${e.mood_from.toUpperCase()}'s design system` : ""}…` };
     case "design_ready": return { ...s, activity: "Locking the style…" };
     case "regenerating": return { ...s, picked: undefined, iterations: [], activity: "Re-planning with your feedback…" };
     case "style_locked": return { ...s, activity: "Starting refinement…" };
@@ -224,7 +224,7 @@ function StyleTile({ brief, action, headline, lead, compact }: { brief: Brief; a
     <div className="tile__hero">
       <span className="tile__eyebrow">{brief.mood.join(" · ")}</span>
       <p className="tile__headline">{headline ?? brief.name}</p>
-      {!compact && <p className="tile__lead">{lead ?? brief.description}</p>}
+      {!compact && (lead ?? brief.description) && <p className="tile__lead">{lead ?? brief.description}</p>}
       <div className="tile__actions">
         <span className="tile__btn tile__btn--primary">{action || "Get started"}</span>
         <span className="tile__btn">Learn more</span>
@@ -247,15 +247,19 @@ function StyleTile({ brief, action, headline, lead, compact }: { brief: Brief; a
   );
 }
 
-function DirectionText({ brief, action }: { brief: Brief; action?: string }) {
+/** The UX half of a direction: the bet and its structure, without the look. */
+function LayoutText({ brief }: { brief: Brief }) {
   return (
     <>
       <div className="cand__head"><span className="letter">{brief.id.toUpperCase()}</span><h3>{brief.name}</h3><span className="tag">{SLOT_LABEL[brief.slot] ?? brief.slot}</span></div>
       <p className="cand__concept">{brief.concept}</p>
       <p className="cand__tradeoff"><strong>Trade-off:</strong> {brief.tradeoff}</p>
-      <StyleTile brief={brief} action={action} />
     </>
   );
+}
+
+function DirectionText({ brief, action }: { brief: Brief; action?: string }) {
+  return <><LayoutText brief={brief} /><StyleTile brief={brief} action={action} /></>;
 }
 
 /* ------------------------------------------------------------------- Sketching */
@@ -290,9 +294,11 @@ function Sketching({ state, runId }: { state: RunState; runId: string }) {
 function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunState["gallery"]> }) {
   const [open, setOpen] = useState<string | null>(null);
   const [compare, setCompare] = useState<string[]>([]);
-  const [pick, setPickRaw] = useState<string | null>(gallery.candidates.length === 1 ? gallery.candidates[0].id : null);
-  const [moodFrom, setMoodFrom] = useState<string | null>(null); // null: the picked direction's own look
-  const setPick = (id: string) => { setPickRaw(id); setMoodFrom(null); };
+  const usable = gallery.candidates.filter((c) => !c.error);
+  const only = usable.length === 1 ? usable[0].id : null;
+  // Layout and design system are separate decisions; neither preselects the other.
+  const [layout, setLayout] = useState<string | null>(only);
+  const [look, setLook] = useState<string | null>(only);
   const [notes, setNotes] = useState("");
   const [regen, setRegen] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -300,8 +306,7 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const byId = Object.fromEntries(gallery.candidates.map((c) => [c.id, c]));
-  const looks = gallery.candidates.filter((c) => !c.error);
-  const mixed = !!pick && !!moodFrom && moodFrom !== pick;
+  const productName = gallery.design_brief.product_name;
 
   const send = async (body: Record<string, unknown>) => {
     setBusy(true); setErr(null);
@@ -318,8 +323,8 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
   return (
     <section>
       <div className="section-bar">
-        <h2 className="h2">Pick a direction</h2>
-        <p className="muted">Each sketch is a different bet on solving the problem. Judge the idea and the structure; the style tile shows the look the designer proposes. You can pair any sketch with another direction&apos;s look. Tick two to compare.</p>
+        <h2 className="h2">Choose a layout and a design system</h2>
+        <p className="muted">These are two separate choices. The layout is the bet on solving the problem: the idea, the structure and what the page leads with. The design system is the look: type, color, shape and style. Any layout works with any design system.</p>
       </div>
       <DesignBriefCard brief={gallery.design_brief} />
       {open && byId[open] && (
@@ -334,16 +339,20 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
           <button className="btn" onClick={() => setCompare([])}>Close comparison</button>
         </div>
       )}
+
+      <h3 className="h3 choice-head"><span className="step">1</span>Layout</h3>
+      <p className="muted choice-sub">Judge the idea and the structure. Sketches are deliberately unstyled. Tick two to compare.</p>
       <div className="grid grid--cards">
         {gallery.candidates.map((c) => (
-          <article key={c.id} className={`cand ${pick === c.id ? "is-picked" : ""}`}>
+          <article key={c.id} className={`cand ${layout === c.id ? "is-picked" : ""}`}>
             <button className="cand__media cand__media--btn" onClick={() => { setOpen(c.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label={`Open ${c.name} sketch on desktop and mobile`}>
               {c.error ? <div className="shot shot--empty">Failed: {c.error}</div> : <Shot runId={runId} path={c.screenshots.desktop} alt={`${c.name} sketch`} />}
             </button>
             <div className="cand__body">
-              <DirectionText brief={c.brief} action={gallery.design_brief.primary_action} />
+              <LayoutText brief={c.brief} />
               <div className="cand__actions">
-                <button className={`btn ${pick === c.id ? "btn--primary" : ""}`} disabled={!!c.error} onClick={() => setPick(c.id)}>{pick === c.id ? "Selected" : "Choose this"}</button>
+                <button className={`btn ${layout === c.id ? "btn--primary" : ""}`} disabled={!!c.error} aria-pressed={layout === c.id}
+                  onClick={() => setLayout(c.id)}>{layout === c.id ? "Layout selected" : "Use this layout"}</button>
                 <label className="check"><input type="checkbox" checked={compare.includes(c.id)} disabled={!compare.includes(c.id) && compare.length >= 2}
                   onChange={() => setCompare((x) => x.includes(c.id) ? x.filter((y) => y !== c.id) : [...x, c.id])} />Compare</label>
                 <a className="link" href={artifactUrl(runId, c.html_path)} target="_blank" rel="noreferrer">Open in tab ↗</a>
@@ -353,33 +362,40 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
         ))}
       </div>
 
-      <div className="decision">
-        {pick ? (
-          <div className="decision__pick">
-            <h3>Design {pick.toUpperCase()} · {byId[pick].name} in full{mixed && <> with {moodFrom!.toUpperCase()}&apos;s look</>}</h3>
-            {looks.length > 1 && (
-              <div className="mix">
-                <span className="mix__label" id="mix-label">Look and feel</span>
-                <div className="mix__options" role="radiogroup" aria-labelledby="mix-label">
-                  {looks.map((c) => {
-                    const on = (moodFrom ?? pick) === c.id;
-                    return (
-                      <button key={c.id} role="radio" aria-checked={on} className={`mix__opt ${on ? "is-on" : ""}`} onClick={() => setMoodFrom(c.id === pick ? null : c.id)}>
-                        <span className="mix__dots" aria-hidden="true">{(["bg", "primary", "accent"] as const).map((k) => <i key={k} style={{ background: c.brief.palette[k] }} />)}</span>
-                        {c.id === pick ? `${c.id.toUpperCase()}'s own` : `${c.id.toUpperCase()} · ${c.name}`}
-                      </button>
-                    );
-                  })}
-                </div>
-                {mixed && <StyleTile compact brief={byId[moodFrom!].brief} headline={byId[pick].name} action={gallery.design_brief.primary_action} />}
+      <h3 className="h3 choice-head"><span className="step">2</span>Design system</h3>
+      <p className="muted choice-sub">Each look was proposed alongside one layout, but you can pair it with any of them.</p>
+      <div className="grid grid--cards">
+        {usable.map((c) => (
+          <article key={c.id} className={`cand ${look === c.id ? "is-picked" : ""}`}>
+            <div className="cand__body">
+              <div className="cand__head"><span className="letter">{c.id.toUpperCase()}</span><h3>{c.brief.reference_style}</h3></div>
+              <StyleTile brief={c.brief} action={gallery.design_brief.primary_action}
+                headline={(layout && byId[layout]?.name) || productName || c.brief.name} lead="" />
+              <div className="cand__actions">
+                <button className={`btn ${look === c.id ? "btn--primary" : ""}`} aria-pressed={look === c.id}
+                  onClick={() => setLook(c.id)}>{look === c.id ? "Design system selected" : "Use this design system"}</button>
               </div>
-            )}
-            <label className="field"><span>Notes for the designer (optional)</span>
-              <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. put the pricing teaser higher; B's testimonials idea would fit here" /></label>
-            <button className="btn btn--primary" disabled={busy} onClick={() => send({ action: "pick", id: pick, notes, ...(mixed ? { mood_from: moodFrom } : {}) })}>
-              {mixed ? "Design this mix →" : "Design this direction →"}</button>
-          </div>
-        ) : <p className="muted">Choose a sketch to continue, or ask for different directions.</p>}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="decision">
+        <div className="decision__pick">
+          <dl className="choice-summary">
+            <div><dt>Layout</dt><dd>{layout ? `${layout.toUpperCase()} · ${byId[layout].name}` : <span className="muted">Not chosen</span>}</dd></div>
+            <div><dt>Design system</dt><dd>{look ? `${look.toUpperCase()} · ${byId[look].brief.reference_style}` : <span className="muted">Not chosen</span>}</dd></div>
+          </dl>
+          {layout && look && (
+            <>
+              <label className="field"><span>Notes for the designer (optional)</span>
+                <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. put the pricing teaser higher; B's testimonials idea would fit here" /></label>
+              <button className="btn btn--primary" disabled={busy}
+                onClick={() => send({ action: "pick", id: layout, notes, ...(look !== layout ? { mood_from: look } : {}) })}>Design it in full →</button>
+            </>
+          )}
+          {!(layout && look) && <p className="muted">Choose a layout and a design system to continue, or ask for different directions.</p>}
+        </div>
         <div className="decision__regen">
           <button className="link" onClick={() => setRegen(!regen)} aria-expanded={regen}>None of these? Sketch new directions</button>
           {regen && (
@@ -442,7 +458,7 @@ function Refining({ state, runId }: { state: RunState; runId: string }) {
   return (
     <section>
       <div className="section-bar">
-        <h2 className="h2">Designing {state.picked?.id.toUpperCase()}{name ? ` · ${name}` : ""}{look ? ` with ${look.id.toUpperCase()}'s look (${look.name})` : ""}</h2>
+        <h2 className="h2">Designing {state.picked?.id.toUpperCase()}{name ? ` · ${name}` : ""}{look ? ` with ${look.id.toUpperCase()}'s design system (${look.reference_style})` : ""}</h2>
         <p className="muted">The designer turns the sketch into a full design. Then a reviewer checks each version against the rubric, a fixer makes targeted edits, and the best version is kept.</p>
       </div>
       <ScoreChart points={state.iterations.map((i) => ({ version: i.snapshot.version, score: i.snapshot.score }))} />

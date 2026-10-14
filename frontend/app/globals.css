@@ -179,16 +179,6 @@ input[type=color] { width: 48px; height: 42px; border: 1px solid var(--border-st
 .tile--compact .tile__actions { grid-column: 2; grid-row: 1 / span 2; }
 
 /* Mix and match: pair the picked sketch with another direction's look. */
-.mix { display: grid; gap: 8px; margin: 8px 0 4px; }
-.mix__label { font-size: .8125rem; font-weight: 600; }
-.mix__options { display: flex; flex-wrap: wrap; gap: 6px; }
-.mix__opt { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 12px; font: inherit; font-size: .8125rem; color: var(--text); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; cursor: pointer; }
-.mix__opt:hover { border-color: var(--accent); }
-.mix__opt.is-on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: var(--accent-soft); }
-.mix__opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.mix__dots { display: inline-flex; }
-.mix__dots i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--border-strong); margin-left: -3px; }
-.mix__dots i:first-child { margin-left: 0; }
 
 /* -------------------------------------------------------------------- run */
 .steps { list-style: none; display: flex; gap: 4px; padding: 0; margin: 0; counter-reset: s; flex-wrap: wrap; }
@@ -196,6 +186,12 @@ input[type=color] { width: 48px; height: 42px; border: 1px solid var(--border-st
 .steps li::before { content: counter(s) " · "; }
 .steps li.is-done { color: var(--muted); } .steps li.is-done::before { content: "✓ "; color: var(--ok); }
 .steps li.is-current { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.choice-head { display: flex; align-items: center; gap: 10px; font-size: 1rem; margin: 28px 0 2px; }
+.step { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-strong); font-size: .75rem; font-weight: 700; }
+.choice-sub { font-size: .875rem; margin: 0 0 12px 34px; }
+.choice-summary { display: flex; flex-wrap: wrap; gap: 8px 32px; margin: 0 0 4px; font-size: .9rem; }
+.choice-summary dt { font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.choice-summary dd { margin: 2px 0 0; font-weight: 600; }
 .cand { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: grid; align-content: start; }
 .cand.is-picked { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
 .cand__media { aspect-ratio: 16 / 10; background: var(--surface-2); overflow: hidden; border-bottom: 1px solid var(--border); display: grid; }

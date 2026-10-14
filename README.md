@@ -1,6 +1,6 @@
 # UI Agent — prototype
 
-You brief it like a PM briefs a UI/UX designer: the problem and the users, never the colors, fonts or layout. The designer agent may ask a few kickoff questions, then sketches N low-fidelity directions (default 3), each a different bet on solving the problem with a proposed visual mood. You pick one; it is designed in full, then a reviewer/executor loop refines it against a rubric, and you get a handoff package (`index.html`, `tokens.json`, `HANDOFF.md`, screenshots, PDF) for a coding agent. See `plan.md` for the full design.
+You brief it like a PM briefs a UI/UX designer: the problem (the designer works out the users), never the colors, fonts or layout. The designer agent may ask a few kickoff questions, then sketches N low-fidelity directions (default 3), each a different bet on solving the problem with a proposed visual mood. You pick a layout and, separately, a design system; the pair is designed in full, then a reviewer/executor loop refines it against a rubric, and you get a handoff package (`index.html`, `tokens.json`, `HANDOFF.md`, screenshots, PDF) for a coding agent. See `plan.md` for the full design.
 
 ## How the agents work together
 
@@ -57,7 +57,7 @@ The fan-out runs at most `max_parallel_generations` sketchers at once. The gate 
 
 Claude Design turns a prompt into a design. This project adds two things it doesn't do:
 
-1. **It follows the real PM → designer workflow.** You describe the problem and the users, not the visuals. The designer agent asks kickoff questions the way a designer would at a kickoff meeting, then offers several competing directions for you to choose from before anything is designed in full. This gets you closer to what a PM actually needs than writing one detailed visual prompt and iterating on whatever comes back.
+1. **It follows the real PM → designer workflow.** You describe the problem, not the visuals. The designer agent asks kickoff questions the way a designer would at a kickoff meeting, then offers several competing directions for you to choose from before anything is designed in full. This gets you closer to what a PM actually needs than writing one detailed visual prompt and iterating on whatever comes back.
 2. **It critiques its own work against a fixed UI/UX rubric.** Each version is rendered and scored against `rubric/rubric.yaml`. Layer A runs automated pass/fail checks: accessibility, contrast, overflow, tap-target size, font-size floor, console errors, focus visibility, and design-token use, plus a layout-balance warning (A9) that flags a short column leaving a big empty area beside a tall one. Layer B scores the page against anchored criteria for UI/UX design principles: hierarchy, layout and spacing, typography, color, responsiveness, component consistency, fit with the brief, interaction states, and fidelity to the chosen direction. A reviewer/executor loop fixes what fails, and a gate keeps the best version. The result is held to an explicit standard instead of depending on how good a single generation happens to be.
 
 ## Run it
@@ -119,7 +119,7 @@ Implemented as planned:
 - The whole graph: `Send` fan-out with a parallelism cap, all three interrupts (kickoff questions, sketch pick, final approval), SQLite checkpointer (runs resume after a page reload), and SQLite Store memory.
 - Code-enforced direction diversity (concept, layout, type, palette, density, style, section order, theme, variance; no font family, library style or page structure shared between directions) and contrast repair. The planner sees industry priors for the brief and a fresh sample of the library each run, and the slots (taste, neutral, bold, wildcard) never put two safe directions side by side. The gate does pass, revert-to-best, plateau, max iterations and budget, and always outputs the best version.
 - The Claude call shape from §10: structured outputs, adaptive thinking with per-role effort, streaming, a cached system prefix, `fallbacks: "default"`, refusal and max-token handling, and per-node usage and cost tracking.
-- The Brief screen (problem, users, optional name, goal and context), kickoff questions with one-click suggested answers, and sketch cards that show each direction's concept, trade-off and a style tile (a hero sample, a card and the palette in the direction's fonts and colors). When picking, the PM can pair a sketch with another direction's look.
+- The Brief screen (problem, plus optional name, goal and context; intake infers the users), kickoff questions with one-click suggested answers, and a gallery with two independent choices: a layout (each sketch's concept, trade-off and structure) and a design system (each direction's style tile: a hero sample, a card and the palette in its fonts and colors). Any layout can be designed with any design system.
 
 Simplified or not yet built:
 - **A6** checks console/page errors plus document basics (doctype, `lang`, viewport). `html-validate` is not wired in yet.

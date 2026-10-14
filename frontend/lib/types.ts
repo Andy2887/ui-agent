@@ -5,7 +5,7 @@ export type Palette = {
 
 /** What the PM tells the designer: the problem and the people, never the look. */
 export type ProductBrief = {
-  problem: string; audience: string;
+  problem: string; audience?: string | null;
   product_name?: string | null; goal?: string | null; context?: string | null;
 };
 

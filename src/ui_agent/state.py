@@ -16,15 +16,15 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class ProductBrief(BaseModel):
-    """What a PM tells a designer: the problem and the people. Never the look."""
+    """What a PM tells a designer: the problem, and optionally more. Never the look."""
 
     problem: str  # what we're solving
-    audience: str  # who we're solving it for
+    audience: Optional[str] = None  # who it's for; the brief screen doesn't ask, so intake infers it
     product_name: Optional[str] = None
     goal: Optional[str] = None  # what a visitor should do or come away with
     context: Optional[str] = None  # constraints, existing brand, real copy, anything else
 
-    @field_validator("problem", "audience")
+    @field_validator("problem")
     @classmethod
     def _required(cls, v: str) -> str:
         if not v.strip():

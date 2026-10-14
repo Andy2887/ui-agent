@@ -59,7 +59,7 @@ SEEDED = ["no-focus", "small-targets", "literal-values", "tiny-text", "weak-cta"
 
 # --------------------------------------------------------------------------- intake
 def intake(brief: dict, answers: list[dict]) -> IntakeResult:
-    text = f"{brief.get('problem', '')} {brief.get('audience', '')} {brief.get('context') or ''}".lower()
+    text = f"{brief.get('problem', '')} {brief.get('audience') or ''} {brief.get('context') or ''}".lower()
     page_type = next(
         (pt for pt, kws in {"dashboard": ["dashboard", "admin", "analytics"], "pricing": ["pricing"],
                             "auth": ["sign up", "signup", "login", "log in"], "blog": ["blog", "article"],
@@ -74,7 +74,7 @@ def intake(brief: dict, answers: list[dict]) -> IntakeResult:
     return IntakeResult(
         product_name=name, page_type=page_type,
         product_category=" ".join(brief.get("problem", "").split()[:6]) or "software product",
-        problem=brief.get("problem", ""), audience=brief.get("audience", ""),
+        problem=brief.get("problem", ""), audience=brief.get("audience") or "People who have this problem (assumed).",
         user_needs=["Understand what the product does in one glance", "Believe it works for someone like them",
                     "Know exactly what to do next"],
         primary_action=action, sections=settings.page_type(page_type)["default_sections"],
