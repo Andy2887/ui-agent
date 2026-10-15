@@ -123,7 +123,7 @@ export function AgentGraph({ track, caption }: { track: AgentTrack; caption: str
           );
         })}
       </svg>
-      <p className="agent-graph__caption" role="status">{caption || active?.role || "Starting…"}</p>
+      <p className="agent-graph__caption" role="status"><span className="spinner" />{caption || active?.role || "Starting…"}</p>
     </div>
   );
 }

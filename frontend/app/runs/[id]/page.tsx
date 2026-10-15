@@ -3,7 +3,7 @@ import { RunRoute } from "./RunRoute";
 
 export default function RunPage() {
   return (
-    <Suspense fallback={<div className="page"><p className="muted">Loading run…</p></div>}>
+    <Suspense fallback={<div className="page"><p className="muted" role="status"><span className="spinner" /> Loading run…</p></div>}>
       <RunRoute />
     </Suspense>
   );

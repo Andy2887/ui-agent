@@ -1,0 +1,135 @@
+/* UI Agent design system: "Studio". Three layers, each built only from the one above it.
+ *   1. Primitives: raw values (a zinc ramp, one magenta accent ramp, status hues, scales). Never used in components.
+ *   2. Semantic:   what a value is for (--bg, --text-muted, --accent, --bad). Components use these.
+ *   3. Component:  knobs for one component (--btn-h, --card-pad). Override these to tune a component everywhere.
+ * The app is a neutral frame around the colorful designs it generates, so color is spent on one thing:
+ * magenta marks what is selected, active or current. Primary actions are ink, not color. See DESIGN.md. */
+
+/* ------------------------------------------------------------ 1. primitives */
+:root {
+  --zinc-0: #ffffff; --zinc-25: #fcfcfd; --zinc-50: #f8f8f9; --zinc-100: #f2f2f4; --zinc-150: #ebebee;
+  --zinc-200: #e2e2e6; --zinc-300: #cfcfd5; --zinc-400: #a1a1aa; --zinc-500: #6e6e78; --zinc-600: #52525b;
+  --zinc-700: #3f3f46; --zinc-800: #27272a; --zinc-850: #1e1e21; --zinc-900: #18181b; --zinc-925: #121214; --zinc-950: #0b0b0d;
+
+  --magenta-50: #fdf1f7; --magenta-100: #fbe1ee; --magenta-200: #f7c3dc; --magenta-300: #f293bf; --magenta-400: #ec66a3;
+  --magenta-500: #dd3584; --magenta-600: #c21f6b; --magenta-700: #9f1756; --magenta-900: #3d0a22; --magenta-950: #26061a;
+
+  --green-50: #eaf7ef; --green-400: #5fd08f; --green-700: #16723c; --green-950: #0d2618;
+  --amber-50: #fdf4e1; --amber-300: #f2c66b; --amber-700: #8c5600; --amber-950: #2b1f06;
+  --red-50: #fdeeea; --red-400: #ff8466; --red-700: #b3300c; --red-950: #3a140a;
+
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Type scale (px → rem at 16px). Nothing in the app chrome goes below --fs-12. */
+  --fs-12: .75rem; --fs-13: .8125rem; --fs-14: .875rem; --fs-15: .9375rem; --fs-16: 1rem;
+  --fs-18: 1.125rem; --fs-22: 1.375rem; --fs-28: 1.75rem; --fs-36: 2.25rem;
+
+  /* 4px spacing grid. */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 24px;
+  --sp-8: 32px; --sp-10: 40px; --sp-12: 48px; --sp-16: 64px;
+
+  --r-2: 2px; --r-4: 4px; --r-6: 6px; --r-8: 8px; --r-12: 12px; --r-full: 999px;
+
+  --dur-1: 120ms; --dur-2: 180ms; --dur-3: 320ms;
+  --ease-out: cubic-bezier(.2, .7, .2, 1);
+}
+
+/* -------------------------------------------------------- 2. semantic: light */
+:root {
+  --bg: var(--zinc-50);              /* page canvas */
+  --surface: var(--zinc-0);          /* cards, inputs, bars */
+  --surface-sunken: var(--zinc-100); /* wells, tracks, segmented controls */
+  --surface-hover: var(--zinc-150);
+  --text: var(--zinc-950);
+  --text-muted: var(--zinc-600);     /* 7.7:1 on surface */
+  --text-faint: var(--zinc-500);     /* 4.5:1 or better on every light surface: captions and hints only */
+  --border: var(--zinc-200);
+  --border-strong: var(--zinc-300);
+
+  --primary: var(--zinc-900);        /* the main action on a screen */
+  --primary-hover: var(--zinc-700);
+  --on-primary: var(--zinc-0);
+
+  --accent: var(--magenta-500);      /* selected, active, current: fills, rings, strokes */
+  --accent-text: var(--magenta-600); /* accent as text: 5.7:1 on surface */
+  --accent-soft: var(--magenta-50);
+  --accent-line: var(--magenta-200);
+  --focus: var(--magenta-500);
+
+  --ok: var(--green-700); --ok-soft: var(--green-50);
+  --warn: var(--amber-700); --warn-soft: var(--amber-50);
+  --bad: var(--red-700); --bad-soft: var(--red-50);
+
+  --shadow-sm: 0 1px 2px rgb(9 9 11 / .05);
+  --shadow-md: 0 1px 2px rgb(9 9 11 / .05), 0 4px 14px rgb(9 9 11 / .06);
+  --shadow-lg: 0 -1px 0 rgb(9 9 11 / .04), 0 12px 32px rgb(9 9 11 / .12);
+  --scrim-fade: linear-gradient(to bottom, transparent, var(--bg) 40%);
+
+  --chart-line: var(--zinc-900);
+  --chart-grid: var(--zinc-150);
+
+  color-scheme: light;
+}
+
+/* --------------------------------------------------------- 2. semantic: dark */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--zinc-950);
+    --surface: var(--zinc-925);
+    --surface-sunken: var(--zinc-900);
+    --surface-hover: var(--zinc-850);
+    --text: var(--zinc-50);
+    --text-muted: var(--zinc-400);
+    --text-faint: #8a8a94;
+    --border: var(--zinc-800);
+    --border-strong: var(--zinc-700);
+
+    --primary: var(--zinc-50);
+    --primary-hover: var(--zinc-200);
+    --on-primary: var(--zinc-950);
+
+    --accent: var(--magenta-400);
+    --accent-text: var(--magenta-300);
+    --accent-soft: var(--magenta-950);
+    --accent-line: var(--magenta-900);
+    --focus: var(--magenta-400);
+
+    --ok: var(--green-400); --ok-soft: var(--green-950);
+    --warn: var(--amber-300); --warn-soft: var(--amber-950);
+    --bad: var(--red-400); --bad-soft: var(--red-950);
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / .5);
+    --shadow-md: 0 1px 2px rgb(0 0 0 / .5), 0 4px 14px rgb(0 0 0 / .35);
+    --shadow-lg: 0 -1px 0 rgb(255 255 255 / .04), 0 12px 32px rgb(0 0 0 / .6);
+
+    --chart-line: var(--zinc-100);
+    --chart-grid: var(--zinc-850);
+
+    color-scheme: dark;
+  }
+}
+
+/* ------------------------------------------------------------ 3. component */
+:root {
+  --page-max: 1320px;
+  --page-gutter: var(--sp-6);
+  --topbar-h: 56px;
+
+  --control-h: 40px;      /* buttons, inputs, steppers */
+  --control-h-lg: 44px;   /* the one primary action in a panel */
+  --control-r: var(--r-6);
+  --input-h: 42px;
+
+  --card-r: var(--r-8);
+  --card-pad: var(--sp-5);
+  --card-border: 1px solid var(--border);
+
+  --chip-h: 32px;
+  --tag-r: var(--r-4);
+  --frame-r: var(--r-6);
+  --frame-bg: var(--zinc-0); /* a generated page's default canvas: white in both app themes */
+}
+@media (max-width: 720px) {
+  :root { --page-gutter: var(--sp-4); --card-pad: var(--sp-4); }
+}

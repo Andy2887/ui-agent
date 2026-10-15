@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { artifactUrl } from "@/lib/api";
 import { CRITERIA } from "@/lib/logic";
 import type { CheckSummary, Issue, Score } from "@/lib/types";
+import { Icon } from "./Icon";
 
 /** Generated HTML always renders in a sandboxed iframe with no same-origin access (§3.3). */
 export function ScaledFrame({ runId, path, width = 1440, height = 900, title }: {
@@ -36,10 +37,10 @@ export function AuditBadges({ checks }: { checks: CheckSummary[] }) {
   return (
     <div className="audit-badges">
       {failing.length === 0
-        ? <span className="badge badge--ok">✓ All {checks.length} automatic checks pass</span>
+        ? <span className="badge badge--ok"><Icon name="check" size={14} />All {checks.length} automatic checks pass</span>
         : failing.map((c) => c.blocking === false
-          ? <span key={c.id} className="badge badge--warn" title={c.details}>! {c.name}</span>
-          : <span key={c.id} className="badge badge--bad" title={c.details}>✗ {c.name}</span>)}
+          ? <span key={c.id} className="badge badge--warn" title={c.details}><Icon name="alert" size={14} />{c.name}</span>
+          : <span key={c.id} className="badge badge--bad" title={c.details}><Icon name="x" size={14} />{c.name}</span>)}
     </div>
   );
 }
@@ -64,7 +65,7 @@ export function ScoreChart({ points, threshold = 4 }: { points: { version: numbe
           </g>
         ))}
         <line className="chart__threshold" x1={L} x2={W - R} y1={y(threshold)} y2={y(threshold)} />
-        <text className="chart__tick chart__tick--label" x={L + 4} y={y(threshold) + 13} textAnchor="start">pass {threshold.toFixed(1)}</text>
+        <text className="chart__tick chart__tick--label" x={L + 4} y={y(threshold) - 5} textAnchor="start">pass {threshold.toFixed(1)}</text>
         <path className="chart__line" d={path} />
         {data.map((d, i) => (
           <g key={d.version} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} tabIndex={0}>
@@ -96,7 +97,7 @@ export function ScoreBars({ scores, previous }: { scores: Score[]; previous?: Sc
           <li key={s.criterion} title={s.evidence}>
             <span className="bars__label">{CRITERIA[s.criterion] ?? s.criterion}</span>
             <span className="bars__track"><span className="bars__fill" style={{ width: `${(s.score / 5) * 100}%` }} /></span>
-            <span className="bars__value">{s.score}/5{delta !== 0 && <em className={delta > 0 ? "up" : "down"}>{delta > 0 ? ` ▲${delta}` : ` ▼${-delta}`}</em>}</span>
+            <span className="bars__value">{s.score}<span className="muted">/5</span>{delta !== 0 && <em className={delta > 0 ? "up" : "down"}>{delta > 0 ? ` ▲${delta}` : ` ▼${-delta}`}</em>}</span>
           </li>
         );
       })}
@@ -110,7 +111,7 @@ export function IssueItem({ issue, fixed }: { issue: Issue; fixed?: boolean }) {
   return (
     <li className={`issue ${fixed ? "issue--fixed" : ""}`}>
       <div className="issue__head">
-        <span className={`sev sev--${issue.severity}`}>{fixed ? "✓ Fixed" : issue.status === "regressed" ? "↺ Came back" : SEV_LABEL[issue.severity]}</span>
+        <span className={`sev sev--${issue.severity}`}>{fixed ? <><Icon name="check" size={14} />Fixed</> : issue.status === "regressed" ? <><Icon name="undo" size={14} />Came back</> : SEV_LABEL[issue.severity]}</span>
         <span className="issue__crit">{CRITERIA[issue.criterion] ?? issue.criterion} · {issue.viewport}</span>
       </div>
       <p className="issue__why"><strong>Why it matters:</strong> {issue.explanation}</p>

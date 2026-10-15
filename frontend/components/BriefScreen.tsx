@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { ProductBrief } from "@/lib/types";
+import { Icon } from "./Icon";
 
 const MIN_COUNT = 1;
 const MAX_COUNT = 10;
@@ -41,33 +42,36 @@ export function BriefScreen() {
     <div className="brief">
       <div className="brief__main">
         <header className="page-head">
+          <span className="eyebrow">New brief</span>
           <h1>Brief the designer</h1>
           <p>Tell the designer what problem you're solving, as you would at a kickoff. The designer works out who it&apos;s for
             and may ask. Colors, fonts and layout are the designer's job, so you won't be asked about them.</p>
-          {mock && <p className="note">Backend is in mock mode (UI_AGENT_MOCK=1): no API calls are made.</p>}
+          {mock && <p className="note"><span className="tag tag--dot">Mock mode</span> UI_AGENT_MOCK=1, so no API calls are made.</p>}
         </header>
-        {error && <div className="callout callout--error">{error}</div>}
+        {error && <div className="callout callout--error" role="alert"><Icon name="alert" /><div>{error}</div></div>}
 
-        <label className="field field--lead">
-          <span>What problem are we solving?</span>
-          <textarea rows={4} value={brief.problem} onChange={set("problem")} required
-            placeholder="Freelancers lose receipts and dread tax season. Tracking expenses feels like a chore they put off until it's too late." />
-        </label>
+        <div className="card brief__form">
+          <label className="field field--lead">
+            <span>What problem are we solving?</span>
+            <textarea rows={4} value={brief.problem} onChange={set("problem")} required
+              placeholder="Freelancers lose receipts and dread tax season. Tracking expenses feels like a chore they put off until it's too late." />
+          </label>
 
-        <div className="field-row">
-          <label className="field"><span>Product name <em className="optional">optional</em></span>
-            <input value={brief.product_name ?? ""} onChange={set("product_name")} placeholder="Receiptly" /></label>
-          <label className="field field--grow"><span>What should they do or come away with? <em className="optional">optional</em></span>
-            <input value={brief.goal ?? ""} onChange={set("goal")} placeholder="Sign up for the free plan" /></label>
+          <div className="field-row">
+            <label className="field"><span>Product name <em className="optional">optional</em></span>
+              <input value={brief.product_name ?? ""} onChange={set("product_name")} placeholder="Receiptly" /></label>
+            <label className="field field--grow"><span>What should they do or come away with? <em className="optional">optional</em></span>
+              <input value={brief.goal ?? ""} onChange={set("goal")} placeholder="Sign up for the free plan" /></label>
+          </div>
+          <label className="field"><span>Anything else the designer should know? <em className="optional">optional</em></span>
+            <textarea rows={4} value={brief.context ?? ""} onChange={set("context")}
+              placeholder="Constraints, an existing brand, competitors, what's been tried, real copy (headlines, pricing, quotes). Real text makes much better designs." /></label>
         </div>
-        <label className="field"><span>Anything else the designer should know? <em className="optional">optional</em></span>
-          <textarea rows={4} value={brief.context ?? ""} onChange={set("context")}
-            placeholder="Constraints, an existing brand, competitors, what's been tried, real copy (headlines, pricing, quotes). Real text makes much better designs." /></label>
       </div>
 
       <aside className="brief__aside" aria-label="How it works and start">
         <div className="aside-card">
-          <h2 className="h2">How it works</h2>
+          <span className="eyebrow">How it works</span>
           <ol className="how">
             <li><strong>Kickoff.</strong> The designer reads your brief and may ask a question or two.</li>
             <li><strong>Sketches.</strong> {count} low-fi sketch{count > 1 ? "es" : ""}, each a different bet on how to solve the problem, with a proposed mood.</li>
@@ -76,17 +80,18 @@ export function BriefScreen() {
           </ol>
         </div>
         <div className="aside-card">
+          <span className="field__hint generate-label" id="count-label">Directions to sketch</span>
           <div className="generate-row">
-            <div className="stepper" role="group" aria-label="Directions to sketch">
-              <button aria-label="Fewer directions" onClick={() => setCount((c) => Math.max(MIN_COUNT, c - 1))} disabled={count <= MIN_COUNT}>−</button>
+            <div className="stepper" role="group" aria-labelledby="count-label">
+              <button aria-label="Fewer directions" onClick={() => setCount((c) => Math.max(MIN_COUNT, c - 1))} disabled={count <= MIN_COUNT}><Icon name="minus" /></button>
               <output aria-live="polite">{count}</output>
-              <button aria-label="More directions" onClick={() => setCount((c) => Math.min(MAX_COUNT, c + 1))} disabled={count >= MAX_COUNT}>+</button>
+              <button aria-label="More directions" onClick={() => setCount((c) => Math.min(MAX_COUNT, c + 1))} disabled={count >= MAX_COUNT}><Icon name="plus" /></button>
             </div>
             <button className="btn btn--primary generate-row__btn" disabled={!ready || submitting} onClick={submit}>
-              {submitting ? "Starting…" : !ready ? "Add the problem" : `Sketch ${count} direction${count > 1 ? "s" : ""}`}
+              {submitting ? <><span className="spinner" />Starting…</> : !ready ? "Add the problem first" : <>Sketch {count} direction{count > 1 ? "s" : ""}<Icon name="arrowRight" /></>}
             </button>
           </div>
-          <p className="caption caption--tight">Directions to sketch. Sketches are quick; only the one you pick is designed in full.</p>
+          <p className="caption caption--tight">Sketches are quick. Only the one you pick is designed in full.</p>
         </div>
       </aside>
     </div>

@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
+import { Mark } from "@/components/Icon";
+import { Nav, NavLinks } from "@/components/Nav";
+import "./tokens.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 // App chrome fonts. Each direction's own fonts load on demand next to its sketch.
-const APP_FONTS = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap";
+const APP_FONTS = "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -22,12 +26,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <a className="skip" href="#main">Skip to content</a>
         <header className="topbar">
-          <Link href="/" className="brandmark"><span aria-hidden="true">◧</span> UI Agent</Link>
-          <nav aria-label="Main">
-            <Link href="/">New brief</Link>
-            <Link href="/runs">Runs</Link>
-            <Link href="/settings">Memory</Link>
-          </nav>
+          <Link href="/" className="brandmark"><Mark />UI Agent</Link>
+          <Suspense fallback={<NavLinks path="" />}><Nav /></Suspense>
         </header>
         <main id="main">{children}</main>
       </body>

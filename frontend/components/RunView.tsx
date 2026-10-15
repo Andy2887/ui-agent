@@ -6,6 +6,7 @@ import { api, artifactUrl, downloadUrl, eventsUrl } from "@/lib/api";
 import { SLOT_LABEL, STOP_REASON } from "@/lib/logic";
 import type { Brief, Design, DesignBrief, GalleryCandidate, Issue, KickoffQuestion, RunEvent, Snapshot } from "@/lib/types";
 import { AgentGraph, initialTrack, trackAgent, type AgentTrack } from "./AgentGraph";
+import { Icon } from "./Icon";
 import { AuditBadges, IssueItem, ScaledFrame, ScoreBars, ScoreChart, Shot } from "./RunParts";
 
 type RunState = {
@@ -106,16 +107,17 @@ export function RunView({ runId }: { runId: string }) {
 
   return (
     <div className="page">
-      <header className="page-head page-head--row">
-        <div>
+      <header className="run-head">
+        <div className="run-head__title">
+          <span className="eyebrow">Run <span className="num">{runId}</span></span>
           <h1>{brief?.product_name || state.productName || "Design run"}</h1>
-          <p className="muted clamp">{brief?.problem ?? state.request?.prompt}</p>
+          <p className="clamp">{brief?.problem ?? state.request?.prompt}</p>
         </div>
         <Steps phase={phase} />
       </header>
-      {state.mock && <p className="callout">Mock mode: sketches, designs, reviews and fixes come from offline stand-ins, not Claude.</p>}
-      {lost && state.status !== "done" && <p className="callout callout--warn">Connection lost. Reconnecting…</p>}
-      {state.status === "error" && <div className="callout callout--error"><strong>The run stopped with an error.</strong><pre>{state.error}</pre></div>}
+      {state.mock && <p className="callout"><Icon name="sparkle" />Mock mode: sketches, designs, reviews and fixes come from offline stand-ins, not Claude.</p>}
+      {lost && state.status !== "done" && <p className="callout callout--warn" role="status"><span className="spinner" />Connection lost. Reconnecting…</p>}
+      {state.status === "error" && <div className="callout callout--error" role="alert"><Icon name="alert" /><div><strong>The run stopped with an error.</strong><pre>{state.error}</pre></div></div>}
       {state.status === "running" && <AgentGraph track={state.agent} caption={state.activity} />}
 
       {phase === 0 && state.status === "waiting_kickoff" && state.kickoff && <Kickoff runId={runId} kickoff={state.kickoff} />}
@@ -177,10 +179,10 @@ function Kickoff({ runId, kickoff }: { runId: string; kickoff: NonNullable<RunSt
           </div>
         ))}
         <div className="kickoff__actions">
-          <button className="btn btn--primary" disabled={busy || !answered} onClick={() => send(answers)}>Continue to sketches →</button>
-          <button className="link" disabled={busy} onClick={() => send({})}>Skip, use your best judgement</button>
+          <button className="btn btn--primary" disabled={busy || !answered} onClick={() => send(answers)}>Continue to sketches<Icon name="arrowRight" /></button>
+          <button className="link link--muted" disabled={busy} onClick={() => send({})}>Skip, use your best judgement</button>
         </div>
-        {err && <p className="callout callout--error">{err}</p>}
+        {err && <div className="callout callout--error" role="alert"><Icon name="alert" /><div>{err}</div></div>}
       </div>
       <DesignBriefCard brief={kickoff.intake} open />
     </section>
@@ -268,8 +270,10 @@ function Sketching({ state, runId }: { state: RunState; runId: string }) {
   if (!state.briefs.length) return null;
   return (
     <section>
-      <h2 className="h2">{state.briefs.length} direction{state.briefs.length > 1 ? "s" : ""}</h2>
-      {state.repairs.length > 0 && <p className="note">Contrast adjusted in the proposed palettes: {state.repairs.join("; ")}</p>}
+      <div className="section-bar">
+        <h2 className="h2">Sketching {state.briefs.length} direction{state.briefs.length > 1 ? "s" : ""}</h2>
+        {state.repairs.length > 0 && <p className="note">Contrast adjusted in the proposed palettes: {state.repairs.join("; ")}</p>}
+      </div>
       <div className="grid grid--cards">
         {state.briefs.map((b) => {
           const c = state.candidates[b.id];
@@ -329,14 +333,14 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
       <DesignBriefCard brief={gallery.design_brief} />
       {open && byId[open] && (
         <div className="viewer-panel">
-          <div className="section-bar"><h3>{open.toUpperCase()} · {byId[open].name}</h3><button className="btn" onClick={() => setOpen(null)}>Close preview</button></div>
+          <div className="section-bar"><h3><span className="letter">{open.toUpperCase()}</span> {byId[open].name}</h3><button className="btn btn--sm" onClick={() => setOpen(null)}><Icon name="x" size={14} />Close preview</button></div>
           {viewer(byId[open])}
         </div>
       )}
       {compare.length === 2 && (
         <div className="compare">
           {compare.map((id) => <div key={id}><h3>{id.toUpperCase()} · {byId[id].name}</h3><ScaledFrame runId={runId} path={byId[id].html_path} title={byId[id].name} /></div>)}
-          <button className="btn" onClick={() => setCompare([])}>Close comparison</button>
+          <button className="btn btn--sm" onClick={() => setCompare([])}><Icon name="x" size={14} />Close comparison</button>
         </div>
       )}
 
@@ -351,11 +355,11 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
             <div className="cand__body">
               <LayoutText brief={c.brief} />
               <div className="cand__actions">
-                <button className={`btn ${layout === c.id ? "btn--primary" : ""}`} disabled={!!c.error} aria-pressed={layout === c.id}
-                  onClick={() => setLayout(c.id)}>{layout === c.id ? "Layout selected" : "Use this layout"}</button>
+                <button className={`btn btn--sm ${layout === c.id ? "btn--selected" : ""}`} disabled={!!c.error} aria-pressed={layout === c.id}
+                  onClick={() => setLayout(c.id)}>{layout === c.id ? <><Icon name="check" size={14} />Layout selected</> : "Use this layout"}</button>
                 <label className="check"><input type="checkbox" checked={compare.includes(c.id)} disabled={!compare.includes(c.id) && compare.length >= 2}
                   onChange={() => setCompare((x) => x.includes(c.id) ? x.filter((y) => y !== c.id) : [...x, c.id])} />Compare</label>
-                <a className="link" href={artifactUrl(runId, c.html_path)} target="_blank" rel="noreferrer">Open in tab ↗</a>
+                <a className="link link--muted" href={artifactUrl(runId, c.html_path)} target="_blank" rel="noreferrer">Open in tab<Icon name="external" size={14} /></a>
               </div>
             </div>
           </article>
@@ -372,8 +376,8 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
               <StyleTile brief={c.brief} action={gallery.design_brief.primary_action}
                 headline={(layout && byId[layout]?.name) || productName || c.brief.name} lead="" />
               <div className="cand__actions">
-                <button className={`btn ${look === c.id ? "btn--primary" : ""}`} aria-pressed={look === c.id}
-                  onClick={() => setLook(c.id)}>{look === c.id ? "Design system selected" : "Use this design system"}</button>
+                <button className={`btn btn--sm ${look === c.id ? "btn--selected" : ""}`} aria-pressed={look === c.id}
+                  onClick={() => setLook(c.id)}>{look === c.id ? <><Icon name="check" size={14} />Design system selected</> : "Use this design system"}</button>
               </div>
             </div>
           </article>
@@ -391,24 +395,24 @@ function Gallery({ runId, gallery }: { runId: string; gallery: NonNullable<RunSt
               <label className="field"><span>Notes for the designer (optional)</span>
                 <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. put the pricing teaser higher; B's testimonials idea would fit here" /></label>
               <button className="btn btn--primary" disabled={busy}
-                onClick={() => send({ action: "pick", id: layout, notes, ...(look !== layout ? { mood_from: look } : {}) })}>Design it in full →</button>
+                onClick={() => send({ action: "pick", id: layout, notes, ...(look !== layout ? { mood_from: look } : {}) })}>{busy ? <><span className="spinner" />Starting…</> : <>Design it in full<Icon name="arrowRight" /></>}</button>
             </>
           )}
           {!(layout && look) && <p className="muted">Choose a layout and a design system to continue, or ask for different directions.</p>}
         </div>
         <div className="decision__regen">
-          <button className="link" onClick={() => setRegen(!regen)} aria-expanded={regen}>None of these? Sketch new directions</button>
+          <button className="link link--muted" onClick={() => setRegen(!regen)} aria-expanded={regen}>None of these? Sketch new directions</button>
           {regen && (
             <div className="regen">
               <label className="field"><span>What&apos;s missing?</span>
                 <input value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="e.g. our users don't trust finance apps; lead with security" /></label>
               <div className="stepper-row"><span>Directions</span>
-                <div className="stepper"><button aria-label="Fewer directions" onClick={() => setCount(Math.max(1, count - 1))}>−</button><output>{count}</output><button aria-label="More directions" onClick={() => setCount(Math.min(10, count + 1))}>+</button></div></div>
+                <div className="stepper"><button aria-label="Fewer directions" onClick={() => setCount(Math.max(1, count - 1))} disabled={count <= 1}><Icon name="minus" /></button><output aria-live="polite">{count}</output><button aria-label="More directions" onClick={() => setCount(Math.min(10, count + 1))} disabled={count >= 10}><Icon name="plus" /></button></div></div>
               <button className="btn" disabled={busy} onClick={() => send({ action: "regenerate", feedback, candidate_count: count })}>Sketch {count} new direction{count > 1 ? "s" : ""}</button>
             </div>
           )}
         </div>
-        {err && <p className="callout callout--error">{err}</p>}
+        {err && <div className="callout callout--error" role="alert"><Icon name="alert" /><div>{err}</div></div>}
       </div>
     </section>
   );
@@ -503,20 +507,21 @@ function FinalReview({ runId, state }: { runId: string; state: RunState }) {
         </div>
       </div>
       <div className="before-after">
-        <figure><figcaption>Before · {base === "sketch" ? "the sketch you picked" : "the first full design (v1)"}</figcaption>
+        <figure><figcaption><b>Before</b>{base === "sketch" ? "the sketch you picked" : "the first full design (v1)"}</figcaption>
           {vp === "desktop" ? <ScaledFrame runId={runId} path={before} title="Before" /> : <div className="mobile-frame"><ScaledFrame runId={runId} path={before} width={375} height={760} title="Before mobile" /></div>}</figure>
-        <figure><figcaption>After · v{f.final.version}</figcaption>
+        <figure><figcaption><b>After</b>v{f.final.version}, the final design</figcaption>
           {vp === "desktop" ? <ScaledFrame runId={runId} path={f.final.html_path} title="After" /> : <div className="mobile-frame"><ScaledFrame runId={runId} path={f.final.html_path} width={375} height={760} title="After mobile" /></div>}</figure>
       </div>
       <div className="final-cols">
-        <div className="aside-card">
+        <div className="aside-card score-card">
           <ScoreChart points={f.trajectory} />
           <ScoreBars scores={f.final.scores} />
         </div>
         <div className="aside-card">
           <h3>{remaining.length ? `Remaining issues (${remaining.length})` : "No remaining issues"}</h3>
           <ul className="issues">{remaining.map((i) => <IssueItem key={i.id} issue={i} />)}</ul>
-          <button className="btn btn--primary btn--block" disabled={busy} onClick={() => send({ action: "approve" })}>Approve and build handoff</button>
+          <button className="btn btn--primary btn--block" disabled={busy} onClick={() => send({ action: "approve" })}><Icon name="check" />Approve and build handoff</button>
+          <div className="divider" />
           <label className="field"><span>Or request changes</span>
             <textarea rows={3} value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="e.g. make the hero headline shorter; add a pricing teaser" /></label>
           <button className="btn btn--block" disabled={busy || !feedback.trim()} onClick={() => send({ action: "request_changes", feedback })}>Request changes</button>
@@ -542,17 +547,16 @@ function Download({ runId, state }: { runId: string; state: RunState }) {
       <div className="final-cols">
         <div>{(best ?? last) && <ScaledFrame runId={runId} path="output/index.html" title="Final design" />}</div>
         <div className="aside-card">
-          <a className="btn btn--primary btn--block" href={downloadUrl(runId, "zip")}>Download handoff (.zip)</a>
+          <a className="btn btn--primary btn--block" href={downloadUrl(runId, "zip")}><Icon name="download" />Download handoff (.zip)</a>
           <div className="dl-list">
-            <a className="btn" href={downloadUrl(runId, "html")}>index.html</a>
-            <a className="btn" href={downloadUrl(runId, "handoff")}>HANDOFF.md</a>
-            <a className="btn" href={downloadUrl(runId, "tokens")}>tokens.json</a>
-            <a className="btn" href={downloadUrl(runId, "pdf")}>design.pdf</a>
+            {([["html", "index.html"], ["handoff", "HANDOFF.md"], ["tokens", "tokens.json"], ["pdf", "design.pdf"]] as const).map(([kind, name]) =>
+              <a key={kind} className="btn btn--sm btn--file" href={downloadUrl(runId, kind)}><Icon name="file" size={14} />{name}</a>)}
           </div>
+          <div className="divider" />
           <h3>Next step</h3>
           <p className="muted">Unzip into an empty folder and tell your coding agent:</p>
           <pre className="code">Build this page in a new Next.js project. Use HANDOFF.md as the spec, index.html as the visual source of truth, and tokens.json for the theme. Compare against screenshots/ at 375, 768 and 1440px.</pre>
-          <Link className="link" href="/">Start another brief →</Link>
+          <Link className="link" href="/">Start another brief<Icon name="arrowRight" size={14} /></Link>
         </div>
       </div>
       <History state={state} runId={runId} />
