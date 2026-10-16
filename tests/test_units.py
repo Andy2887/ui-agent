@@ -1,4 +1,5 @@
-"""Planner composition and diversity, sketch kit, gate decisions, sandboxed editor, color repair, tokens export."""
+"""Site map and flow links, token locking, style spec, library sampling, sketch parsing, gate decisions, sandboxed
+editor, color repair, tokens export."""
 
 from pathlib import Path
 
@@ -7,43 +8,72 @@ from ui_agent.color import check_palette, repair_palette
 from ui_agent.nodes.gate import gate
 from ui_agent.library import design_library, industry_priors, style_recipe
 from ui_agent.nodes.handoff import w3c_tokens
-from ui_agent.nodes.planner import diversity_problems, slots_for
-from ui_agent.nodes.sketch import with_kit
+from ui_agent.nodes.common import lock_tokens, root_tokens
+from ui_agent.nodes.intake import plan_site
+from ui_agent.nodes.sketch import extract_sketch, sketch_notation
+from ui_agent.nodes.style_lock import style_spec
 from ui_agent.nodes.reviewer import merge_issues
 from ui_agent.tools.autofix import apply_font_floor
+from ui_agent.state import MAX_PAGES, FlowPlan, FlowStep, IntakeResult, PagePlan
+from ui_agent.tools.checks.flow import a11_flow_links
+from ui_agent.tools.checks.slop import a10_slop
 from ui_agent.tools.text_editor import TextEditor
 
 
-def test_slots_composition():
-    assert slots_for(1, False) == ["neutral"]
-    assert slots_for(2, True) == ["taste", "neutral"]
-    assert slots_for(2, False) == ["neutral", "bold"]
-    s = slots_for(5, True)
-    assert s == ["taste", "taste", "neutral", "bold", "wildcard"]
-    assert slots_for(3, False) == ["neutral", "bold", "wildcard"]
-    assert slots_for(10, True).count("taste") == 4
-    for n in range(2, 11):
-        s = slots_for(n, False)
-        assert all(not (x == y == "neutral") for x, y in zip(s, s[1:])), s
+def _intake(pages, flows, **kw):
+    return IntakeResult(product_name="Inkwell", product_category="newsletter platform", problem="p", audience="a",
+                        user_needs=[], pages=[PagePlan(**{"page_type": "landing", "purpose": "x", "primary_action": "go",
+                                                          "sections": [], "links_to": [], **pg}) for pg in pages],
+                        flows=[FlowPlan(name=n, steps=[FlowStep(page=pg, action="a") for pg in st]) for n, st in flows],
+                        assumptions=[], questions=[], **kw)
 
 
-def test_diversity_check_flags_identical_briefs():
-    intake = {"sections": ["hero", "features", "testimonials", "cta", "footer"]}
-    b = mock.plan(3, intake, ["neutral", "bold", "wildcard"]).briefs
-    assert not diversity_problems(b)
-    b[1] = b[0].model_copy(update={"id": "b"})
-    assert diversity_problems(b)
+def test_site_map_puts_the_entry_page_first_and_links_every_flow_step():
+    r = plan_site(_intake(
+        [{"id": "Sign Up", "name": "Sign up", "page_type": "auth"}, {"id": "home", "name": "Home"},
+         {"id": "post", "name": "Post", "page_type": "nonsense", "links_to": ["ghost", "post"]}],
+        [("Reader subscribes", ["home", "post", "Sign Up"])]))
+    assert [p.id for p in r.pages] == ["home", "sign-up", "post"]
+    assert [p.file for p in r.pages] == ["index.html", "sign-up.html", "post.html"]
+    links = {p.id: p.links_to for p in r.pages}
+    assert links["home"] == ["post"] and links["post"] == ["sign-up"]  # unknown and self links dropped
+    assert r.flows[0].steps[2].page == "sign-up"
+    post = next(p for p in r.pages if p.id == "post")
+    assert post.page_type == "landing" and post.sections and any("unknown page type" in a for a in r.assumptions)
 
 
-def test_diversity_check_flags_shared_fonts_styles_and_variance():
-    intake = {"sections": ["hero", "features", "testimonials", "cta", "footer"]}
-    b = mock.plan(3, intake, ["neutral", "bold", "wildcard"]).briefs
-    shared_font = [b[0], b[1].model_copy(update={"body_font": b[0].heading_font}), b[2]]
-    assert any("both use" in p for p in diversity_problems(shared_font))
-    same_style = [b[0], b[1].model_copy(update={"style_id": "editorial"}), b[2].model_copy(update={"style_id": "editorial"})]
-    assert any("same library style" in p for p in diversity_problems(same_style))
-    same_variance = [x.model_copy(update={"variance": "mid"}) for x in b]
-    assert any("variance" in p for p in diversity_problems(same_variance))
+def test_site_map_caps_pages_and_drops_their_steps():
+    pages = [{"id": f"p{i}", "name": f"P{i}"} for i in range(MAX_PAGES + 2)]
+    r = plan_site(_intake(pages, [("f", [f"p{i}" for i in range(MAX_PAGES + 2)])]))
+    assert len(r.pages) == MAX_PAGES and r.not_designed == [f"P{MAX_PAGES}", f"P{MAX_PAGES + 1}"]
+    assert len(r.flows[0].steps) == MAX_PAGES
+
+
+def test_lock_tokens_keeps_extra_tokens_and_adds_missing_ones():
+    html = "<style>:root { --color-bg: #fff; --color-text: #111; --only-here: 2px; } .a { color: var(--color-text); }</style>"
+    out, changed = lock_tokens(html, {"--color-bg": "#000", "--color-text": "#111", "--space-1": "4px"})
+    toks = root_tokens(out)
+    assert toks == {"--color-bg": "#000", "--color-text": "#111", "--only-here": "2px", "--space-1": "4px"}
+    assert changed == ["--color-bg", "--space-1"] and ".a { color: var(--color-text); }" in out
+    assert lock_tokens(out, root_tokens(out)) == (out, [])
+
+
+def test_style_spec_comes_from_the_direction_not_the_render():
+    direction = {**mock.plan(plan_site(_intake([{"id": "home", "name": "Home"}], [])).model_dump(), "neutral").model_dump(),
+                 "avoid": ["stock photos"]}
+    spec = style_spec(direction, {"--color-bg": "#fff"}, "warmer copy")
+    assert spec["signature_elements"] == [direction["signature_element"]]
+    assert spec["tokens"] == {"--color-bg": "#fff"} and spec["user_notes"] == "warmer copy"
+    assert "Avoid: stock photos" in spec["must_keep"] and direction["heading_font"] in spec["character"]
+
+
+def test_flow_links_check():
+    links = {"required": ["post.html", "sign-up.html"], "known": ["index.html", "post.html", "sign-up.html"]}
+    html = '<a href="./post.html">Read</a> <a href="https://x.com/a.html">x</a> <a href="#faq">FAQ</a> <a href="pricing.html">P</a>'
+    c = a11_flow_links(html, links)
+    assert not c.passed and c.items == [{"missing_link_to": "sign-up.html"}, {"link_to_unknown_page": "pricing.html"}]
+    ok = a11_flow_links('<a href="post.html">a</a><form action="sign-up.html"></form>', links)
+    assert ok.passed and a11_flow_links("", None) is None
 
 
 def test_industry_priors_follow_the_product_category():
@@ -57,7 +87,7 @@ def test_industry_priors_follow_the_product_category():
 
 def test_library_sample_is_seeded_and_mixes_typical_with_random():
     brief = {"problem": "Patients phone to book.", "audience": "Adults with injuries."}
-    intake = {"page_type": "landing", "product_category": "physiotherapy clinic"}
+    intake = {"pages": [{"page_type": "landing"}], "product_category": "physiotherapy clinic"}
     priors = industry_priors(brief, intake)
     a = design_library(brief, intake, priors, seed="run-1")
     assert a == design_library(brief, intake, priors, seed="run-1")
@@ -74,11 +104,11 @@ def test_style_recipe_reaches_the_designer():
     assert style_recipe(None) is None and style_recipe("not-a-style") is None
 
 
-def test_sketch_kit_is_injected_once():
-    html = "<!doctype html><html><head><title>x</title></head><body></body></html>"
-    once = with_kit(html)
-    assert once.count("data-sketch-kit") == 1 and once.index("data-sketch-kit") < once.index("<title>")
-    assert with_kit(once).count("data-sketch-kit") == 1
+def test_sketch_is_extracted_from_fenced_output():
+    sketch = "DESKTOP 1440px\n+-- hero --+\n\nMOBILE 375px\nhero: stacks\n\nNOTES\n(1) why\n"
+    assert extract_sketch(f"Here it is:\n```\n{sketch}```\n") == sketch
+    assert extract_sketch(sketch) == sketch
+    assert "[[ Label ]]" in sketch_notation() and "## Rules" not in sketch_notation()
 
 
 def test_color_repair_keeps_hue_and_reaches_aa():
@@ -145,6 +175,26 @@ def test_issue_covering_a_check_is_ranked_at_least_as_severe():
     audit = {"checks": [{"id": "A9", "name": "Layout balance", "passed": False, "blocking": False, "details": "d", "items": []}]}
     merged = {i["id"]: i for i in merge_issues([], [low], audit)}
     assert merged["iss_hero_empty_right"]["severity"] == "medium" and "iss_audit_a9" not in merged
+
+
+def test_slop_check_keeps_only_template_habits():
+    findings = [{"antipattern": "hero-eyebrow-chip", "snippet": "eyebrow above h1"},
+                {"antipattern": "icon-tile-stack", "snippet": "tile 1"}, {"antipattern": "icon-tile-stack", "snippet": "tile 2"},
+                {"antipattern": "overused-font", "snippet": "Primary font: inter"},  # the direction owns its fonts
+                {"antipattern": "low-contrast", "snippet": "4.0:1"}]  # A2's job
+    c = a10_slop(findings)
+    assert not c.passed and not c.blocking
+    assert [(i["rule"], i["count"]) for i in c.items] == [("hero-eyebrow-chip", 1), ("icon-tile-stack", 2)]
+    assert "overused-font" not in c.fix and c.fix.startswith("hero-eyebrow-chip:")
+    assert a10_slop([{"antipattern": "overused-font"}]).passed
+    skipped = a10_slop(None)
+    assert skipped.passed and skipped.details.startswith("Skipped")
+
+
+def test_audit_issue_carries_the_checks_own_fix():
+    audit = {"checks": [a10_slop([{"antipattern": "side-tab", "snippet": "border-left: 4px"}]).model_dump()]}
+    issue = {i["id"]: i for i in merge_issues([], [], audit)}["iss_audit_a10"]
+    assert issue["criterion"] == "B10" and issue["severity"] == "medium" and "hairline" in issue["suggested_fix"]
 
 
 def test_revert_restores_issue_statuses_of_best():

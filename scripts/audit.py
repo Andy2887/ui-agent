@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from ui_agent.tools.browser import get_browser  # noqa: E402
-from ui_agent.tools.checks import run_layer_a  # noqa: E402
+from ui_agent.tools.checks import detect_slop, run_layer_a  # noqa: E402
 
 
 async def main() -> int:
@@ -28,7 +28,7 @@ async def main() -> int:
         render = await get_browser().render(path, out)
     finally:
         await get_browser().close()
-    audit = run_layer_a(render, path.read_text())
+    audit = run_layer_a(render, path.read_text(), await detect_slop(path))
     if a.json:
         print(json.dumps(audit.model_dump(), indent=2))
     else:

@@ -1,32 +1,39 @@
 # Fixed eval briefs (plan §13). Keep this list stable: results are only comparable across runs of the same set.
-# Each brief covers a different page type and audience. `vague-shop` is deliberately thin so the kickoff path runs.
+# Each brief covers a different kind of site and audience, and at least one user flow. `vague-shop` is deliberately thin so the kickoff path runs.
 briefs:
   - id: freelancer-receipts
     brief:
       problem: Freelancers lose receipts and scramble at tax time to prove their business expenses.
       audience: Solo freelancers (designers, writers, consultants) who do their own bookkeeping, mostly on their phones.
       product_name: Stubly
-      goal: Get visitors to start a free 30-day trial.
+      flows:
+        - A freelancer hears about Stubly from a friend, checks how receipt capture works and what it costs, then starts a free 30-day trial.
   - id: clinic-booking
     brief:
       problem: Patients of a small physiotherapy clinic phone during working hours to book, and many give up when nobody answers.
       audience: Adults aged 35-70 with back, knee or sports injuries, many not very confident online.
       product_name: Northside Physio
-      goal: Get patients to book their first appointment online.
+      flows:
+        - A patient with a sore knee finds the clinic in a search, checks which physio fits and whether insurance is billed directly, then books a first appointment online.
       context: Three physiotherapists, open six days a week, direct billing to most insurers.
   - id: devtool-pricing
     brief:
       problem: Engineering leads cannot tell which plan of our log-search tool fits their team, so they stall at the pricing page.
       audience: Engineering leads and CTOs at 10-200 person software companies comparing observability tools.
       product_name: Tracewell
-      goal: Get teams to pick a plan, or contact sales for the enterprise tier.
+      flows:
+        - An engineering lead comparing tools opens pricing, works out which plan fits a 40-person team, and starts that plan.
+        - A CTO at a 200-person company needs the enterprise tier and contacts sales.
   - id: volunteer-signup
     brief:
       problem: A city food bank cannot fill weekend sorting shifts because volunteers do not know when help is needed or how to sign up.
       audience: Local residents, students needing service hours and corporate groups looking for a team day.
       product_name: Riverside Food Bank
-      goal: Get visitors to sign up for a specific shift.
+      flows:
+        - A student needing service hours sees which weekend shifts are short of people and signs up for one.
   - id: vague-shop
     brief:
       problem: A small shop wants a website for its products.
       audience: People who might buy from the shop.
+      flows:
+        - Someone buys something.

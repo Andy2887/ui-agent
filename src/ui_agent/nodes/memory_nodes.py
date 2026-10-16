@@ -15,18 +15,27 @@ async def load_memory(state: AgentState, *, store: BaseStore) -> dict:
     return {"memory_context": ctx}
 
 
+def site_score(state: dict) -> float | None:
+    """The mean of the designed pages' best scores."""
+    scores = [s["best"].get("score") for s in (state.get("pages") or {}).values() if s.get("best")]
+    scores = [x for x in scores if x is not None]
+    return round(sum(scores) / len(scores), 2) if scores else None
+
+
 async def update_memory(state: AgentState, *, store: BaseStore) -> dict:
-    issues = list(state.get("issues") or [])
-    await memory.record_lessons(store, state["run_id"], issues)
-    best = state.get("best") or state.get("current") or {}
+    pages = (state.get("pages") or {}).values()
+    for page in pages:
+        await memory.record_lessons(store, state["run_id"], list(page.get("issues") or []))
+    score = site_score(state)
+    stops = {pid: s.get("stop_reason") or s.get("skipped") for pid, s in (state.get("pages") or {}).items()}
     await memory.record_run(store, state["user_id"], state["run_id"], {
         "prompt": brief_text(state["brief"])[:300],
-        "chosen_direction": (state.get("selection") or {}).get("id"),
-        "mood_from": (state.get("selection") or {}).get("mood_from"),
-        "iterations": state.get("iteration"),
-        "final_score": best.get("score"),
-        "stop_reason": state.get("stop_reason"),
+        "direction": (state.get("direction") or {}).get("name"),
+        "revisions": len(state.get("rejected_directions") or []),
+        "pages": len(stops),
+        "final_score": score,
+        "stop_reasons": stops,
         "cost_usd": round((state.get("usage") or {}).get("cost_usd", 0.0), 4),
     })
-    emit("done", stop_reason=state.get("stop_reason"), score=best.get("score"))
+    emit("done", score=score, pages=stops)
     return {}

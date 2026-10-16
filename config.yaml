@@ -4,7 +4,6 @@ models:
   planner:    {model: claude-haiku-5-5,  effort: high,   max_tokens: 32000}
   sketcher:   {model: claude-haiku-5-5,  effort: low,    max_tokens: 24000}
   generator:  {model: claude-sonnet-5-5, effort: medium, max_tokens: 64000}
-  style_lock: {model: claude-haiku-5-5,  effort: medium, max_tokens: 8000}
   reviewer:   {model: claude-sonnet-5-5, effort: high,   max_tokens: 32000}
   executor:   {model: claude-haiku-5-5,  effort: high,   max_tokens: 64000}
   handoff:    {model: claude-haiku-5-5,  effort: medium, max_tokens: 32000}
@@ -32,7 +31,8 @@ viewports:
 max_tiles:  {mobile: 4, tablet: 2, desktop: 4}
 
 refine:
-  max_iterations: 5
+  max_iterations: 5             # key page (the entry page of flow 1)
+  max_iterations_secondary: 3   # every other page starts from the key page's reviewed design
   change_request_max_iterations: 2
   pass_threshold: 4.0
   min_criterion: 3
@@ -42,6 +42,9 @@ refine:
   top_issues: 5
 
 final_approval: true
+# A10 runs impeccable's detector (github.com/pbakaus/impeccable). null: find it on PATH or in ~/.impeccable/bin;
+# a path pins one binary; "off" disables the check. Install with: npm install -g impeccable
+impeccable_bin: null
 export_pdf: true
 runs_dir: runs
 data_dir: data

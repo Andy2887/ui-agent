@@ -253,6 +253,37 @@ async () => {
 }
 """
 
+# A12 text scaling: double the root font size, as a reader who sets their browser's text size to 200% does, and
+# check the page still fits the window. Type set in rem grows with it; type set in px doesn't, so report the growth.
+TEXT_SCALE_JS = r"""
+() => {
+  const html = document.documentElement;
+  // The base layer's reduced-motion rule keeps font-size transitions at 0.01ms; read end values, not start values.
+  const settle = () => document.getAnimations().forEach((a) => { try { a.finish(); } catch (e) {} });  // infinite ones throw
+  settle();
+  const before = parseFloat(getComputedStyle(document.body).fontSize);
+  html.style.setProperty('font-size', `${parseFloat(getComputedStyle(html).fontSize) * 2}px`, 'important');
+  settle();
+  const scale = parseFloat(getComputedStyle(document.body).fontSize) / before;
+  const vw = html.clientWidth, sw = html.scrollWidth;
+  const overflow = [];
+  // How far an element or its content reaches: unwrappable text spills past its own box.
+  const reach = (el) => { const r = el.getBoundingClientRect(); return r.width === 0 ? 0 : Math.max(r.right, r.left + el.scrollWidth); };
+  if (sw > vw + 1) {
+    for (const el of document.querySelectorAll('body *')) {
+      // The innermost elements past the edge name the culprit.
+      if (reach(el) <= vw + 1 || [...el.children].some((c) => reach(c) > vw + 1)) continue;
+      let s = el.tagName.toLowerCase() + (el.classList.length ? '.' + [...el.classList].slice(0, 2).join('.') : '');
+      const comp = el.closest('[data-component]');
+      if (comp && comp !== el) s = `[data-component=${comp.dataset.component}] ${s}`;
+      overflow.push({ selector: s, right: Math.round(reach(el)), text: (el.innerText || '').trim().slice(0, 40) });
+      if (overflow.length >= 8) break;
+    }
+  }
+  return { viewport_width: vw, scale: Math.round(scale * 100) / 100, scroll_width: sw, overflow };
+}
+"""
+
 NO_MOTION_CSS = "*,*::before,*::after{transition:none!important;animation:none!important;}"
 
 
@@ -289,7 +320,7 @@ class BrowserSession:
         out_dir.mkdir(parents=True, exist_ok=True)
         allowed = set(cfg["allowed_hosts"])
         result: dict = {"screenshots": {}, "tiles": {}, "facts": {}, "axe": [], "focus": [],
-                        "console_errors": [], "blocked_requests": [], "font_floor_rules": []}
+                        "console_errors": [], "blocked_requests": [], "font_floor_rules": [], "text_scale": None}
         async with self._sem:
             browser = await self.browser()
             for vp, (w, h) in cfg["viewports"].items():
@@ -364,6 +395,8 @@ class BrowserSession:
                             if r.get("wrapped"):
                                 break
                             result["focus"].append(r)
+                        # Last on the page: it changes the layout.
+                        result["text_scale"] = await page.evaluate(TEXT_SCALE_JS)
                 finally:
                     await ctx.close()
         return result

@@ -15,6 +15,8 @@ layer_a:
   - {id: A7, name: Focus visibility, pass: "every keyboard-focusable element has a visible focus style"}
   - {id: A8, name: Integrability, pass: "no inline style=; >= 90% of color/font/spacing values use var(--*); every top-level section has data-component; no requests outside the allowlist"}
   - {id: A9, name: Layout balance, warning: true, pass: "at 768 and 1440px, no side-by-side column ends far short of its neighbour (sticky columns exempt) and no block is pushed right leaving the left empty"}
+  - {id: A10, name: AI-template tells, warning: true, pass: "impeccable's detector finds none of the template habits in tools/checks/slop.py (eyebrow above the headline, icon tile above card headings, side-tab borders, nested cards, buzzwords, ...); skipped when the detector isn't installed"}
+  - {id: A12, name: Text scaling, warning: true, pass: "with the root font size doubled (text at 200%, WCAG 1.4.4) at 1440px, body text grows and the page still fits the window"}
 
 layer_b:
   - id: B1
@@ -80,3 +82,10 @@ layer_b:
       1: "No longer recognizably the sketch and direction the PM picked; their notes ignored."
       3: "Recognizable, but some character has been sanded off, the sketch's structure drifted, or a note was only partly applied."
       5: "Clearly the direction the PM picked: the sketch's structure and concept, the StyleSpec's signature elements, and every PM note intact."
+  - id: B10
+    name: Design specificity
+    weight: 1.0
+    anchors:
+      1: "Interchangeable: swap the name and logo and the page would serve an unrelated product. It is assembled from stock template moves (a label above the headline, an icon tile above every card, a centered hero over three feature cards) and placeholder-like imagery."
+      3: "Partly grounded: some sections are built from this product's real content, data or tasks, but others are template sections any product could reuse unchanged."
+      5: "Grounded in this product: composition, imagery and interactions come from what these users do here (its real screens, data, steps and objects), so an unrelated product could not reuse the page unchanged. No template habit appears unless the direction asks for it."

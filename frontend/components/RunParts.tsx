@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { artifactUrl } from "@/lib/api";
 import { CRITERIA } from "@/lib/logic";
 import type { CheckSummary, Issue, Score } from "@/lib/types";
@@ -23,6 +23,12 @@ export function ScaledFrame({ runId, path, width = 1440, height = 900, title }: 
         style={{ width, height, transform: `scale(${scale})` }} />
     </div>
   );
+}
+
+/** A text wireframe, scaled so its widest line fits the box it sits in. */
+export function SketchView({ text, label }: { text: string; label: string }) {
+  const cols = Math.max(60, ...text.split("\n").map((l) => l.length));
+  return <div className="wire-box"><pre className="wire" aria-label={label} style={{ "--cols": cols } as CSSProperties}>{text}</pre></div>;
 }
 
 export function Shot({ runId, path, alt, tall }: { runId: string; path?: string; alt: string; tall?: boolean }) {

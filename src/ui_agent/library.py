@@ -60,9 +60,15 @@ def ranked(query: list[str], items: list[dict], doc) -> list[dict]:
 
 
 def brief_query(brief: dict, intake: dict) -> list[str]:
-    fields = [brief.get(k) or "" for k in ("product_name", "problem", "audience", "goal", "context")]
-    fields += [intake.get(k) or "" for k in ("problem", "audience", "primary_action")]
+    fields = [brief.get(k) or "" for k in ("product_name", "problem", "audience", "context")]
+    fields += brief.get("flows") or []
+    fields += [intake.get(k) or "" for k in ("problem", "audience")]
     return tokens(" ".join(fields))
+
+
+def page_types(intake: dict) -> list[str]:
+    """The site's page types, entry page first."""
+    return list(dict.fromkeys(p["page_type"] for p in intake.get("pages") or [])) or ["landing"]
 
 
 def industry_priors(brief: dict, intake: dict) -> list[dict]:
@@ -111,15 +117,16 @@ def design_library(brief: dict, intake: dict, priors: list[dict], seed: str) -> 
     pairing_sample = _sample(rng, ranked(query + tokens(moods), pairings,
                                          lambda t: f"{t['name']} {t['hint']} {t.get('best_for', '')}"), pairings, "pairings")
 
-    structures = [s for s in p["structures"]["structures"] if intake["page_type"] in s["page_types"]]
+    types = page_types(intake)
+    structures = [s for s in p["structures"]["structures"] if set(types) & set(s["page_types"])]
     st_by_id = {s["id"]: s for s in structures}
     typical_st = [st_by_id[pr["structure_id"]] for pr in priors if pr.get("structure_id") in st_by_id]
     typical_st += ranked(query, structures, lambda s: f"{s['name']} {' '.join(s['sections'])}")
     structure_sample = _sample(rng, list({s["id"]: s for s in typical_st}.values()), structures, "structures")
 
     return {
-        "layouts_for_page_type": [{"id": l["id"], "name": l["name"], "brief": l["brief"]}
-                                  for l in p["layouts"]["layouts"] if l["page_type"] == intake["page_type"]],
+        "layouts_for_page_types": [{"id": l["id"], "name": l["name"], "page_type": l["page_type"], "brief": l["brief"]}
+                                   for l in p["layouts"]["layouts"] if l["page_type"] in types],
         "page_structures": [{k: s[k] for k in ("id", "name", "sections", "cta_placement", "color_strategy", "fit")}
                             for s in structure_sample],
         "reference_styles": [{k: s[k] for k in ("id", "name", "guidance", "best_for", "avoid_for", "modes", "fit")}

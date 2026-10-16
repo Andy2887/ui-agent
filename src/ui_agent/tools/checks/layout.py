@@ -1,4 +1,5 @@
-"""A3 horizontal overflow, A4 tap target size (mobile), A5 font size floor, A9 layout balance (warning)."""
+"""A3 horizontal overflow, A4 tap target size (mobile), A5 font size floor, A9 layout balance (warning),
+A12 text scaling (warning)."""
 
 from __future__ import annotations
 
@@ -59,4 +60,27 @@ def a9_balance(render: dict) -> CheckResult:
         details=(f"{len(items)} lopsided row(s) or block(s) leave a large empty area" if items
                  else "Side-by-side columns are filled evenly; no block is pushed to one side"),
         items=items[:10],
+    )
+
+
+def a12_text_scale(render: dict) -> CheckResult:
+    """Warning only. WCAG 1.4.4 asks that text work at 200%; browser zoom also satisfies it, so this text-only test
+    (the root font size doubled at 1440px) is stricter than the standard."""
+    t = render.get("text_scale")
+    if t is None:
+        return CheckResult(id="A12", name="Text scaling", passed=True, blocking=False, details="Not measured")
+    items = []
+    if t["scale"] < 1.5:
+        items.append({"problem": f"body text grew only {t['scale']}x when the reader doubled their text size; "
+                                 "font sizes set in px ignore the reader's setting"})
+    if t["scroll_width"] > t["viewport_width"] + 1:
+        items.append({"problem": f"at 200% text the page is {t['scroll_width'] - t['viewport_width']}px wider than the "
+                                 f"{t['viewport_width']}px window", "offenders": t["overflow"]})
+    return CheckResult(
+        id="A12", name="Text scaling", passed=not items, blocking=False,
+        details=("; ".join(i["problem"] for i in items) if items
+                 else f"At 200% text the page still fits {t['viewport_width']}px (body text grew {t['scale']}x)"),
+        items=items,
+        fix="Set font sizes in rem. Let rows wrap when their text grows: flex-wrap on nav and button rows, min-width: 0 "
+            "on grid and flex children, max-width: 100% on inputs and media, no fixed widths or white-space: nowrap on text.",
     )

@@ -16,18 +16,19 @@ from dataclasses import dataclass, field
 from langgraph.types import Command
 
 from ..nodes.common import run_dir
+from ..nodes.memory_nodes import site_score
 from .. import settings
 
 log = logging.getLogger("ui_agent.runs")
 
 # interrupt kind -> run status while it waits for the PM
-WAITING = {"kickoff": "waiting_kickoff", "gallery": "waiting_gallery", "final_approval": "waiting_approval"}
+WAITING = {"kickoff": "waiting_kickoff", "sketch_review": "waiting_sketches", "final_approval": "waiting_approval"}
 
 
 @dataclass
 class RunHandle:
     run_id: str
-    status: str = "running"  # running | waiting_kickoff | waiting_gallery | waiting_approval | done | error
+    status: str = "running"  # running | waiting_kickoff | waiting_sketches | waiting_approval | done | error
     task: asyncio.Task | None = None
     subscribers: set[asyncio.Queue] = field(default_factory=set)
     events: list[dict] = field(default_factory=list)
@@ -76,10 +77,7 @@ class RunManager:
         h = RunHandle(run_id)
         self.runs[run_id] = h
         self.set_status(h, "running", request=request, mock=settings.mock_mode())
-        initial = {
-            "run_id": run_id, "user_id": user_id, "brief": request["brief"],
-            "candidate_count": request["candidate_count"], "usage": {},
-        }
+        initial = {"run_id": run_id, "user_id": user_id, "brief": request["brief"], "usage": {}}
         h.task = asyncio.create_task(self._drive(h, initial))
         return run_id
 
@@ -113,8 +111,8 @@ class RunManager:
                 self.set_status(h, WAITING[interrupted["kind"]])
             else:
                 state = (await self.graph.aget_state(cfg)).values
-                self.set_status(h, "done", stop_reason=state.get("stop_reason"),
-                                score=(state.get("best") or {}).get("score"), usage=state.get("usage"))
+                self.set_status(h, "done", score=site_score(state), usage=state.get("usage"),
+                                pages={pid: s.get("stop_reason") or s.get("skipped") for pid, s in (state.get("pages") or {}).items()})
         except Exception as e:  # surface every failure to the UI
             log.exception("run %s failed", h.run_id)
             self.set_status(h, "error", error=f"{type(e).__name__}: {e}", trace=traceback.format_exc()[-2000:])

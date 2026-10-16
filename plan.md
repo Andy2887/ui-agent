@@ -1,22 +1,23 @@
 # UI Agent — Project Plan
 
-An agent that works like a UI/UX designer briefed by a PM. The user states **the problem and who has it**, never the look; the agent owns every "how" decision. It may ask a few kickoff questions, sketches several low-fidelity directions, lets the user pick one, designs it in full as a production-ready **web page UI** (HTML/CSS), then refines it through a reviewer ↔ executor loop until it meets a quality bar. The output is a **handoff package** that another coding agent (e.g. Claude Code) uses as the source of truth to build the real project. The design is created **before any codebase exists**.
+An agent that works like a UI/UX designer briefed by a PM. The user states **the problem and what users do** (at least one user flow), never the pages or the look; the agent owns every "how" decision. It works out the pages the flows need, may ask a few kickoff questions, proposes one direction with a low-fidelity sketch of every page, lets the user approve it or ask for changes, designs every page in full as a production-ready, linked **multi-page web UI** (HTML/CSS) in one design system, then refines it through a reviewer ↔ executor loop until it meets a quality bar. The output is a **handoff package** that another coding agent (e.g. Claude Code) uses as the source of truth to build the real project. The design is created **before any codebase exists**.
 
 ---
 
 ## 1. Goals and non-goals
 
 **Goals**
-- Take a PM-style brief: the problem, the target users, and optionally a product name, the goal, and free-form context. Never ask the user to choose colors, fonts, layout, theme or style.
+- Take a PM-style brief: the problem, one to five user flows (one free-text paragraph each; the first is required), and optionally the users, a product name and free-form context. Never ask the user to choose pages, colors, fonts, layout, theme or style.
 - Ask clarifying questions at kickoff only when the answer would change the design.
-- Sketch genuinely different directions (different bets on solving the problem, each with a proposed visual mood) as low-fidelity wireframes, in parallel. The user chooses how many (default 3, range 1–10).
-- Let the user pick a sketch (plus optional notes); design only that one in full.
-- Automatically refine the chosen design against an explicit UI/UX rubric, with screenshots, until it passes a threshold.
+- Turn the flows into a site map (at most 6 pages) and propose one direction for the whole site: a bet on solving the problem plus a design system. Sketch every page as a low-fidelity wireframe, in parallel.
+- Let the user approve the direction and sketches (plus optional notes) or ask for changes; design nothing in full until then.
+- Design the entry page of flow 1 first; it sets the design system. Design every other page against it with the same tokens, header, footer and components, and link the pages so every flow can be clicked through.
+- Automatically refine each page against an explicit UI/UX rubric, with screenshots, until it passes a threshold.
 - Output HTML that is easy for a coding agent to integrate: semantic markup, tokenized CSS, labeled components, and a written handoff spec.
 - Learn the user's taste and the system's recurring mistakes across runs (long-term memory).
 
 **Non-goals (v1)**
-- Multi-page apps or flows. One page per run.
+- More than 6 pages per run, or app logic behind the flows. Pages are static and link to each other; forms and buttons only navigate.
 - Framework output (React/Vue/Tailwind). The coding agent translates; we give it clean, framework-agnostic input.
 - Matching an existing codebase or design system. This tool makes the *initial* design, before any code exists. (Brand constraints the user mentions in the brief's context are respected by the designer.)
 - Real imagery or brand assets. We use annotated placeholders.
@@ -37,7 +38,7 @@ An agent that works like a UI/UX designer briefed by a PM. The user states **the
 | Starting point | **Greenfield**: no existing codebase | The design comes first and the codebase is built from it, so there's no repo to read or match. |
 | Interface | **Web frontend** (Next.js + TypeScript) talking to a Python backend | Sketches, refinement progress and the before/after comparison are visual. An MCP server comes later. |
 | Who decides what | **The user states the problem; the agent owns the "how"** | Users think like a PM: problem and users in, no visual pickers. Colors, type, layout, theme and style are design decisions, and they're made for the stated users (§5). |
-| Exploration | **Low-fi sketches first, one hi-fi design** | Sketches are cheap and make the *idea* easy to judge; only the picked direction is designed in full (§4.5, §4.7). |
+| Exploration | **One direction, a low-fi sketch per page, then hi-fi pages** | Sketches are cheap and make the structure of every page easy to judge before anything is designed in full (§4.5–4.7). One direction keeps the PM's decision to "is this right?" across the whole site instead of a pick among single pages. |
 | Review | **Two layers**: deterministic audits (code) + rubric judgment (vision LLM) | Objective checks can't be argued with or hallucinated, and the LLM focuses on what needs judgment. |
 | PDF | Optional visual snapshot only | Developers integrate the HTML; a PDF is just for sharing or sign-off. |
 
@@ -49,18 +50,19 @@ An agent that works like a UI/UX designer briefed by a PM. The user states **the
 
 ```mermaid
 flowchart TD
-    A[intake] --> Q{{kickoff: interrupt — questions, only if needed}}
+    A[intake — design brief + site map from the flows] --> Q{{kickoff: interrupt — questions, only if needed}}
     Q -->|answers| A
     Q -->|no questions / skipped| B[load_memory]
-    B --> C[plan_directions]
-    C -->|Send ×N| D[sketch_direction]
-    D --> F{{gallery: interrupt — user picks a sketch}}
-    F -->|regenerate| C
-    F -->|pick + notes| G[design — hi-fi from the sketch]
-    G --> S[lock_style]
+    B --> C[plan_direction — one direction + design system]
+    C -->|Send ×pages| D[sketch_page]
+    D --> F{{sketch_review: interrupt — approve or revise}}
+    F -->|revise + feedback| C
+    F -->|approve + notes| NP[next_page]
+    NP -->|next page| G[design_page — hi-fi from the sketch; key page first]
+    G --> S[lock_style — once, from the key page]
     S --> H
 
-    subgraph R[refine loop subgraph]
+    subgraph R[refine loop subgraph, once per page]
         H[render] --> I[audit — deterministic]
         I --> J[review — vision LLM]
         J --> K{gate}
@@ -68,8 +70,11 @@ flowchart TD
         L --> H
     end
 
-    K -->|pass / plateau / max iters| M{{final approval: optional interrupt}}
-    M -->|change requests| L
+    K -->|pass / plateau / max iters| FP[finish_page — best version to site/]
+    FP --> NP
+    NP -->|change requested on a page| L
+    NP -->|all pages done| M{{final approval: optional interrupt}}
+    M -->|change requests: one page or all| NP
     M -->|approve| N[build_handoff]
     N --> O[export html / pdf]
     O --> P[update_memory]
@@ -105,15 +110,17 @@ class AgentState(TypedDict):
     run_id: str
     user_id: str
     brief: ProductBrief
-    candidate_count: int                                 # 1–10, default 3
-    intake: DesignBrief                                  # the designer's reading of the brief (+ questions)
+    intake: DesignBrief                                  # the designer's reading of the brief + site map (+ questions)
     kickoff: Kickoff | None                              # answers, or skipped
     memory_context: dict
-    briefs: list[DirectionBrief]
-    candidates: Annotated[list[Design], reducer]         # sketches (fan-out reducer)
-    selection: Selection | None                          # chosen id + notes
-    design: Design | None                                # first full design (refine v1)
-    style_lock: StyleSpec | None
+    direction: DirectionBrief                            # one direction for the whole site
+    sketches: Annotated[list[Sketch], reducer]           # one per page (fan-out reducer)
+    sketch_notes: str                                    # the PM's notes at sketch review
+    style_lock: StyleSpec | None                         # from the key page; its tokens bind every page
+    page_queue: list[str]                                # pages still to design or revisit
+    pages: dict[str, PageResult]                         # finished pages: v1, best, issues, stop reason
+    page_id: str | None                                  # the page in the refine loop now
+    design: Design | None                                # this page's first full design (refine v1)
     current: Design | None
     best: Design | None
     history: list[Design]
@@ -137,10 +144,10 @@ Next.js frontend  ⇄  FastAPI backend  →  LangGraph run (background task)  �
 
 | Endpoint | Purpose |
 |---|---|
-| `POST /runs` | Start a run with a `ProductBrief` + `candidate_count` → `run_id` |
+| `POST /runs` | Start a run with a `ProductBrief` (problem + flows) → `run_id` |
 | `GET /runs/{id}/events` | Server-sent events (SSE) stream: node started/finished, the design brief, each sketch ready, the full design, each refine iteration (screenshot, score, issues), interrupts |
 | `POST /runs/{id}/resume` | Answer an interrupt (kickoff answers / sketch pick / regenerate / final approval) → `Command(resume=...)` |
-| `GET /runs/{id}/artifacts/...` | Sketch and design HTML (shown in sandboxed iframes), screenshots, handoff zip, PDF |
+| `GET /runs/{id}/artifacts/...` | Sketch text, design HTML (shown in sandboxed iframes), screenshots, handoff zip, PDF |
 | `GET/PUT/DELETE /memory` | View, edit and reset what the agent remembers |
 
 The graph streams progress through LangGraph's custom stream mode, which the API relays as SSE. (Alternative: LangGraph Server plus its React `useStream` hook. That's less code, but less control over the API shape.)
@@ -149,7 +156,7 @@ The graph streams progress through LangGraph's custom stream mode, which the API
 1. **Brief:** problem, users, optional name, goal and context, and the number of directions to sketch (§5).
 2. **Kickoff:** the designer's reading of the brief (problem, users, needs, primary action, assumptions) plus its questions, each with one-click suggested answers and a line on why it matters. Answer or skip. Shown only when the designer has questions.
 3. **Sketching:** one card per direction (concept, trade-off, mood swatch), filling in as each sketch finishes.
-4. **Pick a sketch:** sketches in a grid; each opens to a desktop iframe + mobile view, and any two can be compared side by side. Pick + notes, or ask for new directions with feedback.
+4. **Pick a sketch:** sketches in a grid; each opens to its full text wireframe, and any two can be compared side by side. Pick + notes, or ask for new directions with feedback.
 5. **Designing & refining:** the chosen sketch becomes a full design, then a timeline of iterations, each showing screenshot, score per criterion, and issues found and fixed. Every issue gets a **plain-English explanation of why it matters**, so the user learns UI/UX while the design improves.
 6. **Final review:** the picked sketch (or the first full design) vs. final side by side, score trajectory, and approve or request changes.
 7. **Download:** handoff package (zip), HTML, PDF.
@@ -162,7 +169,7 @@ Generated HTML always renders in a sandboxed `<iframe>` (no same-origin), never 
 ## 4. Nodes
 
 ### 4.1 `intake`
-Reads the PM's brief like a designer at kickoff and writes a design brief: the problem restated as a design problem, who the users are (context, skepticism, likely device), what they must understand/feel/do, the primary action, the page type and sections, and assumptions for every gap it filled. It may also return up to 3 **questions**, only when an answer would clearly change the design. It never asks about colors, fonts, layout or style. On its second pass (after answers) it updates the brief and returns no questions.
+Reads the PM's brief and flows like a designer at kickoff and writes a design brief: the problem restated as a design problem, who the users are (context, skepticism, likely device), what they must understand/feel/do, and assumptions for every gap it filled. It also writes the **site map**: the pages the flows need (each with a page type, purpose, primary action, sections and the pages it links to) and each flow as a sequence of steps on those pages. Fewer pages is better: a step that fits on a page the user is already on stays there. Code then checks the site map (`plan_site`): unique kebab-case ids, known page types, at most **6 pages** with the entry page of flow 1 first (the rest are listed as not designed), flow steps only on real pages, a link for every step that changes page, and file names (`index.html` for the entry page, `<id>.html` for the rest). It may also return up to 3 **questions**, only when an answer would clearly change the design. It never asks about pages, colors, fonts, layout or style. On its second pass (after answers) it updates the brief and returns no questions.
 
 ### 4.2 `kickoff` (interrupt #1, only when there are questions)
 `interrupt()` with the design brief and the questions; each has suggested answers and a one-line "why it matters". Answers send the graph back to `intake` to update the brief; skipping keeps the assumptions. Either way the next stop is `load_memory`.
@@ -170,68 +177,64 @@ Reads the PM's brief like a designer at kickoff and writes a design brief: the p
 ### 4.3 `load_memory`
 Reads the user's taste profile, project brand kit (if any), and the system's lessons learned from the Store (see §9).
 
-### 4.4 `plan_directions`
-One LLM call with structured output that returns `candidate_count` `DirectionBrief`s. A direction is **a different bet on solving the problem** (what it leads with, how it earns trust, how it gets users to the primary action), plus the visual mood the designer proposes for it: style, mood words, theme, type pairing, palette, density, shape, motion, imagery and a signature element. The presets (§5.4) are the designer's library: vocabulary and starting points, never constraints.
+### 4.4 `plan_direction`
+One LLM call with structured output that returns one `DirectionBrief` for the whole site: **the bet on solving the problem** (what the entry page leads with, how the site earns trust, how it carries users through each flow), plus the design system the designer proposes: style, mood words, theme, type pairing, palette, density, shape, motion, imagery and a signature element that can recur on every page. It must work for every page type in the site map, not only the entry page. The slot is `taste` when there is remembered taste, otherwise `neutral`. The presets (§5.4) are the designer's library: vocabulary and starting points, never constraints. On a revision it gets the PM's feedback and the previous direction, keeps what the feedback doesn't mention, and changes what it asks for.
 
-Diversity is enforced in three places:
-- **Prompt:** every pair differs in concept and on at least 3 of: layout archetype, type pairing, palette, density, reference style, section order, theme.
-- **Composition (scales with the count):**
-  - 1 option: a single best-fit direction, informed by remembered taste.
-  - 2 options: 1 leans toward remembered taste, 1 is neutral-strong.
-  - 3+ options: about 40% lean toward remembered taste (at least 1), exactly 1 is a deliberate wildcard, and the rest are neutral-strong.
-  - With no taste memory yet, taste slots become neutral-strong.
-- **Check (code):** reject and re-plan if two briefs share the same layout archetype and reference style, differ on fewer than 3 axes, or share a concept or signature element.
+**Palette check (code):** every text/background and button pair in the palette is checked for WCAG AA contrast. Failing pairs are repaired by shifting OKLCH lightness within the same hue, before any sketching starts.
 
-**Palette check (code):** every text/background and button pair in each palette is checked for WCAG AA contrast. Failing pairs are repaired by shifting OKLCH lightness within the same hue, before any sketching starts.
+### 4.5 `sketch_page` (×pages via `Send`)
+Each sketcher gets the PM brief, the design brief, kickoff answers, the direction, the site map, its page, and the flow steps that happen on it (where users come from and go next). It writes a **low-fidelity text wireframe** (`prompts/sketch_contract.md`): an ASCII box chart of the desktop page (one box per section, columns drawn to relative width, a small notation for headings, buttons, images, fields and body-text lines, and `-> page-id` on a button that goes to another page), one line per section on how it reflows at 375px, and 2–4 notes explaining *why* a part is shaped that way. Every page draws the same header and footer. At most `max_parallel_generations` (default 5) run at once.
 
-### 4.5 `sketch_direction` (×N via `Send`)
-Each sketcher gets the PM brief, the design brief, kickoff answers and one direction, and writes a **low-fidelity wireframe** as HTML: structure, hierarchy, real copy for everything that carries the concept, text-line placeholders for running copy, and 2–4 annotations explaining *why* a part is shaped that way. It builds with a shared **sketch kit** (`prompts/sketch_kit.css`: grayscale ink on paper, annotations in blue) that code injects at the top of `<head>`; the sketcher adds layout CSS only. Sketches are rendered at every viewport for screenshots (no audit: a sketch is judged by the person, not the rubric). At most `max_parallel_generations` (default 5) run at once.
+### 4.6 `sketch_review` (interrupt #2)
+`interrupt()` with the design brief, the direction (concept, trade-off, layout, and its style tile) and every page's sketch. The PM sees how each flow moves through the pages and opens each sketch in a tab. Two outcomes:
+- `approve(notes?)`, e.g. "keep the sign-up form to one field". Records the direction in taste memory, with any directions sent back earlier as rejected.
+- `revise(feedback)`: back to `plan_direction`, then every page is sketched again with the feedback.
 
-### 4.6 `gallery` (interrupt #2)
-`interrupt()` with the design brief and the sketches: each opens to a sandboxed iframe at 1440px plus a mobile view, and any two can be compared side by side. Each card shows the direction's concept, trade-off and **mood** (palette swatches, font names set in those fonts, theme, mood words), so picking a sketch also picks a look. With a single sketch the gallery still appears.
-The user chooses one of:
-- `pick(id, notes?)`, e.g. "put the pricing teaser higher; B's testimonials idea would fit here"
-- `regenerate(feedback, count?)`: back to `plan_directions`, which moves away from the previous directions.
+### 4.7 `next_page` and `design_page`
+`next_page` takes the next page off the queue (every page in site-map order after approval; the pages a change request names after final review). A page not yet designed goes to `design_page`; a finished page with a change request goes back into its own refine loop at the executor, restored from its saved state.
 
-### 4.7 `design`
-One generator turns the picked sketch into the **first full design** (`refine/v1.html`): it keeps the sketch's section order, structure, hierarchy and content, makes every visual decision within the direction's mood, applies the PM's notes, and follows the **HTML contract** (§7) and the lessons-learned checklist. It sees the sketch's HTML and its first desktop screen.
+`design_page` turns one page's sketch into its **first full design** (`pages/<id>/v1.html`): it keeps the sketch's section order, structure, hierarchy and content, applies the PM's notes, makes real links to the pages in `links_to`, and follows the **HTML contract** (§7) and the lessons-learned checklist. The **key page** (the entry page of flow 1) comes first and makes every visual decision within the direction. Every later page also gets the key page's final HTML and must copy its `:root` tokens, header, footer and shared component CSS; code then copies the key page's token values into it. When the run is over budget the page is skipped and listed at final review.
 
-### 4.8 `lock_style`
-Builds a `StyleSpec` from the first full design:
-- **Deterministic:** parse `:root` custom properties (colors, fonts, spacing scale, radii, shadows).
-- **LLM:** a short description of the design's character and signature elements, plus the PM's notes.
+### 4.8 `lock_style` and `finish_page`
+`lock_style` builds a `StyleSpec` once, in code (no LLM call):
+- **Tokens:** the `:root` custom properties of the key page's first design (colors, fonts, spacing scale, radii, shadows).
+- **Character, signature element, must-keep list:** from the approved direction (mood, reference style, theme, density, shape, motion, imagery, layout, fonts, signature element, avoid list), plus the PM's notes. Taking these from the direction rather than from a reading of v1 holds every page to what the PM approved, and keeps an unreviewed detail of v1 (a label above the headline, say) from becoming a rule the reviewer must protect.
 
-The StyleSpec is the "don't lose what the user picked" constraint for the rest of the run. The PM's notes become a high-severity issue that the reviewer verifies like any other.
+For every page it then resets the refine state (versions, issues, iteration cap: `max_iterations` for the key page, `max_iterations_secondary` for the others). The PM's notes become a high-severity issue that the reviewer verifies on each page (resolved where they don't apply).
+
+`finish_page` saves the page's refine state and copies its best version to `site/<file>`, where the pages link to each other. After the key page it updates the StyleSpec's tokens to the key page's final values, and re-syncs any finished page whose tokens moved.
 
 ### 4.9 Refine loop (subgraph)
+
+Each page runs the loop on its own: versions live in `pages/<id>/`, and the issues, scores and best version are that page's.
 
 **`render`**: Playwright at 375 / 768 / 1440 px. Screenshots are taken per viewport **in viewport-height tiles**, because tall full-page images get downscaled and lose detail. Also captures a simplified DOM plus key computed styles: font sizes, colors, spacing, and bounding boxes of `data-component` sections.
 
 **`audit`**: Layer A checks (§6.1). Pure code, no LLM.
 
 **`review`**: A fresh-context vision LLM with structured output.
-- **Inputs:** screenshots, DOM summary, audit results, StyleSpec, the PM brief and design brief, and the list of previously raised issues. It marks each as resolved or not, then does a fresh pass.
+- **Inputs:** screenshots, DOM summary, audit results, StyleSpec, the PM brief and design brief, the site map, this page and its flow steps, and the list of previously raised issues. It marks each as resolved or not, then does a fresh pass.
 - **Never sees:** the executor's reasoning or edit history narrative.
 - **Output:** per-criterion scores with evidence, plus a list of `Issue`s (§6.3).
 
 **`gate`**: Pure code (§8). Picks `continue`, `pass`, `plateau`, `max_iters` or `revert`.
 
-**`execute`**: The LLM gets the current HTML, the **top 5 open issues by severity** (not all of them), the StyleSpec, and a "do not regress" list of resolved issues. It edits with the Anthropic text-editor tool (`str_replace` on the file), so changes are targeted rather than a full regeneration. Each round writes a new version, `vN.html`.
+**`execute`**: The LLM gets the current HTML, the **top 5 open issues by severity** (not all of them), the StyleSpec, and a "do not regress" list of resolved issues. It edits with the Anthropic text-editor tool (`str_replace` on the file), so changes are targeted rather than a full regeneration. Each round writes a new version, `vN.html`. On every page but the key page, code copies the key page's tokens back after the edits.
 
 ### 4.10 `final_approval` (interrupt #3, optional, on by default)
-Shows the picked sketch (or the first full design) vs. final, the score trajectory, and remaining low-severity issues. Two outcomes:
+Shows every page in a tab: its sketch (or first full design) vs. final, its score trajectory and remaining issues. The final previews come from `site/`, so the links work and the PM can click through each flow. Two outcomes:
 - **Approve:** continue to handoff.
-- **Request changes:** the feedback becomes high-severity issues, and the loop runs again with a small iteration cap.
+- **Request changes** on one page or on all pages: the feedback becomes a high-severity issue on each, and those pages run their refine loops again with a small iteration cap.
 
 ### 4.11 `build_handoff`
-An LLM writes `HANDOFF.md` from the final HTML plus the StyleSpec (§7.2). `tokens.json` is extracted deterministically.
+One HTML file per page (`index.html` and `<id>.html`, linked), `screenshots/<page>/`, `history/<page>/`, a shared `tokens.json` from the key page, `FLOWS.md` (written by code: each flow in the PM's words, its steps as files, and a page table) and a `review-report.json` per page. An LLM writes `HANDOFF.md` from every page's HTML plus the StyleSpec (§7.2): routes and flows, shared components, page-specific components.
 
 ### 4.12 `export`
-- HTML: final file, validated as self-contained.
-- PDF (optional): Playwright `page.pdf()` at a fixed 1440px width with print CSS that prevents section breaks, plus a separate mobile-width PDF if requested.
+- HTML: the page files, validated as self-contained.
+- PDF (optional): Playwright `page.pdf()` per page at 1440px and 375px, with print CSS that prevents section breaks, in `pdf/`.
 
 ### 4.13 `update_memory`
-Writes the taste signal, lessons learned and a run summary (§9).
+Writes lessons learned from every page and a run summary (§9). The taste signal is written at sketch review.
 
 ---
 
@@ -243,12 +246,12 @@ The user thinks like a PM talking to a UI/UX designer: **what problem, for whom*
 | Field | Required | Example |
 |---|---|---|
 | What problem are we solving? | yes | "Freelancers lose receipts and dread tax season." |
-| Who are we solving it for? | yes | "Solo freelancers who do their own books, mostly on their phone. Skeptical of finance apps." |
+| User flow 1 | yes | "A freelancer hears about us from a friend, checks how receipt capture works and what it costs, then starts a free trial." |
+| User flows 2–5 | no | "A returning user signs in at tax time and exports a year of receipts for their accountant." |
 | Product name | no | "Receiptly" |
-| What should they do or come away with? | no | "Sign up for the free plan" |
 | Anything else the designer should know? | no | Constraints, an existing brand, competitors, what's been tried, real copy |
 
-Plus the number of directions to sketch (stepper, default **3**, 1–10). A side panel explains the flow: kickoff → sketches → pick one → hand off.
+A flow is free text on purpose: it describes what the user does, and the pages are the designer's decision. The users are inferred (and may be asked about at kickoff). A side panel explains the steps: kickoff → sketches → approve → hand off.
 
 There are deliberately **no visual pickers**. If the user has a hard constraint (e.g. an existing brand color), they say so in the context field and the designer respects it.
 
@@ -260,14 +263,13 @@ The designer asks at most 3 questions, only when the answer would clearly change
 ```python
 class ProductBrief(BaseModel):
     problem: str                     # required
-    audience: str                    # required
+    flows: list[str]                 # 1–5 free-text paragraphs; the first is required
+    audience: str | None = None      # inferred when missing
     product_name: str | None = None
-    goal: str | None = None
     context: str | None = None
 
 class RunRequest(BaseModel):         # body of POST /runs
     brief: ProductBrief
-    candidate_count: int = Field(3, ge=1, le=10)
 ```
 
 ### 5.4 The designer's library (`presets/*.json`)
@@ -299,6 +301,9 @@ Stored in `rubric/rubric.yaml` (versioned, so score changes can be traced back t
 | A6 | HTML validity, console errors | html-validate, Playwright console | 0 errors |
 | A7 | Focus visibility | tab through, compare focus vs. unfocused styles | every interactive element has a visible focus state |
 | A8 | Integrability | custom script | no inline `style=`; ≥ 90% of color/font/spacing values use `var(--*)`; every top-level section has `data-component`; no network requests outside the allowlist |
+| A9 | Layout balance (warning) | DOM geometry at 768 and 1440px | no short column leaving a large empty area beside a tall one |
+| A10 | AI-template tells (warning) | [impeccable](https://github.com/pbakaus/impeccable) detector, optional | none of the template habits in `tools/checks/slop.py`; rules about palette, fonts and effects are left to the direction |
+| A12 | Text scaling (warning) | root font size doubled at 1440px (WCAG 1.4.4, text-only, so stricter than zoom) | body text grows and the page still fits the window |
 
 ### 6.2 Layer B: LLM-judged (1–5 each, anchored descriptions per score in the YAML)
 
@@ -313,6 +318,7 @@ Stored in `rubric/rubric.yaml` (versioned, so score changes can be traced back t
 | B7 | Brief fit and content: built for these users and this problem, the primary action is the page's center of gravity, realistic copy, no lorem ipsum | 1.25 |
 | B8 | Interaction states: hover/focus/active/disabled defined for interactive elements | 0.75 |
 | B9 | **Fidelity to the chosen direction**: still recognizably the sketch and direction the user picked, StyleSpec signature elements intact, every PM note applied | 1.5 |
+| B10 | Design specificity: grounded in this product and these users; an unrelated product could not reuse the page unchanged (A10's template habits feed it) | 1.0 |
 
 **Pass condition:** all Layer A pass **AND** weighted B average ≥ **4.0** **AND** no criterion < **3** **AND** no open `high` issues.
 
@@ -393,7 +399,7 @@ The output is always **`best`**, never just the latest version. `stop_reason` is
 
 | Namespace | Contents | Written when | Read by |
 |---|---|---|---|
-| `("user", uid, "taste")` | Structured profile: preferred/avoided styles, layouts, fonts, density, shape; counts of picks vs. rejects per attribute | After each sketch pick (chosen vs. passed-over directions), and from user notes | `plan_directions` (the `taste` slots) |
+| `("user", uid, "taste")` | Structured profile: preferred/avoided styles, layouts, fonts, density, shape; counts of picks vs. rejects per attribute | At sketch approval (the approved direction vs. directions sent back), and from user notes | `plan_direction` (the `taste` slot) |
 | `("project", pid, "brand")` | Brand constraints the user provides explicitly (colors, fonts, logo rules) so they carry across runs for the same product | Explicit user action | planner, generators, StyleSpec |
 | `("system", "lessons")` | Recurring issue patterns (e.g. "missing focus states", "hero CTA below fold on mobile") with counts | After each run, from final review issues | generators + executor (as a pre-flight checklist) |
 | `("runs", uid)` | Run summaries: prompt, chosen direction, iterations, final score, stop reason | End of run | analytics, evals |
@@ -434,7 +440,7 @@ ui-agent/
 ├── presets/                    # single source of truth for options (§5.4), used by frontend + backend
 │   ├── styles.json  layouts.json  colors.json  typography.json  shapes.json  ...
 │   └── thumbnails/             # hand-made style/mood sample images
-├── frontend/                   # Next.js app: setup, generating, gallery, refining, final, download, settings
+├── frontend/                   # Next.js app: brief, sketching, sketch review, refining (per page), final, download, settings
 ├── pyproject.toml              # Python backend (src/ui_agent)
 ├── config.yaml                 # models, effort, thresholds, viewports, max iters
 ├── rubric/rubric.yaml
@@ -447,7 +453,7 @@ ui-agent/
 │   ├── state.py                # TypedDict + Pydantic schemas
 │   ├── llm.py                  # Anthropic client wrapper
 │   ├── nodes/
-│   │   ├── intake.py  planner.py  generator.py  gallery.py  style_lock.py
+│   │   ├── intake.py  planner.py  sketch.py  pages.py  generator.py  style_lock.py
 │   │   ├── render.py  audit.py  reviewer.py  gate.py  executor.py
 │   │   └── handoff.py  export.py  memory_nodes.py
 │   ├── tools/
@@ -500,7 +506,7 @@ ui-agent/
 
 **M7: Hardening (ongoing)**
 - Eval suite, cost dashboards, Postgres checkpointer/store.
-- **MCP server interface**, so a coding agent can call `generate_ui(brief)` and receive the handoff package directly. The gallery pick still happens in the browser.
+- **MCP server interface**, so a coding agent can call `generate_ui(brief)` and receive the handoff package directly. The sketch review still happens in the browser.
 
 ---
 
@@ -545,10 +551,11 @@ ui-agent/
 - **Web frontend, not CLI:** developers need to *see* each option (§3.3, §5). MCP server later (M7).
 - **The user states the problem, the agent owns the how:** the setup screen's style, layout, color, theme, typography, density, shape, motion and imagery pickers were removed. The user gives a PM-style brief (problem, users, optional name, goal, context); presets became the designer's internal library (§5).
 - **Kickoff questions:** the designer may ask up to 3 clarifying questions before sketching, only when the answer changes the design; skipping is allowed (§4.2, §5.2).
-- **Sketch first:** N low-fi wireframes plus a visual mood per direction; only the picked one is designed in full (§4.5–4.7).
-- **Number of directions:** chosen by the user, 1–10, default 3.
-- **Theme is a design decision:** each direction picks light or dark for its users.
+- **Multi-page from user flows (2026-10-16):** the PM gives at least one user flow as free text; the designer derives the pages (at most 6) and links them. Replaces the single page per run and the optional goal field (§4.1, §5.1).
+- **One direction, every page sketched (2026-10-16):** the gallery of N competing directions was removed. The PM reviews one direction (concept + design system) and a sketch of every page, then approves or asks for changes (§4.4–4.6).
+- **Key page sets the design system:** the entry page of flow 1 is designed first; code copies its tokens into every other page, which also reuse its shell and components (§4.7–4.8). New audit check A11 verifies the flow links.
+- **Theme is a design decision:** the direction picks light or dark for its users.
 
 **Open**
 1. **Dark mode:** each direction picks one theme today. Should the full design also ship the other theme via tokens?
-2. **Mixing directions** ("A's layout + C's palette") as a first-class gallery action instead of free-text notes?
+2. **Shared CSS:** each page is self-contained HTML today, with the shared CSS duplicated. Should the handoff also extract a shared stylesheet?

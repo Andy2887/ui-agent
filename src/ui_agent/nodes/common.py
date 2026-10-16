@@ -13,9 +13,6 @@ from langgraph.config import get_stream_writer
 from .. import settings
 
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
-# The visual half of a DirectionBrief; the rest (concept, sections, layout) is the UX bet.
-MOOD_FIELDS = ("style_id", "reference_style", "mood", "theme", "heading_font", "body_font", "palette", "density", "shape",
-               "motion", "imagery", "signature_element")
 
 
 def run_dir(run_id: str) -> Path:
@@ -42,17 +39,55 @@ def image_block(path: Path) -> dict:
                                         "data": base64.standard_b64encode(path.read_bytes()).decode()}}
 
 
-def chosen_direction(state: dict) -> dict:
-    """The picked direction, wearing another direction's look when the PM mixed and matched."""
-    sel = state["selection"]
-    briefs = {b["id"]: b for b in state["briefs"]}
-    direction = briefs[sel["id"]]
-    donor = briefs.get(sel.get("mood_from") or "")
-    if not donor or donor["id"] == direction["id"]:
-        return direction
-    return {**direction, **{k: donor[k] for k in MOOD_FIELDS},
-            "avoid": list(dict.fromkeys(direction["avoid"] + donor["avoid"])),
-            "mood_from": {"id": donor["id"], "name": donor["name"]}}
+def key_page_id(state: dict) -> str:
+    """The entry page of flow 1. It is designed first, and its tokens and shell bind every other page."""
+    return state["intake"]["pages"][0]["id"]
+
+
+def page_spec(state: dict, page_id: str) -> dict:
+    return next(p for p in state["intake"]["pages"] if p["id"] == page_id)
+
+
+def page_links(state: dict, page_id: str) -> dict:
+    """Files this page must link to (its flow steps and links_to), and every file in the site."""
+    files = {p["id"]: p["file"] for p in state["intake"]["pages"]}
+    return {"required": [files[l] for l in page_spec(state, page_id)["links_to"] if l in files],
+            "known": list(files.values())}
+
+
+def shots_dir(html_path: str) -> str:
+    """pages/home/v3.html -> pages/home/v3-shots"""
+    return html_path.removesuffix(".html") + "-shots"
+
+
+def review_path(html_path: str) -> str:
+    """pages/home/v3.html -> pages/home/v3-review.json"""
+    return html_path.removesuffix(".html") + "-review.json"
+
+
+def lock_tokens(html: str, locked: dict[str, str]) -> tuple[str, list[str]]:
+    """Give the page's first `:root` block the key page's token values, adding any it lacks. The page may keep
+    extra tokens of its own. Returns the new HTML and the names that changed."""
+    m = next((m for m in re.finditer(r"(:root\s*\{)(.*?)(\})", html, flags=re.S)), None)
+    if not m or not locked:
+        return html, []
+    body, changed = m.group(2), []
+    seen = set()
+
+    def swap(d: re.Match) -> str:
+        name, value = d.group(1), d.group(2).strip()
+        seen.add(name)
+        if name in locked and value != locked[name]:
+            changed.append(name)
+            return f"{name}: {locked[name]};"
+        return d.group(0)
+
+    body = re.sub(r"(--[\w-]+)\s*:\s*([^;]+);", swap, body)
+    missing = [n for n in locked if n not in seen]
+    if missing:
+        body = body.rstrip() + "\n  /* Locked from the key page */\n" + "".join(f"  {n}: {locked[n]};\n" for n in missing)
+        changed += missing
+    return html[:m.start(2)] + body + html[m.end(2):], changed
 
 
 def put_first_in_head(html: str, marker: str, css: str) -> str:
@@ -112,6 +147,7 @@ def design_snapshot(design: dict) -> dict:
     review = design.get("review") or {}
     audit = design.get("audit") or {}
     return {
+        "page_id": design.get("page_id"),
         "version": design["version"],
         "html_path": design["html_path"],
         "screenshots": design.get("screenshots", {}),

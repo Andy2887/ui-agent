@@ -8,9 +8,9 @@ export type AgentTrack = { active?: AgentId; prev?: AgentId; visited: AgentId[];
 
 const NODES: { id: AgentId; label: string; role: string }[] = [
   { id: "intake", label: "Intake", role: "Reading the brief…" },
-  { id: "planner", label: "Planner", role: "Planning directions…" },
-  { id: "sketch", label: "Sketchers", role: "Sketching directions…" },
-  { id: "designer", label: "Designer", role: "Designing from the sketch…" },
+  { id: "planner", label: "Planner", role: "Planning the direction…" },
+  { id: "sketch", label: "Sketchers", role: "Sketching every page…" },
+  { id: "designer", label: "Designer", role: "Designing a page from its sketch…" },
   { id: "style", label: "Style lock", role: "Locking the style…" },
   { id: "render", label: "Render & audit", role: "Rendering and auditing…" },
   { id: "reviewer", label: "Reviewer", role: "Reviewing against the rubric…" },
@@ -41,12 +41,12 @@ const GATE = 24; // half-diagonal of the gate diamond
 
 /** Which agent an event means is now working. */
 const ON: Record<string, AgentId> = {
-  intake: "planner", kickoff_answered: "intake", kickoff_skipped: "planner", plan_retry: "planner", regenerating: "planner",
-  briefs: "sketch", candidate_started: "sketch", picked: "designer", design_started: "designer", design_ready: "style",
+  intake: "planner", kickoff_answered: "intake", kickoff_skipped: "planner", revising: "planner",
+  direction: "sketch", sketch_started: "sketch", sketches_approved: "designer", design_started: "designer", design_ready: "style",
   style_locked: "render", render_started: "render", review_started: "reviewer", gate: "gate", execute_started: "executor",
   execute_done: "render", changes_requested: "executor", approved: "handoff",
 };
-const NODE_EVENT: Record<string, AgentId> = { intake: "intake", plan_directions: "planner" };
+const NODE_EVENT: Record<string, AgentId> = { intake: "intake", plan_direction: "planner" };
 
 export const initialTrack: AgentTrack = { visited: [] };
 

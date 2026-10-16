@@ -3,11 +3,12 @@
     python scripts/eval.py run --label baseline [--only clinic-booking,vague-shop] [--max-usd 4] [--stop-after design]
     python scripts/eval.py compare evals/results/<a> evals/results/<b>
 
-The PM is simulated: kickoff questions get their first suggested answer, the first sketch is picked with no
-notes, and the final design is approved. Memory is in-process, so eval runs neither read nor change the real
+The PM is simulated: kickoff questions get their first suggested answer, the sketches are approved with no
+notes, and the final site is approved. Memory is in-process, so eval runs neither read nor change the real
 taste profile or lessons. Each run's artifacts and events.jsonl go to evals/results/<stamp>-<label>/<brief id>/,
-and the per-brief metrics go to results.json in that folder. `--stop-after design` ends each run at the first full
-design (about $0.15 a brief), for changes that only affect v1. Set UI_AGENT_MOCK=1 for a free smoke test."""
+and the per-brief metrics go to results.json in that folder. `--stop-after design` ends each run at the key page's first
+full design (about $0.15 a brief), for changes that only affect v1. Scores are per site: the mean of the pages' best
+scores; "v1" is the key page's first design, so it stays comparable with single-page results. Set UI_AGENT_MOCK=1 for a free smoke test."""
 
 from __future__ import annotations
 
@@ -24,7 +25,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-ROLES = ("intake", "planner", "sketcher", "generator", "style_lock", "reviewer", "executor", "handoff")
+ROLES = ("intake", "planner", "sketcher", "generator", "reviewer", "executor", "handoff")
+STOP_NODES = {"design": "design_page"}
 
 
 def git_rev() -> str:
@@ -37,8 +39,8 @@ def auto_answer(interrupt: dict) -> dict:
     kind = interrupt["kind"]
     if kind == "kickoff":
         return {"action": "answer", "answers": {q["id"]: q["suggestions"][0] for q in interrupt["questions"] if q.get("suggestions")}}
-    if kind == "gallery":
-        return {"action": "pick", "id": next(c["id"] for c in interrupt["candidates"] if not c.get("error")), "notes": ""}
+    if kind == "sketch_review":
+        return {"action": "approve", "notes": ""}
     if kind == "final_approval":
         return {"action": "approve"}
     raise ValueError(f"unexpected interrupt {kind!r}")
@@ -63,14 +65,13 @@ async def run_brief(case: dict, stop_after: str | None = None) -> dict:
         events.append(e)
         log.write(json.dumps(e, default=str) + "\n")
 
-    record({"type": "status", "status": "running", "request": {"brief": case["brief"], "candidate_count": 3}})
-    t0, inp, error = time.time(), {"run_id": run_id, "user_id": "eval", "brief": case["brief"],
-                                    "candidate_count": 3, "usage": {}}, None
+    record({"type": "status", "status": "running", "request": {"brief": case["brief"]}})
+    t0, inp, error = time.time(), {"run_id": run_id, "user_id": "eval", "brief": case["brief"], "usage": {}}, None
     try:
         while True:
             interrupted = None
             async for _ns, mode, chunk in graph.astream(inp, cfg, stream_mode=["custom", "updates"], subgraphs=True,
-                                                        interrupt_after=[stop_after] if stop_after else None):
+                                                        interrupt_after=[STOP_NODES[stop_after]] if stop_after else None):
                 if mode == "custom":
                     record(chunk)
                 elif chunk.get("__interrupt__"):  # empty for the --stop-after breakpoint, which ends the run
@@ -90,27 +91,39 @@ async def run_brief(case: dict, stop_after: str | None = None) -> dict:
 
 
 def summarize(case_id: str, state: dict, events: list[dict], wall: float, error: str | None) -> dict:
+    from ui_agent.nodes.memory_nodes import site_score
+
     # Usage comes from the final state, not events.jsonl, where refine's node_done repeats review/execute usage.
     usage = state.get("usage") or {}
     history = state.get("history") or []
-    v1 = history[0] if history else state.get("design") or {}
+    site = (state.get("intake") or {}).get("pages") or []
+    key = site[0]["id"] if site else None
+    v1 = next((h for h in history if h.get("page_id") == key), None) or state.get("design") or {}
+    saved = state.get("pages") or {}
+    pages = {pid: {"stop_reason": s.get("stop_reason") or s.get("skipped"), "iterations": s.get("iteration"),
+                   "final_score": (s.get("best") or {}).get("score"),
+                   "trajectory": [h.get("score") for h in history if h.get("page_id") == pid]}
+             for pid, s in saved.items()}
+    stops = {p["stop_reason"] for p in pages.values()}
     by_type = lambda t: [e for e in events if e["type"] == t]  # noqa: E731
-    starts = {e["version"]: e["ts"] for e in by_type("execute_started")}
-    rounds = [{"version": e["version"], "seconds": round(e["ts"] - starts[e["version"]], 1),
+    starts = {(e.get("page_id"), e["version"]): e["ts"] for e in by_type("execute_started")}
+    rounds = [{"page_id": e.get("page_id"), "version": e["version"], "seconds": round(e["ts"] - starts[(e.get("page_id"), e["version"])], 1),
                **{k: e.get(k) for k in ("edits", "views", "failed_edits", "turns", "edit_errors")}}
-              for e in by_type("execute_done") if e["version"] in starts]
+              for e in by_type("execute_done") if (e.get("page_id"), e["version"]) in starts]
     renders, gates = by_type("render_started"), by_type("gate")
-    best = state.get("best") or {}
     return {
-        "id": case_id, "error": error, "stop_reason": state.get("stop_reason"),
+        "id": case_id, "error": error,
+        "stop_reason": ("pass" if stops == {"pass"} else ",".join(sorted(str(x) for x in stops))) if pages else state.get("stop_reason"),
         "kickoff_asked": any(e["kind"] == "kickoff" for e in by_type("interrupt")),
-        "iterations": state.get("iteration", 0),
+        "page_count": len(site), "pages_passed": sum(p["stop_reason"] == "pass" for p in pages.values()),
+        "iterations": sum(p["iterations"] or 0 for p in pages.values()) or state.get("iteration", 0),
         "v1_audit_passed": (v1.get("audit") or {}).get("passed"),
         "v1_audit_failures": [c["id"] for c in (v1.get("audit") or {}).get("checks", []) if not c["passed"]],
         "v1_audit_details": {c["id"]: c["details"] for c in (v1.get("audit") or {}).get("checks", []) if not c["passed"]},
         "v1_score": v1.get("score"),
-        "trajectory": [h.get("score") for h in history],
-        "final_score": best.get("score"), "final_version": best.get("version"),
+        "trajectory": [h.get("score") for h in history if h.get("page_id") == key],
+        "final_score": site_score(state) if pages else (state.get("best") or {}).get("score"),
+        "pages": pages,
         "cost_usd": round(usage.get("cost_usd", 0.0), 4),
         "cost_by_role": {r: round(usage.get(f"{r}.cost_usd", 0.0), 4) for r in ROLES if usage.get(f"{r}.cost_usd")},
         "seconds": round(wall, 1),
@@ -161,6 +174,8 @@ METRICS = [  # (label, function over one result)
     ("v1 score", lambda r: r["v1_score"]),
     ("final score", lambda r: r["final_score"]),
     ("passed gate", lambda r: float(r["stop_reason"] == "pass")),
+    ("pages", lambda r: r.get("page_count")),
+    ("page pass rate", lambda r: r["pages_passed"] / r["page_count"] if r.get("page_count") else None),
     ("iterations", lambda r: r["iterations"]),
     ("cost $", lambda r: r["cost_usd"]),
     ("seconds", lambda r: r["seconds"]),

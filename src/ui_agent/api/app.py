@@ -110,19 +110,18 @@ async def run_events(run_id: str, request: Request, since: int = 0):
 
 
 class ResumeBody(BaseModel):
-    action: str  # answer | pick | regenerate | approve | request_changes
+    # kickoff: answer · sketch review: approve | revise · final review: approve | request_changes
+    action: str
     answers: dict[str, str] | None = None  # kickoff question id -> answer
-    id: str | None = None
-    notes: str | None = None
-    mood_from: str | None = None  # pick: wear this direction's look instead of the picked one's
-    feedback: str | None = None
-    candidate_count: int | None = None
+    notes: str | None = None  # approve (sketch review): notes for the designer
+    feedback: str | None = None  # revise / request_changes
+    page_id: str | None = None  # request_changes: one page id, or "all"
 
 
 @app.post("/runs/{run_id}/resume")
 async def resume(run_id: str, body: ResumeBody):
-    if body.action == "pick" and not body.id:
-        raise HTTPException(422, "pick needs an id")
+    if body.action in ("revise", "request_changes") and not (body.feedback or "").strip():
+        raise HTTPException(422, f"{body.action} needs feedback")
     try:
         await app.state.runs.resume(run_id, body.model_dump(exclude_none=True))
     except KeyError:
@@ -148,13 +147,14 @@ async def artifact(run_id: str, path: str):
 @app.get("/runs/{run_id}/download/{kind}")
 async def download(run_id: str, kind: str):
     root = settings.runs_dir() / run_id
-    files = {"zip": root / "handoff.zip", "html": root / "output" / "index.html", "pdf": root / "output" / "design.pdf",
-             "handoff": root / "output" / "HANDOFF.md", "tokens": root / "output" / "tokens.json"}
+    files = {"zip": root / "handoff.zip", "html": root / "output" / "index.html", "pdf": root / "output" / "pdf" / "index.pdf",
+             "handoff": root / "output" / "HANDOFF.md", "tokens": root / "output" / "tokens.json",
+             "flows": root / "output" / "FLOWS.md"}
     f = files.get(kind)
     if not f or not f.exists():
         raise HTTPException(404, "not available")
-    names = {"zip": f"ui-agent-{run_id}.zip", "html": "index.html", "pdf": "design.pdf", "handoff": "HANDOFF.md",
-             "tokens": "tokens.json"}
+    names = {"zip": f"ui-agent-{run_id}.zip", "html": "index.html", "pdf": "index.pdf", "handoff": "HANDOFF.md",
+             "tokens": "tokens.json", "flows": "FLOWS.md"}
     return FileResponse(f, filename=names[kind])
 
 

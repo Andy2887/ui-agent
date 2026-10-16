@@ -13,7 +13,7 @@ async function json<T>(res: Response): Promise<T> {
 
 export const api = {
   health: () => fetch(`${API}/health`).then(json<{ ok: boolean; mock: boolean; models: Record<string, string> }>),
-  createRun: (body: { brief: ProductBrief; candidate_count: number }) =>
+  createRun: (body: { brief: ProductBrief }) =>
     fetch(`${API}/runs`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
       .then(json<{ run_id: string }>),
   listRuns: () => fetch(`${API}/runs`).then(json<{ run_id: string; prompt: string; status: string }[]>),

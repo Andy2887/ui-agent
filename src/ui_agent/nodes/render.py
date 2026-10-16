@@ -1,10 +1,10 @@
-"""Rendering: sketches (screenshots only), and full designs with the Layer-A audit (plan §4.5, §4.8)."""
+"""Rendering: full designs with the Layer-A audit (plan §4.8)."""
 
 from __future__ import annotations
 
 from ..tools.autofix import apply_font_floor
 from ..tools.browser import get_browser
-from ..tools.checks import run_layer_a
+from ..tools.checks import detect_slop, run_layer_a
 from .common import dump_json, emit, rel, run_dir
 
 
@@ -20,20 +20,21 @@ def dom_summary(render: dict) -> dict:
     return out
 
 
-async def render_design(run_id: str, design: dict, out_subdir: str) -> tuple[dict, dict]:
-    """Render `design["html_path"]`, attach screenshots/tiles/audit, persist facts. Returns (design, render)."""
+async def render_design(run_id: str, design: dict, out_subdir: str, links: dict | None = None) -> tuple[dict, dict]:
+    """Render `design["html_path"]`, attach screenshots/tiles/audit, persist facts. Returns (design, render).
+    `links`: what the page must link to in the site (common.page_links), for A11."""
     root = run_dir(run_id)
     html_path = root / design["html_path"]
     out_dir = root / out_subdir
     render = await get_browser().render(html_path, out_dir)
-    audit = run_layer_a(render, html_path.read_text())
+    audit = run_layer_a(render, html_path.read_text(), await detect_slop(html_path), links)
     autofixes: list[dict] = []
     if render["font_floor_rules"] and not next(c for c in audit.checks if c.id == "A5").passed:
         html, autofixes = apply_font_floor(html_path.read_text(), render["font_floor_rules"])
         if autofixes:  # code-side A5 fix: no LLM round for text that is simply set too small
             html_path.write_text(html)
             render = await get_browser().render(html_path, out_dir)
-            audit = run_layer_a(render, html)
+            audit = run_layer_a(render, html, await detect_slop(html_path), links)
             emit("autofix", version=design.get("version"), check="A5", fixes=autofixes)
     dump_json(out_dir / "render.json", {k: v for k, v in render.items() if k not in ("screenshots", "tiles")})
     design = {
@@ -46,13 +47,3 @@ async def render_design(run_id: str, design: dict, out_subdir: str) -> tuple[dic
         design["autofixes"] = autofixes
     return design, render
 
-
-async def render_sketch(run_id: str, sketch: dict, out_subdir: str) -> dict:
-    """Screenshots only: a low-fi sketch is judged by the person, not by the audit."""
-    root = run_dir(run_id)
-    render = await get_browser().render(root / sketch["html_path"], root / out_subdir, deep_checks=False)
-    return {
-        **sketch,
-        "screenshots": {vp: rel(run_id, p) for vp, p in render["screenshots"].items()},
-        "tiles": {vp: [rel(run_id, p) for p in ps] for vp, ps in render["tiles"].items()},
-    }

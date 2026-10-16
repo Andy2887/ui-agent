@@ -1,4 +1,6 @@
-# Third-party data in presets/
+# Third-party material
+
+## presets/
 
 `industries.json`, `structures.json`, most of `styles.json` (entries with a `source` field) and most of
 `typography.json` (entries with a `source` field) were adapted from the CSV data of
@@ -28,3 +30,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## impeccable (A10 check and the generator's refuse list)
+
+`src/ui_agent/tools/checks/slop.py` runs the detector from [impeccable](https://github.com/pbakaus/impeccable)
+(Copyright 2025 Paul Bakaus, Apache License 2.0, https://www.apache.org/licenses/LICENSE-2.0) as an external binary;
+no impeccable code is copied. The rule selection and fix wording in `slop.py`, and the "Template habits to refuse"
+list in `prompts/generator.md`, are adapted and shortened from impeccable's detector rule descriptions
+(`crates/live/assets/antipatterns.json`) and `skill/reference/craft-floor.md`.

@@ -5,7 +5,7 @@ import { Icon } from "@/components/Icon";
 import { api } from "@/lib/api";
 
 const STATUS: Record<string, string> = {
-  running: "Running", waiting_kickoff: "Questions for you", waiting_gallery: "Waiting for your pick",
+  running: "Running", waiting_kickoff: "Questions for you", waiting_sketches: "Sketches to review",
   waiting_approval: "Waiting for approval",
   done: "Done", error: "Error",
 };

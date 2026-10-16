@@ -33,9 +33,9 @@ async def main() -> None:
     shutil.copyfile(a.html, root / "refine" / "v1.html")
     html = Path(a.html).read_text()
     state = {
-        "run_id": run_id, "user_id": "dev", "brief": {"problem": a.problem, "audience": a.audience}, "candidate_count": 1,
-        "intake": {"page_type": "landing", "sections": [], "product_name": "", "problem": a.problem, "audience": a.audience,
-                   "user_needs": [], "primary_action": "", "assumptions": [], "questions": []},
+        "run_id": run_id, "user_id": "dev", "brief": {"problem": a.problem, "audience": a.audience, "flows": []},
+        "intake": {"product_name": "", "problem": a.problem, "audience": a.audience,
+                   "user_needs": [], "pages": [], "flows": [], "assumptions": [], "questions": []},
         "style_lock": {"direction_id": "given", "tokens": root_tokens(html), "character": "As given.",
                        "signature_elements": [], "must_keep": [], "user_notes": ""},
         "current": {"direction_id": "given", "version": 1, "html_path": "refine/v1.html"},

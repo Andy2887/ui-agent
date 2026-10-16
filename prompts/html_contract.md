@@ -2,7 +2,7 @@
 
 The page you produce is the source of truth that another coding agent will rebuild in a real codebase. Every design decision must be visible and named.
 
-- One complete `index.html`. All CSS in a single `<style>` block in `<head>`. No JavaScript unless the design genuinely needs it (e.g. a mobile nav toggle); if so, small vanilla JS in one `<script>` at the end of `<body>`.
+- One complete HTML document per page. All CSS in a single `<style>` block in `<head>`. No JavaScript unless the design genuinely needs it (e.g. a mobile nav toggle); if so, small vanilla JS in one `<script>` at the end of `<body>`.
 - Plain, hand-written CSS only. No Tailwind, Bootstrap, CDN resets or utility-class systems. Use modern CSS freely: grid, `clamp()`, custom properties, `:has()`, `@keyframes`, `prefers-reduced-motion`.
 - Code puts a base layer first in `<head>` (`<style data-base-layer>`, rules inside `@layer base`): box-sizing, zero margins on `body`, `figure` and `blockquote`, inherited fonts on form controls, 1.5em checkboxes and radios, images that shrink to fit, a default `:focus-visible` ring in `--color-primary`, a `.visually-hidden` class and reduced motion. Don't repeat or edit it. Any rule you write outside a layer overrides it.
 - All design tokens are CSS custom properties on `:root`: semantic colors (`--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-primary`, `--color-on-primary`, `--color-accent`, `--color-border`, plus any extra roles you need), font families, a type scale, a spacing scale, radii, shadows, motion durations/easing. Document breakpoints in a comment.
@@ -29,3 +29,4 @@ Code renders the page at 375, 768 and 1440px and measures it. Each of these fail
 - A focusable element that looks the same focused and unfocused, e.g. `outline: none` with no replacement.
 - Text below WCAG AA contrast (4.5:1, or 3:1 for large text), including muted text on tinted surfaces.
 - Not exactly one `<h1>`, a top-level block without `data-component`, a missing doctype, `lang` or viewport meta, or a console error.
+- In a multi-page site: no real link to a page this page must reach (`links_to`), or a link to an `.html` file that isn't in the site map.

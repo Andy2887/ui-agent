@@ -1,4 +1,5 @@
-"""End-to-end graph run in mock mode: intake → kickoff → sketches → pick → design → refine → approval → handoff."""
+"""End-to-end graph run in mock mode: intake → kickoff → one direction → a sketch per page → approve → each page
+designed and refined (key page first) → final approval → handoff."""
 
 import asyncio
 import json
@@ -13,15 +14,15 @@ from langgraph.store.memory import InMemoryStore  # noqa: E402
 from langgraph.types import Command  # noqa: E402
 
 from ui_agent.graph import build_graph  # noqa: E402
-from ui_agent.nodes.common import run_dir  # noqa: E402
+from ui_agent.nodes.common import root_tokens, run_dir  # noqa: E402
 from ui_agent.tools.browser import get_browser  # noqa: E402
 
-BRIEF = {"product_name": "Shipfast", "problem": "Small teams waste hours babysitting flaky deploys",
-         "audience": "Engineering leads at 5–20 person startups"}
+BRIEF = {"product_name": "Inkwell", "problem": "Independent writers can't turn one-off readers into subscribers",
+         "flows": ["A reader finds the blog from a search, opens a post, reads it and signs up to get the next one."]}
 
 
-async def _run(count: int, brief: dict, answers: dict | None = None, notes: str = "", change: str | None = None,
-               mood_from: str | None = None):
+async def _run(brief: dict, answers: dict | None = None, notes: str = "", revise: str | None = None,
+               change: dict | None = None):
     graph = build_graph(InMemorySaver(), InMemoryStore())
     run_id = "test-" + uuid.uuid4().hex[:6]
     cfg = {"configurable": {"thread_id": run_id}}
@@ -34,77 +35,104 @@ async def _run(count: int, brief: dict, answers: dict | None = None, notes: str 
             elif "__interrupt__" in chunk:
                 interrupts.append(chunk["__interrupt__"][0].value)
 
-    await drive({"run_id": run_id, "user_id": "tester", "brief": brief, "candidate_count": count, "usage": {}})
+    await drive({"run_id": run_id, "user_id": "tester", "brief": brief, "usage": {}})
     if interrupts[-1]["kind"] == "kickoff":
         await drive(Command(resume={"action": "answer", "answers": answers or {}}))
-    assert interrupts[-1]["kind"] == "gallery"
-    assert len(interrupts[-1]["candidates"]) == count
-    await drive(Command(resume={"action": "pick", "id": "a", "notes": notes, "mood_from": mood_from}))
+    assert interrupts[-1]["kind"] == "sketch_review"
+    if revise:
+        await drive(Command(resume={"action": "revise", "feedback": revise}))
+        assert interrupts[-1]["kind"] == "sketch_review"
+    await drive(Command(resume={"action": "approve", "notes": notes}))
     assert interrupts[-1]["kind"] == "final_approval"
     if change:
-        await drive(Command(resume={"action": "request_changes", "feedback": change}))
+        await drive(Command(resume={"action": "request_changes", **change}))
         assert interrupts[-1]["kind"] == "final_approval"
     await drive(Command(resume={"action": "approve"}))
     state = (await graph.aget_state(cfg)).values
     return run_id, state, events, interrupts
 
 
-def test_full_run_with_kickoff_answer():
+def test_flow_becomes_linked_pages_with_one_design_system():
     async def main():
         try:
-            run_id, state, events, interrupts = await _run(3, BRIEF, answers={"q_primary_action": "Book a demo"})
-            assert interrupts[0]["kind"] == "kickoff" and interrupts[0]["questions"][0]["id"] == "q_primary_action"
-            assert state["intake"]["primary_action"] == "Book a demo" and not state["intake"]["questions"]
+            run_id, state, events, interrupts = await _run(BRIEF, answers={"q_audience": "Newsletter readers"})
+            assert interrupts[0]["kind"] == "kickoff" and interrupts[0]["questions"][0]["id"] == "q_audience"
+            assert state["intake"]["audience"] == "Newsletter readers" and not state["intake"]["questions"]
+            pages = state["intake"]["pages"]
+            assert [p["id"] for p in pages] == ["home", "post", "sign-up"]
+            assert [p["file"] for p in pages] == ["index.html", "post.html", "sign-up.html"]
+            assert [s["page"] for s in state["intake"]["flows"][0]["steps"]] == ["home", "post", "sign-up"]
+
+            # One direction, one sketch per page, all shown at the review.
+            review = interrupts[1]
+            assert review["direction"]["id"] == "a" and len(review["pages"]) == 3
+            assert all(p["sketch"].startswith("DESKTOP 1440px") for p in review["pages"])
+            assert "-> sign-up" in review["pages"][1]["sketch"]
+            assert (run_dir(run_id) / "sketches" / "post.txt").exists()
+
+            # Key page first, then the others; every page refined until it passes.
             types = [e["type"] for e in events]
-            assert types.count("candidate_ready") == 3 and "design_ready" in types
-            sketches = interrupts[1]["candidates"]
-            assert all((run_dir(run_id) / c["screenshots"]["desktop"]).exists() for c in sketches)
-            assert len({c["brief"]["concept"] for c in sketches}) == 3
-            assert "data-sketch-kit" in (run_dir(run_id) / sketches[0]["html_path"]).read_text()
-            assert state["stop_reason"] == "pass", state["stop_reason"]
+            assert types.count("style_locked") == 1
+            assert [e["page_id"] for e in events if e["type"] == "design_started"] == ["home", "post", "sign-up"]
+            assert all(state["pages"][p["id"]]["stop_reason"] == "pass" for p in pages), \
+                {k: v["stop_reason"] for k, v in state["pages"].items()}
             fin = interrupts[-1]
-            assert fin["sketch"]["html_path"].startswith("sketches/") and fin["v1"]["html_path"] == "refine/v1.html"
-            assert fin["trajectory"][0]["score"] < fin["trajectory"][-1]["score"]
+            assert [p["id"] for p in fin["pages"]] == ["home", "post", "sign-up"]
+            assert all(p["trajectory"][0]["score"] < p["trajectory"][-1]["score"] for p in fin["pages"])
+            # Every page's final audit includes passing flow links.
+            for p in fin["pages"]:
+                a11 = next(c for c in p["final"]["audit"]["checks"] if c["id"] == "A11")
+                assert a11["passed"], (p["id"], a11)
+
             out = run_dir(run_id) / "output"
-            for f in ("index.html", "tokens.json", "HANDOFF.md", "review-report.json", "screenshots/desktop.png"):
+            for f in ("index.html", "post.html", "sign-up.html", "tokens.json", "HANDOFF.md", "FLOWS.md",
+                      "review-report.json", "screenshots/post/desktop.png", "history/home/v1.html", "pdf/index.pdf"):
                 assert (out / f).exists(), f
             assert (run_dir(run_id) / "handoff.zip").exists()
-            tokens = json.loads((out / "tokens.json").read_text())
-            assert "color" in tokens and "primary" in tokens["color"]
+            # One design system: every page carries the key page's tokens.
+            key = root_tokens((out / "index.html").read_text())
+            for f in ("post.html", "sign-up.html"):
+                toks = root_tokens((out / f).read_text())
+                assert all(toks.get(k) == v for k, v in key.items()), f
+            assert 'href="sign-up.html"' in (out / "post.html").read_text()
+            assert "`post.html`" in (out / "FLOWS.md").read_text()
+            report = json.loads((out / "review-report.json").read_text())
+            assert set(report["pages"]) == {"index.html", "post.html", "sign-up.html"}
             # history is not double-counted by the subgraph
-            assert len(state["history"]) == state["iteration"]
-            return state
-        finally:
-            await get_browser().close()
-    state = asyncio.run(main())
-    print("iterations", state["iteration"], "trajectory", [h["score"] for h in state["history"]])
-
-
-def test_clear_brief_skips_kickoff_and_applies_notes():
-    async def main():
-        try:
-            brief = {**BRIEF, "goal": "Start a free trial"}
-            run_id, state, events, interrupts = await _run(1, brief, notes="less rounded", change="Make the hero headline shorter")
-            assert [i["kind"] for i in interrupts][0] == "gallery"
-            ids = {i["id"]: i["status"] for i in state["issues"]}
-            assert ids.get("chg_gallery_notes") == "resolved"
-            assert ids.get("chg_2") == "resolved"
+            assert len(state["history"]) == sum(s["iteration"] for s in state["pages"].values())
         finally:
             await get_browser().close()
     asyncio.run(main())
 
 
-def test_skipping_kickoff_questions_keeps_assumptions_and_mixes_moods():
+def test_revise_then_notes_and_a_change_to_one_page():
     async def main():
         try:
-            run_id, state, events, interrupts = await _run(2, BRIEF, answers={}, mood_from="b")
-            assert state["kickoff"] == {"answers": [], "skipped": True}
-            assert any("Primary action assumed" in a for a in state["intake"]["assumptions"])
-            # Mix and match: A's structure wearing B's look.
-            a, b = state["briefs"]
-            final = (run_dir(run_id) / "output" / "index.html").read_text()
-            assert b["heading_font"] in final and b["palette"]["primary"].lower() in final.lower()
-            assert a["sections"][0] in final and state["selection"]["mood_from"] == "b"
+            brief = {**BRIEF, "audience": "Readers of indie newsletters"}
+            run_id, state, events, interrupts = await _run(brief, notes="less rounded", revise="Warmer, more personal",
+                                                           change={"feedback": "Make the form shorter", "page_id": "sign-up"})
+            assert interrupts[0]["kind"] == "sketch_review"
+            first, second = interrupts[0]["direction"], interrupts[1]["direction"]
+            assert first["name"] != second["name"] and state["rejected_directions"][0]["name"] == first["name"]
+            for pid, page in state["pages"].items():
+                ids = {i["id"]: i["status"] for i in page["issues"]}
+                assert ids.get("chg_sketch_notes") == "resolved", pid
+            changed = {i["id"]: i["status"] for i in state["pages"]["sign-up"]["issues"] if i["id"].startswith("chg_") and i["id"] != "chg_sketch_notes"}
+            assert changed and set(changed.values()) == {"resolved"}
+            assert not [i for i in state["pages"]["post"]["issues"] if i["id"] not in ("chg_sketch_notes",) and i["id"].startswith("chg_")]
+            revisits = [e for e in events if e["type"] == "page_started" and e.get("revisit")]
+            assert [e["page_id"] for e in revisits] == ["sign-up"]
         finally:
             await get_browser().close()
     asyncio.run(main())
+
+
+def test_brief_without_flows_is_rejected():
+    from pydantic import ValidationError
+
+    from ui_agent.state import RunRequest
+    try:
+        RunRequest.model_validate({"brief": {"problem": "x", "flows": ["  "]}})
+        raise AssertionError("expected a validation error")
+    except ValidationError as e:
+        assert "at least one user flow" in str(e)

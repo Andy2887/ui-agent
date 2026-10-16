@@ -1,8 +1,8 @@
 """Offline stand-ins for every LLM role (UI_AGENT_MOCK=1).
 
-They exercise the real pipeline end to end: the intake asks a kickoff question when the
-brief has no goal, briefs go through the same diversity and contrast checks, sketches and
-designs are rendered (and designs audited) for real, the reviewer's issues
+They exercise the real pipeline end to end: the intake turns the flows into pages by keyword and asks a
+kickoff question when the brief has no audience, the direction goes through the same contrast repair,
+sketches and designs (one per page, linked to each other) are rendered and audited for real, the reviewer's issues
 come from the real audit, and the executor fixes them through the sandboxed
 text-editor handler. Seeded defects are wrapped in `/* defect:<key> */ ... /* /defect */`
 markers so the mock executor can repair them with targeted str_replace edits."""
@@ -16,13 +16,14 @@ from . import settings
 from .state import (
     CriterionScore,
     DirectionBrief,
+    FlowPlan,
+    FlowStep,
     IntakeResult,
     Issue,
     KickoffQuestion,
+    PagePlan,
     Palette,
-    PlanResult,
     ReviewResult,
-    StyleCharacter,
 )
 
 FALLBACK_FONTS = [("Inter", "Inter"), ("Outfit", "DM Sans"), ("Playfair Display", "Source Sans 3"),
@@ -58,28 +59,59 @@ SEEDED = ["no-focus", "small-targets", "literal-values", "tiny-text", "weak-cta"
 
 
 # --------------------------------------------------------------------------- intake
+# Pages a flow can mention, by keyword: id -> (keywords, name, page type, purpose, primary action)
+PAGE_KINDS = {
+    "post": (["post", "article", "read"], "Post", "blog", "Lets a reader read one piece and decide to come back.", "Subscribe"),
+    "pricing": (["pricing", "price", "plan"], "Pricing", "pricing", "Shows what each plan costs and who it is for.", "Choose a plan"),
+    "sign-up": (["signs? up", "signup", "subscribe", "register", "join", "book"], "Sign up", "auth",
+                "Turns interest into an account in one short form.", "Create my account"),
+    "sign-in": (["signs? in", "logs? in", "login"], "Sign in", "auth", "Gets a returning user back in quickly.", "Sign in"),
+    "dashboard": (["dashboard", "admin", "analytics", "track"], "Dashboard", "dashboard",
+                  "Shows the user where things stand at a glance.", "Review today's numbers"),
+}
+
+
+def _flow_pages(text: str) -> list[str]:
+    """Page ids in the order a flow mentions them."""
+    t = text.lower()
+    at = {pid: [m.start() for k in kws for m in [re.search(rf"\b{k}", t)] if m] for pid, (kws, *_r) in PAGE_KINDS.items()}
+    return [pid for _, pid in sorted((min(v), pid) for pid, v in at.items() if v)]
+
+
 def intake(brief: dict, answers: list[dict]) -> IntakeResult:
-    text = f"{brief.get('problem', '')} {brief.get('audience') or ''} {brief.get('context') or ''}".lower()
-    page_type = next(
-        (pt for pt, kws in {"dashboard": ["dashboard", "admin", "analytics"], "pricing": ["pricing"],
-                            "auth": ["sign up", "signup", "login", "log in"], "blog": ["blog", "article"],
-                            "portfolio": ["portfolio"]}.items() if any(k in text for k in kws)), "landing")
     name = brief.get("product_name") or (re.findall(r"\b[A-Z][a-zA-Z]{2,}\b", brief.get("problem", "")) or ["Acme"])[0]
     answered = {a["id"]: a["answer"] for a in answers}
-    action = brief.get("goal") or answered.get("q_primary_action") or "Start a free trial"
-    questions = [] if answers or brief.get("goal") else [KickoffQuestion(
-        id="q_primary_action", question="What's the one thing a visitor should do on this page?",
-        why="The whole page is arranged to lead to that action, so it decides what goes first.",
-        suggestions=["Start a free trial", "Book a demo", "Join the waitlist"])]
+    audience = brief.get("audience") or answered.get("q_audience")
+    questions = [] if answers or brief.get("audience") else [KickoffQuestion(
+        id="q_audience", question="Who uses this most?",
+        why="The pages are written and arranged for them, so it decides what each page leads with.",
+        suggestions=["First-time visitors", "Returning customers", "Small business owners"])]
+    flows_text = brief.get("flows") or ["A visitor lands on the home page and signs up."]
+    pages = {"home": PagePlan(id="home", name="Home", page_type="landing", purpose=f"Explains {name} and starts every flow.",
+                              primary_action="Get started", sections=["hero", "features", "testimonials", "cta", "footer"],
+                              links_to=[])}
+    flows = []
+    for i, text in enumerate(flows_text):
+        ids = _flow_pages(text)
+        steps = ([FlowStep(page="home", action="Arrives and gets oriented")] if i == 0 else []) + \
+                [FlowStep(page=pid, action=PAGE_KINDS[pid][4]) for pid in ids]
+        for pid in ids:
+            if pid not in pages:
+                _kws, pname, ptype, purpose, action = PAGE_KINDS[pid]
+                pages[pid] = PagePlan(id=pid, name=pname, page_type=ptype, purpose=purpose, primary_action=action,
+                                      sections=settings.page_type(ptype)["default_sections"], links_to=[])
+        flows.append(FlowPlan(name=f"Flow {i + 1}", steps=steps or [FlowStep(page="home", action="Gets started")]))
+    for p in pages.values():  # the next step of each flow first, then the rest: the shared nav reaches every page
+        nxt = [b.page for f in flows for a, b in zip(f.steps, f.steps[1:]) if a.page == p.id and b.page != p.id]
+        p.links_to = list(dict.fromkeys(nxt + [pid for pid in pages if pid != p.id]))
     return IntakeResult(
-        product_name=name, page_type=page_type,
-        product_category=" ".join(brief.get("problem", "").split()[:6]) or "software product",
-        problem=brief.get("problem", ""), audience=brief.get("audience") or "People who have this problem (assumed).",
+        product_name=name, product_category=" ".join(brief.get("problem", "").split()[:6]) or "software product",
+        problem=brief.get("problem", ""), audience=audience or "People who have this problem (assumed).",
         user_needs=["Understand what the product does in one glance", "Believe it works for someone like them",
                     "Know exactly what to do next"],
-        primary_action=action, sections=settings.page_type(page_type)["default_sections"],
+        pages=list(pages.values()), flows=flows,
         assumptions=["Visitors arrive from search or a friend's link and skim on a phone first (mock)."]
-                    + ([] if brief.get("goal") or answers else [f"Primary action assumed to be '{action}'."]),
+                    + ([] if audience else ["Users assumed to be people who have this problem."]),
         questions=questions)
 
 
@@ -97,104 +129,75 @@ SIGNATURES = ["oversized numeral section markers", "gradient glow behind the pro
 MOODS = [["calm", "trustworthy"], ["bold", "urgent"], ["warm", "human"], ["precise", "technical"], ["light", "playful"]]
 
 
-def _sections_for(base: list[str], shift: int) -> list[str]:
-    """Same sections, different order: the middle of the page rotates per direction."""
-    head = [s for s in base if s == "hero"]
-    tail = [s for s in base if s in ("cta", "footer")]
-    middle = [s for s in base if s not in head + tail]
-    k = shift % len(middle) if middle else 0
-    return head + middle[k:] + middle[:k] + tail
-
-
-def plan(n: int, intake_d: dict, slots: list[str], attempt: int = 0) -> PlanResult:
-    briefs = []
+def plan(intake_d: dict, slot: str, revision: int = 0) -> DirectionBrief:
+    """One direction; each revision moves to the next entry of every list, so a revise visibly changes it."""
+    i = revision
     directions = settings.presets()["colors"]["directions"]
-    for i in range(n):
-        shift = i + attempt * 3
-        theme = "dark" if slots[i] == "wildcard" else "light"
-        d = directions[shift % len(directions)]
-        pal = d["examples"][i % len(d["examples"])][theme]
-        hf, bf = FALLBACK_FONTS[shift % len(FALLBACK_FONTS)]
-        ref = REFS[shift % len(REFS)]
-        archetype = ["centered hero + 3-up feature grid", "split hero + alternating rows", "screenshot-led hero + bento grid"][shift % 3]
-        title, concept = CONCEPTS[shift % len(CONCEPTS)]
-        briefs.append(DirectionBrief(
-            id=chr(ord("a") + i), name=NAMES[shift % len(NAMES)],
-            description=f"{title}: {archetype}, {' and '.join(MOODS[shift % len(MOODS)])}.",
-            slot=slots[i], concept=f"{concept} Built as a {archetype} in a {ref.replace('-', ' ')} voice.",
-            tradeoff=["Less room for detail.", "Asks users to read more.", "Depends on having real proof.",
-                      "Takes longer to reach the action.", "Feels less distinctive."][shift % 5],
-            sections=_sections_for(intake_d.get("sections") or ["hero", "features", "cta", "footer"], shift),
-            layout_archetype=archetype, layout_id=None, structure_id=None,
-            variance=["mid", "high", "low"][shift % 3], style_id=ref if settings.style(ref) else None, reference_style=ref,
-            mood=MOODS[shift % len(MOODS)], theme=theme, heading_font=hf, body_font=bf, palette=Palette(**pal),
-            density=["airy", "balanced", "compact"][shift % 3], shape=["soft", "sharp", "rounded"][shift % 3],
-            motion="subtle", imagery=["abstract", "illustrations", "photos", "none"][shift % 4],
-            signature_element=SIGNATURES[shift % len(SIGNATURES)],
-            avoid=["stock-photo clichés", "more than one accent color"],
-        ))
-    return PlanResult(briefs=briefs)
+    theme = "dark" if i % 3 == 2 else "light"
+    d = directions[i % len(directions)]
+    pal = d["examples"][0][theme]
+    hf, bf = FALLBACK_FONTS[i % len(FALLBACK_FONTS)]
+    ref = REFS[i % len(REFS)]
+    archetype = ["centered stacks with a split hero", "split hero + alternating rows", "screenshot-led hero + bento grid"][i % 3]
+    title, concept = CONCEPTS[i % len(CONCEPTS)]
+    return DirectionBrief(
+        id="a", name=NAMES[i % len(NAMES)], description=f"{title}: {archetype}, {' and '.join(MOODS[i % len(MOODS)])}.",
+        slot=slot, concept=f"{concept} Built as a {archetype} in a {ref.replace('-', ' ')} voice.",
+        tradeoff=["Less room for detail.", "Asks users to read more.", "Depends on having real proof."][i % 3],
+        layout_archetype=archetype, layout_id=None, structure_id=None,
+        variance=["mid", "high", "low"][i % 3], style_id=ref if settings.style(ref) else None, reference_style=ref,
+        mood=MOODS[i % len(MOODS)], theme=theme, heading_font=hf, body_font=bf, palette=Palette(**pal),
+        density=["airy", "balanced", "compact"][i % 3], shape=["soft", "sharp", "rounded"][i % 3],
+        motion="subtle", imagery=["abstract", "illustrations", "photos", "none"][i % 4],
+        signature_element=SIGNATURES[i % len(SIGNATURES)],
+        avoid=["stock-photo clichés", "more than one accent color"],
+    )
 
 
 # -------------------------------------------------------------------------- sketch
-def sketch_for(d: DirectionBrief, intake_d: dict) -> str:
-    name = html_lib.escape(intake_d.get("product_name") or "Acme")
-    action = html_lib.escape(intake_d.get("primary_action") or "Get started")
+def _box(section: str, rows: list[str], width: int = 96) -> list[str]:
+    head = f"+-- {section} "
+    return [head + "-" * (width - 1 - len(head)) + "+", *(f"|  {r}".ljust(width - 1)[:width - 1] + "|" for r in rows),
+            "+" + "-" * (width - 2) + "+"]
+
+
+def sketch_for(d: DirectionBrief, intake_d: dict, page: dict) -> str:
+    name = intake_d.get("product_name") or "Acme"
+    pages = {p["id"]: p for p in intake_d.get("pages") or [page]}
+    action = page.get("primary_action") or "Get started"
     split = "split" in d.layout_archetype
-    blocks = []
-    for s in d.sections:
-        if s == "hero":
-            visual = '<div class="sk-img sk-img--tall">Product in action</div>'
-            blocks.append(f"""
-    <section class="sk-section hero{' hero--split' if split else ''}" data-section="hero">
-      <div class="sk-stack">
-        <p class="sk-eyebrow">{html_lib.escape(d.name)}</p>
-        <h1>{html_lib.escape(intake_d.get('problem') or 'Solve the problem')[:90]}</h1>
-        <span class="sk-line"></span><span class="sk-line sk-line--short"></span>
-        <div class="sk-row"><a class="sk-btn sk-btn--primary" href="#">{action}</a><a class="sk-btn" href="#">See how it works</a></div>
-        <p class="sk-note">{html_lib.escape(d.concept.split('.')[0])}.</p>
-      </div>
-      {visual}
-    </section>""")
-        elif s == "footer":
+    nav = "   ".join(p["name"] + ("*" if pid == page["id"] else "") for pid, p in pages.items() if pid != "home")
+    nxt = page["links_to"][0] if page.get("links_to") else None
+    go = f"[[ {action} ]]" + (f" -> {nxt}" if nxt else "")
+    lines = ["DESKTOP 1440px", *_box("nav", [f"{name}".ljust(40) + nav])]
+    mobile = ["nav: logo and menu button; links move into the menu"]
+    sections = page.get("sections") or ["hero", "footer"]
+    if "hero" not in sections:
+        lines += _box("page-head", [f"# {page['name']}", "~" * 38, go])
+        mobile.append("page-head: unchanged, button full width")
+    for s in sections:
+        if s == "footer":
             continue
-        elif s in ("cta", "newsletter"):
-            blocks.append(f"""
-    <section class="sk-section" data-section="{s}">
-      <div class="sk-stack">
-        <h2>Ready when you are</h2>
-        <span class="sk-line sk-line--short"></span>
-        <div class="sk-row"><a class="sk-btn sk-btn--primary" href="#">{action}</a></div>
-      </div>
-    </section>""")
+        if s == "hero":
+            copy = [f"# {(intake_d.get('problem') or 'Solve the problem')[:40]}",
+                    "~" * 38, "~" * 26, f"{go}   (1)", ""]
+            if split:
+                img = ["+" + "-" * 36 + "+", "| [img: product in action]" + " " * 11 + "|", "+" + "-" * 36 + "+", "", ""]
+                copy = [c.ljust(48) + "|  " + i for c, i in zip(copy, img)]
+            lines += _box("hero", copy)
+            mobile.append("hero: copy first, buttons full width" + ("; visual moves below them" if split else ""))
+        elif s in ("cta", "newsletter", "form"):
+            lines += _box(s, ["## Ready when you are", "[____ Email ____]", go])
+            mobile.append(f"{s}: unchanged, button full width")
         else:
-            title = html_lib.escape((settings.section(s) or {"name": s.replace("-", " ").title()})["name"])
-            cards = "".join('\n        <div class="sk-box"><span class="sk-icon"></span><h3>Benefit</h3><span class="sk-line"></span><span class="sk-line sk-line--short"></span></div>' for _ in range(3))
-            blocks.append(f"""
-    <section class="sk-section" data-section="{s}">
-      <h2>{title}</h2>
-      <div class="sk-grid">{cards}
-      </div>
-    </section>""")
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{name}: {html_lib.escape(d.name)} (sketch)</title>
-  <style>
-    .hero {{ display: grid; gap: 32px; }}
-    @media (min-width: 768px) {{ .hero--split {{ grid-template-columns: 1.1fr 1fr; align-items: center; }} }}
-  </style>
-</head>
-<body>
-  <header class="sk-nav"><span class="sk-logo">{name}</span><nav class="sk-row sk-small"><a href="#">Product</a><a href="#">Pricing</a><a class="sk-btn" href="#">{action}</a></nav></header>
-  <main>{''.join(blocks)}
-  </main>
-  <footer class="sk-footer">© 2026 {name}</footer>
-</body>
-</html>
-"""
+            title = (settings.section(s) or {"name": s.replace("-", " ").title()})["name"]
+            card = ["+" + "-" * 24 + "+", "| ### Benefit" + " " * 12 + "|", "| " + "~" * 20 + "   |", "+" + "-" * 24 + "+"]
+            lines += _box(s, [f"## {title}", *("  ".join([c] * 3) for c in card)])
+            mobile.append(f"{s}: cards stack in one column")
+    lines += _box("footer", [f"(c) 2026 {name}"])
+    mobile.append("footer: unchanged")
+    concept = d.concept.split(".")[0]
+    return "\n".join([*lines, "", "MOBILE 375px", *mobile, "", "NOTES", f"(1) {concept}."]) + "\n"
 
 
 # ---------------------------------------------------------------------------- html
@@ -222,12 +225,20 @@ def _palette_css(p: dict) -> str:
     return "\n".join(f"  --color-{k.replace('_', '-')}: {v};" for k, v in p.items())
 
 
-def html_for(brief: DirectionBrief, intake_d: dict, notes: str = "", defects: list[str] | None = None) -> str:
+def html_for(brief: DirectionBrief, intake_d: dict, page: dict | None = None, notes: str = "",
+             defects: list[str] | None = None) -> str:
     defects = SEEDED if defects is None else defects
     b = brief
+    pages = intake_d.get("pages") or []
+    page = page or (pages[0] if pages else {"id": "home", "name": "Home", "file": "index.html", "purpose": "",
+                                             "sections": ["hero", "features", "cta", "footer"], "links_to": []})
+    files = {p["id"]: p for p in pages}
+    nexts = [files[l] for l in page.get("links_to") or [] if l in files]
+    go = nexts[0]["file"] if nexts else "#get-started"
+    alt = nexts[1]["file"] if len(nexts) > 1 else "#demo"
     pal = b.palette.model_dump()
-    # The designer applies the PM's pick notes up front; the mock reviewer looks for this marker.
-    applied_notes = "/* change:chg_gallery_notes */" if notes else ""
+    # The designer applies the PM's sketch notes up front; the mock reviewer looks for this marker.
+    applied_notes = "/* change:chg_sketch_notes */" if notes else ""
     shape = settings.option("shapes", b.shape)
     density = settings.option("density", b.density)
     motion = settings.option("motion", b.motion)
@@ -235,13 +246,30 @@ def html_for(brief: DirectionBrief, intake_d: dict, notes: str = "", defects: li
     space = {i: round(4 * i * m) for i in (1, 2, 3, 4, 5, 6, 8, 12, 16)}
     name = html_lib.escape(intake_d.get("product_name") or "Acme")
     desc = html_lib.escape(intake_d.get("problem") or "The fastest way to ship reliable software, without the busywork.")
-    sections = b.sections or intake_d.get("sections") or ["hero", "features", "cta", "footer"]
+    sections = page.get("sections") or ["hero", "features", "cta", "footer"]
     split = (b.layout_id or "").startswith("split") or "split" in b.layout_archetype.lower()
     fonts_q = "&".join(sorted({f"family={f.replace(' ', '+')}:wght@400;600;700" for f in (b.heading_font, b.body_font)}))
 
     body = []
+    if "hero" not in sections:
+        body.append(f"""
+    <section class="page-head" data-component="page-head" aria-labelledby="page-title">
+      <h1 id="page-title" class="hero__title">{html_lib.escape(page["name"])}</h1>
+      <p class="hero__lead">{html_lib.escape(page.get("purpose") or desc)}</p>
+      <div class="hero__actions"><a class="btn btn--primary" href="{go}">{html_lib.escape(page.get("primary_action") or "Continue")}</a></div>
+    </section>""")
     for s in sections:
-        if s == "hero":
+        if s == "form":
+            body.append(f"""
+    <section class="form-section" data-component="form" aria-labelledby="form-title">
+      <h2 id="form-title" class="section__title">Create your account</h2>
+      <form class="form" action="{go}">
+        <label class="form__label" for="email">Email</label>
+        <input class="form__input" id="email" name="email" type="email" autocomplete="email">
+        <button class="btn btn--primary" type="submit">{html_lib.escape(page.get("primary_action") or "Continue")}</button>
+      </form>
+    </section>""")
+        elif s == "hero":
             body.append(f"""
     <section class="hero{' hero--split' if split else ''}" data-component="hero" aria-labelledby="hero-title">
       <div class="hero__copy">
@@ -249,8 +277,8 @@ def html_for(brief: DirectionBrief, intake_d: dict, notes: str = "", defects: li
         <h1 id="hero-title" class="hero__title">Ship with confidence, <span class="hero__accent">every single day</span></h1>
         <p class="hero__lead">{desc}</p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#get-started">Start free trial</a>
-          <a class="btn btn--ghost" href="#demo">Book a demo</a>
+          <a class="btn btn--primary" href="{go}">Start free trial</a>
+          <a class="btn btn--ghost" href="{alt}">Book a demo</a>
         </div>
       </div>
       <div class="hero__visual" role="img" aria-label="Product screenshot placeholder" data-placeholder="hero-image 1200x800, product dashboard screenshot"></div>
@@ -284,7 +312,7 @@ def html_for(brief: DirectionBrief, intake_d: dict, notes: str = "", defects: li
     <section class="cta" data-component="{s}" aria-labelledby="{s}-title">
       <h2 id="{s}-title" class="section__title">Ready when you are</h2>
       <p class="cta__text">Free for 14 days. No credit card required.</p>
-      <a class="btn btn--primary" id="get-started" href="#signup">Get started</a>
+      <a class="btn btn--primary" id="get-started" href="{go}">Get started</a>
     </section>""")
         elif s == "footer":
             continue
@@ -299,6 +327,10 @@ def html_for(brief: DirectionBrief, intake_d: dict, notes: str = "", defects: li
       </div>
     </section>""")
 
+    nav = "".join(f"""
+      <a class="nav__link" href="{p['file']}"{' aria-current="page"' if p['id'] == page['id'] else ''}>{html_lib.escape(p['name'])}</a>"""
+                  for p in pages) or """
+      <a class="nav__link" href="#features">Product</a>"""
     css = f"""
 :root {{
   /* Color roles */
@@ -352,10 +384,15 @@ section {{ padding: var(--space-16) var(--space-6); }}
 .card__icon {{ width: 28px; height: 28px; color: var(--color-accent); }}
 .card__title {{ font-size: var(--text-lg); margin: var(--space-3) 0 var(--space-2); }}
 .card__body {{ color: var(--color-muted); margin: 0; }}
-.quote {{ margin: 0; padding: var(--space-6); border-left: 3px solid var(--color-accent); background: var(--color-surface); border-radius: var(--radius-md); }}
+.quote {{ margin: 0; padding: var(--space-6); border: 1px solid var(--color-border); background: var(--color-surface); border-radius: var(--radius-md); }}
 .quote blockquote {{ margin: 0 0 var(--space-3); font-size: var(--text-lg); }}
 .quote figcaption {{ color: var(--color-muted); font-size: var(--text-sm); }}
 .cta {{ text-align: center; background: var(--color-surface); border-block: 1px solid var(--color-border); }}
+.page-head {{ display: grid; gap: var(--space-4); justify-items: start; }}
+.form {{ display: grid; gap: var(--space-3); max-width: 28rem; margin: 0 auto; }}
+.form__label {{ font-weight: 600; }}
+.form__input {{ min-height: 48px; padding: 0 var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  font: inherit; color: var(--color-text); background: var(--color-bg); }}
 .cta__text {{ color: var(--color-muted); margin: 0 0 var(--space-6); }}
 .site-footer {{ display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-4); padding: var(--space-8) var(--space-6); border-top: 1px solid var(--color-border); }}
 {_defect("tiny-text", BAD["tiny-text"], "tiny-text" in defects, GOOD["tiny-text"])}
@@ -372,7 +409,7 @@ section {{ padding: var(--space-16) var(--space-6); }}
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{name} — {html_lib.escape(b.name)}</title>
+  <title>{html_lib.escape(page["name"])} · {name}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?{fonts_q}&display=swap">
@@ -380,11 +417,8 @@ section {{ padding: var(--space-16) var(--space-6); }}
 </head>
 <body>
   <header class="site-header" data-component="site-header">
-    <a class="logo" href="#">{name}</a>
-    <nav class="nav" aria-label="Main">
-      <a class="nav__link" href="#features">Product</a>
-      <a class="nav__link" href="#pricing">Pricing</a>
-      <a class="nav__link" href="#docs">Docs</a>
+    <a class="logo" href="index.html">{name}</a>
+    <nav class="nav" aria-label="Main">{nav}
     </nav>
   </header>
   <main>{''.join(body)}
@@ -396,16 +430,6 @@ section {{ padding: var(--space-16) var(--space-6); }}
 </body>
 </html>
 """
-
-
-# ------------------------------------------------------------------- style lock
-def style_character(brief: dict, notes: str) -> StyleCharacter:
-    return StyleCharacter(
-        character=f"{brief['name']}: {brief['reference_style']} direction, {brief['density']} spacing, {brief['shape']} shapes, "
-                  f"{brief['heading_font']} headings over {brief['body_font']} body text.",
-        signature_elements=[brief["signature_element"], f"{brief['layout_archetype'][:80]}"],
-        must_keep=["the palette roles", "the heading font", "the hero arrangement"] + ([f"user note: {notes}"] if notes else []),
-    )
 
 
 # ----------------------------------------------------------------------- review
@@ -427,7 +451,7 @@ def review(html: str, audit: dict, previous: list[dict], change_requests: list[d
     for i in issues:
         if i.status == "open":
             open_by_crit[i.criterion] = open_by_crit.get(i.criterion, 0) + (2 if i.severity == "high" else 1)
-    base = {"B1": 4, "B2": 4, "B3": 4, "B4": 5, "B5": 4, "B6": 4, "B7": 4, "B8": 5, "B9": 5}
+    base = {"B1": 4, "B2": 4, "B3": 4, "B4": 5, "B5": 4, "B6": 4, "B7": 4, "B8": 5, "B9": 5, "B10": 4}
     scores = [CriterionScore(criterion=c, score=max(2, min(5, s - open_by_crit.get(c, 0) + (1 if not open_by_crit and c in ("B2", "B3") else 0))),
                              evidence="Open issues: " + ", ".join(i.id for i in issues if i.criterion == c and i.status == "open")
                              if open_by_crit.get(c) else "No open issues for this criterion (mock reviewer).")
@@ -459,23 +483,33 @@ def execute(editor, html: str, top_issues: list[dict]) -> str:
 
 
 # ---------------------------------------------------------------------- handoff
-def handoff(components: list[str], tokens: dict, spec: dict, review_d: dict | None) -> str:
+def handoff(components: dict[str, list[str]], tokens: dict, spec: dict) -> str:
     rows = "\n".join(f"| `{k}` | `{v}` |" for k, v in list(tokens.items())[:60])
-    comps = "\n".join(f"### `{c}`\n- Purpose: see the screenshots.\n- States: hover, focus-visible, active.\n- Responsive: stacks below 768px.\n" for c in components)
+    shared = set.intersection(*(set(c) for c in components.values())) if components else set()
+    comps = "\n".join(f"### `{c}`\n- Purpose: see the screenshots.\n- States: hover, focus-visible, active.\n- Responsive: stacks below 768px.\n"
+                      for c in sorted(shared))
+    per_page = "\n".join(f"### `{f}`\n" + "".join(f"- `{c}`\n" for c in cs if c not in shared) for f, cs in components.items())
     return f"""# HANDOFF — {spec.get('direction_id', '')}
 
 > Generated in mock mode. Run with an API key for a full written spec.
 
-## Design character
+## Overview
+{len(components)} pages: {', '.join(f'`{f}`' for f in components)}.
 {spec.get('character', '')}
 
 ## How to build from this
 1. Set up the tokens below as your theme (CSS variables, or your framework's theme config).
-2. Build components top-down in the order they appear.
-3. Compare against `screenshots/` at 375, 768 and 1440px.
+2. Build the shared components, then each page top-down in the order its components appear.
+3. Wire the links between pages as FLOWS.md lists them.
+4. Compare against `screenshots/<page>/` at 375, 768 and 1440px.
 
-## Component inventory
+## Routes and flows
+See FLOWS.md.
+
+## Shared components
 {comps}
+## Page-specific components
+{per_page}
 ## Tokens
 | Token | Value |
 |---|---|
@@ -485,7 +519,7 @@ def handoff(components: list[str], tokens: dict, spec: dict, review_d: dict | No
 Elements with `data-placeholder` describe the image to supply.
 
 ## Accessibility notes
-Focus states use `:focus-visible`; tap targets are at least 44px on mobile.
+Focus states use `:focus-visible`; tap targets are at least 44px on mobile; the nav marks the current page with `aria-current`.
 
 ## Known limitations
 Mock-mode content is generic.

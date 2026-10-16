@@ -72,7 +72,7 @@ def gate(state: AgentState) -> dict:
         update["stop_reason"] = decision
         update["current"] = update["best"]  # the output is always best, never just the latest
     update["gate_decision"] = decision
-    emit("gate", decision=decision, note=note, iteration=iteration, score=cur.get("score"),
+    emit("gate", page_id=cur.get("page_id"), decision=decision, note=note, iteration=iteration, score=cur.get("score"),
          best_version=update["best"]["version"], best_score=update["best"].get("score"))
     return update
 

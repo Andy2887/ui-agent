@@ -8,12 +8,15 @@ import re
 from .. import mock, settings
 from ..state import AgentState, ReviewResult, brief_text
 from ..llm import get_llm
-from .common import SEVERITY_ORDER, design_snapshot, emit, image_block, rubric_text, run_dir, weighted_score
+from .common import (SEVERITY_ORDER, design_snapshot, emit, image_block, page_links, page_spec, review_path, rubric_text,
+                     run_dir, shots_dir, weighted_score)
 from .render import dom_summary, render_design
+from .sketch import page_flows, site_map
 
 AUDIT_SEVERITY = {"A1": "high", "A2": "high", "A3": "high", "A4": "high", "A5": "medium", "A6": "medium",
-                  "A7": "high", "A8": "medium", "A9": "medium"}
-AUDIT_CRITERION = {"A1": "B5", "A2": "B4", "A3": "B5", "A4": "B5", "A5": "B3", "A6": "B6", "A7": "B8", "A8": "B6", "A9": "B2"}
+                  "A7": "high", "A8": "medium", "A9": "medium", "A10": "medium", "A11": "high", "A12": "medium"}
+AUDIT_CRITERION = {"A1": "B5", "A2": "B4", "A3": "B5", "A4": "B5", "A5": "B3", "A6": "B6", "A7": "B8", "A8": "B6", "A9": "B2", "A10": "B10",
+                   "A11": "B7", "A12": "B5"}
 AUDIT_EXPLANATION = {
     "A1": "Some visitors use screen readers or keyboards. These problems block them from using parts of the page.",
     "A2": "Low-contrast text is hard to read in sunlight, on cheap screens and for people with weaker eyesight.",
@@ -24,13 +27,17 @@ AUDIT_EXPLANATION = {
     "A7": "Keyboard users need to see where they are. Without a visible focus ring they get lost.",
     "A8": "The next developer rebuilds the page from these tokens and labels. Hard-coded values get lost or drift.",
     "A9": "A big empty patch beside or under content makes the page look lopsided and unfinished, and draws the eye away from what matters.",
+    "A11": "Visitors move through the site by clicking. A missing link strands them on this page, and a link to a page that doesn't exist leads nowhere.",
+    "A12": "Many people enlarge the text in their browser to read comfortably. If the layout can't grow with it, words and controls spill off the screen.",
+    "A10": "These are habits nearly every AI-generated page repeats, like a tiny label above the headline or an icon in a rounded square above every card. They make the page look like a template rather than something designed for this product.",
 }
 
 
 async def render_node(state: AgentState) -> dict:
     cur = state["current"]
-    emit("render_started", version=cur["version"])
-    design, render = await render_design(state["run_id"], cur, f"refine/v{cur['version']}-shots")
+    emit("render_started", page_id=cur.get("page_id"), version=cur["version"])
+    links = page_links(state, cur["page_id"]) if cur.get("page_id") else None
+    design, render = await render_design(state["run_id"], cur, shots_dir(cur["html_path"]), links)
     return {"current": design}
 
 
@@ -38,7 +45,7 @@ async def audit_node(state: AgentState) -> dict:
     # The audit itself ran with the render (same browser session); this node reports it.
     cur = state["current"]
     audit = cur.get("audit") or {}
-    emit("audit", version=cur["version"], passed=audit.get("passed"),
+    emit("audit", page_id=cur.get("page_id"), version=cur["version"], passed=audit.get("passed"),
          checks=[{"id": c["id"], "name": c["name"], "passed": c["passed"], "blocking": c.get("blocking", True),
                   "details": c["details"]} for c in audit.get("checks", [])])
     return {}
@@ -52,13 +59,19 @@ def _review_content(state: AgentState, cur: dict) -> list:
         for i, t in enumerate(tiles):
             content.append({"type": "text", "text": f"{vp} ({width}px wide), screen {i + 1} of {len(tiles)}:"})
             content.append(image_block(root / t))
-    facts = json.loads((root / f"refine/v{cur['version']}-shots/render.json").read_text())
+    facts = json.loads((root / shots_dir(cur["html_path"]) / "render.json").read_text())
     audit = cur.get("audit") or {}
     previous = [{k: i[k] for k in ("id", "criterion", "severity", "selector", "evidence", "status")}
                 for i in state.get("issues") or []]
+    page = []
+    if cur.get("page_id"):
+        page = [f"<site_map>\n{json.dumps(site_map(state['intake']), indent=1)}\n</site_map>",
+                f"<this_page>\n{json.dumps(page_spec(state, cur['page_id']), indent=1)}\n</this_page>",
+                f"<flow_steps_on_this_page>\n{json.dumps(page_flows(state['intake'], cur['page_id']), indent=1)}\n</flow_steps_on_this_page>"]
     content.append({"type": "text", "text": "\n\n".join([
         f"<pm_brief>\n{brief_text(state['brief'])}\n</pm_brief>",
-        f"<design_brief>\n{json.dumps({k: v for k, v in state['intake'].items() if k != 'questions'}, indent=1)}\n</design_brief>",
+        f"<design_brief>\n{json.dumps({k: v for k, v in state['intake'].items() if k not in ('questions', 'pages')}, indent=1)}\n</design_brief>",
+        *page,
         f"<style_spec>\n{json.dumps(state.get('style_lock'), indent=1)}\n</style_spec>",
         f"<audit passed=\"{audit.get('passed')}\">\n{json.dumps([c for c in audit.get('checks', []) if not c['passed']], indent=1)}\n</audit>",
         f"<dom_summary>\n{json.dumps(dom_summary(facts), indent=1)[:30000]}\n</dom_summary>",
@@ -97,7 +110,7 @@ def merge_issues(previous: list[dict], new: list[dict], audit: dict) -> list[dic
             "id": iid, "criterion": AUDIT_CRITERION[c["id"]], "severity": AUDIT_SEVERITY[c["id"]],
             "selector": "body", "viewport": "all",
             "evidence": f"{c['id']} {c['name']}: {c['details']}. {json.dumps(c['items'])[:500]}",
-            "suggested_fix": "Fix every item listed in the evidence.", "explanation": AUDIT_EXPLANATION[c["id"]],
+            "suggested_fix": c.get("fix") or "Fix every item listed in the evidence.", "explanation": AUDIT_EXPLANATION[c["id"]],
             "status": "open",
         }
     # Audit-backed issues that now pass are resolved by definition.
@@ -111,7 +124,7 @@ def merge_issues(previous: list[dict], new: list[dict], audit: dict) -> list[dic
 async def review(state: AgentState) -> dict:
     cur = state["current"]
     root = run_dir(state["run_id"])
-    emit("review_started", version=cur["version"])
+    emit("review_started", page_id=cur.get("page_id"), version=cur["version"])
     system = settings.prompt("reviewer").replace("{rubric}", rubric_text())
     result, usage = await get_llm().parse(
         "reviewer", system=system, content=_review_content(state, cur), output_format=ReviewResult,
@@ -128,10 +141,10 @@ async def review(state: AgentState) -> dict:
     score = weighted_score(score_list)
     review_d = {"summary": result.summary, "scores": score_list, "issues": issues}
     design = {**cur, "review": review_d, "score": score}
-    (root / "refine" / f"v{cur['version']}-review.json").write_text(json.dumps(review_d, indent=2))
+    (root / review_path(cur["html_path"])).write_text(json.dumps(review_d, indent=2))
     iteration = (state.get("iteration") or 0) + 1
     snap = design_snapshot(design)
-    emit("iteration", iteration=iteration, snapshot=snap)
+    emit("iteration", page_id=cur.get("page_id"), iteration=iteration, snapshot=snap)
     return {
         "current": design, "issues": issues, "iteration": iteration, "history": [snap], "usage": usage,
         "resolved_issue_ids": [i["id"] for i in issues if i["status"] == "resolved"],
