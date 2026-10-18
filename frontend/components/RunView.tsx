@@ -7,6 +7,7 @@ import { SLOT_LABEL, STOP_REASON } from "@/lib/logic";
 import type { Brief, DesignBrief, FinalApproval, FinalPage, FlowPlan, Issue, KickoffQuestion, PagePlan, RunEvent, Sketch, SketchReview, Snapshot } from "@/lib/types";
 import { AgentGraph, initialTrack, trackAgent, type AgentTrack } from "./AgentGraph";
 import { Icon } from "./Icon";
+import { RefineHelix } from "./RefineHelix";
 import { AuditBadges, IssueItem, ScaledFrame, ScoreBars, ScoreChart, SketchView, Shot } from "./RunParts";
 
 type PageProgress = { status: "queued" | "designing" | "refining" | "done" | "skipped"; score?: number | null; version?: number; stop?: string | null };
@@ -491,7 +492,8 @@ function Refining({ state, runId }: { state: RunState; runId: string }) {
   // Several pages refine at once after the key page; follow the first busy one unless the PM picked a page.
   const busy = state.intake?.pages.find((p) => ["designing", "refining"].includes(state.progress[p.id]?.status ?? ""))?.id;
   const pageId = picked ?? busy ?? state.currentPage ?? state.intake?.pages[0]?.id ?? "";
-  const points = state.iterations.filter((i) => i.pageId === pageId).map((i) => ({ version: i.snapshot.version, score: i.snapshot.score }));
+  const laps = state.iterations.filter((i) => i.pageId === pageId)
+    .map((i) => ({ version: i.snapshot.version, score: i.snapshot.score, decision: state.gates[`${pageId}:${i.iteration}`]?.decision }));
   return (
     <section>
       <div className="section-bar">
@@ -501,8 +503,8 @@ function Refining({ state, runId }: { state: RunState; runId: string }) {
       <PageProgressList state={state} selected={pageId} onSelect={setPicked} />
       <h3 className="h3 choice-head">{pageName(state, pageId)}</h3>
       {["designing", "refining"].includes(state.progress[pageId]?.status ?? "") &&
-        <AgentGraph track={state.pageAgents[pageId] ?? pageStart} caption={state.pageActivity[pageId] ?? ""} />}
-      <ScoreChart points={points} />
+        <RefineHelix track={state.pageAgents[pageId] ?? pageStart} caption={state.pageActivity[pageId] ?? ""} laps={laps} />}
+      <ScoreChart points={laps} />
       <Timeline state={state} runId={runId} pageId={pageId} />
     </section>
   );
@@ -524,7 +526,6 @@ function History({ state, runId }: { state: RunState; runId: string }) {
 function FinalReview({ runId, state, final }: { runId: string; state: RunState; final: FinalApproval }) {
   const [pageId, setPageId] = useState(final.pages[0]?.id ?? "");
   const [vp, setVp] = useState<"desktop" | "mobile">("desktop");
-  const [base, setBase] = useState<"sketch" | "v1">("sketch");
   const [feedback, setFeedback] = useState("");
   const [target, setTarget] = useState<"page" | "all">("page");
   const [busy, setBusy] = useState(false);
@@ -555,29 +556,16 @@ function FinalReview({ runId, state, final }: { runId: string; state: RunState; 
       ) : (
         <>
           <div className="seg-row">
-            <div className="segmented" role="radiogroup" aria-label="Compare with">
-              {(["sketch", "v1"] as const).map((x) => <button key={x} role="radio" aria-checked={base === x} className={base === x ? "is-on" : ""} onClick={() => setBase(x)}>{x === "sketch" ? "Its sketch" : "First design (v1)"}</button>)}
-            </div>
             <div className="segmented" role="radiogroup" aria-label="Viewport">
               {(["desktop", "mobile"] as const).map((x) => <button key={x} role="radio" aria-checked={vp === x} className={vp === x ? "is-on" : ""} onClick={() => setVp(x)}>{x === "desktop" ? "Desktop" : "Mobile"}</button>)}
             </div>
             <a className="link" href={artifactUrl(runId, live)} target="_blank" rel="noreferrer">Open the site in a new tab<Icon name="arrowRight" size={14} /></a>
           </div>
-          <div className="before-after">
-            <figure><figcaption><b>Before</b>{base === "sketch" ? "the approved sketch" : "the first full design (v1)"}</figcaption>
-              {base === "sketch" && page.sketch ? <SketchView text={page.sketch} label={`${page.name} sketch`} /> : frame(page.v1.html_path, "Before")}</figure>
-            <figure><figcaption><b>After</b>v{page.final.version}, {STOP_REASON[page.stop_reason ?? ""]?.toLowerCase() ?? page.stop_reason}</figcaption>
-              {frame(live, "After")}</figure>
-          </div>
+          <figure className="final-preview"><figcaption><b>Final</b>v{page.final.version}, {STOP_REASON[page.stop_reason ?? ""]?.toLowerCase() ?? page.stop_reason}</figcaption>
+            {frame(live, page.name)}</figure>
         </>
       )}
-      <div className="final-cols">
-        {page.final && page.trajectory ? (
-          <div className="aside-card score-card">
-            <ScoreChart points={page.trajectory} />
-            <ScoreBars scores={page.final.scores} />
-          </div>
-        ) : <div />}
+      <div className="final-cols final-cols--single">
         <div className="aside-card">
           <h3>{remaining.length ? `${page.name}: remaining issues (${remaining.length})` : `${page.name}: no remaining issues`}</h3>
           <ul className="issues">{remaining.map((i) => <IssueItem key={i.id} issue={i} />)}</ul>

@@ -6,7 +6,7 @@ import type { RunEvent } from "@/lib/types";
 export type AgentId = "intake" | "planner" | "sketch" | "designer" | "style" | "render" | "reviewer" | "gate" | "executor" | "handoff";
 export type AgentTrack = { active?: AgentId; prev?: AgentId; visited: AgentId[]; version?: number };
 
-const NODES: { id: AgentId; label: string; role: string }[] = [
+export const NODES: { id: AgentId; label: string; role: string }[] = [
   { id: "intake", label: "Intake", role: "Reading the brief…" },
   { id: "planner", label: "Planner", role: "Planning the direction…" },
   { id: "sketch", label: "Sketchers", role: "Sketching every page…" },
