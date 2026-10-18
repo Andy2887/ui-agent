@@ -9,7 +9,7 @@ Tokens live in `app/tokens.css`; component styles in `app/globals.css`; icons in
 1. **The work is the color.** Chrome is zinc greys. Generated sketches, tiles and frames carry all the hue.
 2. **Magenta means "this one".** `--accent` marks what is selected, active or current: the picked card, the working agent, the current step, the focused field. Never decoration, never a primary button.
 3. **One ink action per panel.** `.btn--primary` (ink: near-black in light, near-white in dark) is the next step. Everything else is a plain `.btn` or a `.link`.
-4. **Mono for machine facts.** Geist Mono for run IDs, versions, scores, file names and small uppercase labels (`.eyebrow`, table heads, `dt`). Geist for everything people read.
+4. **Mono for machine facts.** Geist Mono for run IDs, versions, scores, file names and small uppercase labels (table heads, `dt`). Geist for everything people read.
 
 ## Token layers
 
@@ -49,7 +49,6 @@ Geist (UI) and Geist Mono (data). Scale: `--fs-12 13 14 15 16 18 22 28 36`. Body
 | Page title `h1` | 28px (36 on the brief), 600, -0.025em |
 | Section `.h2` | 18px, 600 |
 | Card title `h3` | 16px, 600 |
-| Eyebrow / label | `.eyebrow`: 12px mono, uppercase, +0.08em, `--text-faint` |
 | Number | `.num` or `.score`: mono, tabular figures |
 
 ### Space, shape, motion
@@ -83,7 +82,7 @@ Geist (UI) and Geist Mono (data). Scale: `--fs-12 13 14 15 16 18 22 28 36`. Body
 
 ## Icons
 
-`<Icon name="check" />` from `components/Icon.tsx`: 24px grid, 1.75 stroke, `currentColor`, hidden from screen readers unless given a `label`. Don't use emoji or text glyphs (✓ ↗ →) as icons. The one exception is the CSS check in `.steps`.
+`<Icon name="check" />` from `components/Icon.tsx`: 24px grid, 1.75 stroke, `currentColor`, hidden from screen readers unless given a `label`. Don't use emoji or text glyphs (✓ ↗ →) as icons. Where only CSS can reach (pseudo-elements), paint the same paths with `--mask-check` / `--mask-arrow`.
 
 ## Checklist for new UI
 

@@ -3,6 +3,7 @@
 // climbs to a new ring, so the stack shows every version and its score. Narrow screens and reduced motion get the flat AgentGraph.
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { AgentGraph, NODES, type AgentId, type AgentTrack } from "./AgentGraph";
+import { Icon } from "./Icon";
 
 export type Lap = { version: number; score: number | null; decision?: string };
 
@@ -113,10 +114,10 @@ export function RefineHelix({ track, caption, laps }: { track: AgentTrack; capti
   return (
     <div ref={outer}><div className="agent-graph rh">
       <div className="rh__top">
-        <span className="rh-chip"><span className="rh-tick">✓</span>Intake · Planner · Sketchers</span>
+        <span className="rh-chip"><span className="rh-tick"><Icon name="check" size={14} /></span>Intake · Planner · Sketchers</span>
         <span className="rh__top-right">
           {hidden > 0 && <span className="rh-chip">{hidden === 1 ? `v${rings[0]}` : `v${rings[0]}–v${rings[hidden - 1]}`} below</span>}
-          {track.version && <span className="rh-chip rh-chip--on">↻ v{track.version}</span>}
+          {track.version && <span className="rh-chip rh-chip--on"><Icon name="rotate" size={14} />v{track.version}</span>}
         </span>
       </div>
       <div className="rh__fit" style={{ height: H * scale }}>

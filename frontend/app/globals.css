@@ -23,7 +23,6 @@ button { cursor: pointer; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ------------------------------------------------------------ type helpers */
-.eyebrow { font: 500 var(--fs-12)/1.3 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--text-faint); }
 .h2 { font-size: var(--fs-18); }
 .muted { color: var(--text-muted); }
 .mono { font-family: var(--font-mono); font-size: var(--fs-13); }
@@ -216,19 +215,19 @@ button { cursor: pointer; }
 .run-head { display: grid; gap: var(--sp-5); margin-bottom: var(--sp-6); }
 .run-head__title { display: grid; gap: var(--sp-2); }
 .run-head__title p { color: var(--text-muted); max-width: 80ch; }
+.run-head__title .run-head__id { font-size: var(--fs-13); color: var(--text-faint); }
 
 .steps { list-style: none; display: flex; padding: 0; margin: 0; counter-reset: s; border-top: 1px solid var(--border); }
 .steps li { counter-increment: s; flex: 1; display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-3) 0 0; margin-top: -1px; border-top: 2px solid transparent;
   font-size: var(--fs-13); font-weight: 500; color: var(--text-faint); white-space: nowrap; }
 .steps li::before { content: counter(s, decimal-leading-zero); font: 500 var(--fs-12) var(--font-mono); }
 .steps li.is-done { color: var(--text-muted); border-top-color: var(--text); }
-.steps li.is-done::before { content: "✓"; font-family: var(--font-sans); color: var(--ok); }
+.steps li.is-done::before { content: ""; width: 14px; height: 14px; background: var(--ok); mask: var(--mask-check) center / contain no-repeat; }
 .steps li.is-current { color: var(--text); border-top-color: var(--accent); }
 .steps li.is-current::before { color: var(--accent-text); }
 
 /* -------------------------------------------------------------- agent graph */
-.agent-graph { background: var(--surface); border: var(--card-border); border-radius: var(--card-r); padding: var(--sp-5) var(--sp-5) var(--sp-4); margin: 0 0 var(--sp-6);
-  background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: 16px 16px; background-position: -8px -8px; }
+.agent-graph { background: var(--surface); border: var(--card-border); border-radius: var(--card-r); padding: var(--sp-5) var(--sp-5) var(--sp-4); margin: 0 0 var(--sp-6); }
 .agent-graph__svg { display: block; width: 100%; max-width: 1040px; height: auto; margin: 0 auto; overflow: visible; }
 .agent-graph__svg.is-narrow { max-width: 420px; }
 .agent-graph__caption { display: flex; justify-content: center; align-items: center; gap: var(--sp-2); margin-top: var(--sp-3); color: var(--text-muted); font-size: var(--fs-14); }
@@ -253,7 +252,7 @@ button { cursor: pointer; }
 .rh-chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: var(--tag-r); border: 1px solid var(--border);
   background: var(--surface); color: var(--text-muted); font-size: var(--fs-13); white-space: nowrap; }
 .rh-chip--on { font: 600 var(--fs-13) var(--font-mono); color: var(--accent-text); border-color: var(--accent); background: var(--accent-soft); }
-.rh-tick { color: var(--ok); }
+.rh-tick { display: inline-flex; color: var(--ok); }
 .rh__fit { position: relative; overflow: hidden; margin-top: var(--sp-1); }
 .rh__stage { position: absolute; left: 50%; top: 0; width: 680px; height: 430px; transform-origin: top center; perspective: 1100px; perspective-origin: 50% 20%;
   cursor: grab; touch-action: none; user-select: none; border-radius: var(--r-6); }
@@ -284,8 +283,7 @@ button { cursor: pointer; }
 .rh-ring.is-current .rh-ver b { color: var(--text); }
 .rh-ver .tag { height: 20px; font: 600 11px var(--font-mono); }
 .rh-dot { position: absolute; left: 0; top: 0; width: 16px; height: 16px; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, white 70%, transparent) 0 2px, transparent 5px), var(--accent);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 18px var(--accent); }
+  background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
 
 /* ---------------------------------------------------------------- kickoff */
 .kickoff { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: var(--sp-6); align-items: start; }
@@ -314,7 +312,7 @@ button { cursor: pointer; }
 /* Colors, fonts, radii and padding come from the direction (--t-*), set inline per tile. Sizes stay on the app scale. */
 .tile { margin: 0; display: grid; gap: 10px; padding: var(--t-pad); background: var(--t-bg); color: var(--t-text); font-family: var(--t-body); border: 1px solid var(--t-border); border-radius: var(--r-6); }
 .tile__hero { display: grid; gap: 6px; }
-.tile__eyebrow { font-size: var(--fs-12); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--t-accent); }
+.tile__mood { font-size: var(--fs-13); color: var(--t-muted); }
 .tile .tile__headline { font-family: var(--t-heading); font-size: var(--fs-22); font-weight: 700; line-height: 1.15; color: var(--t-text); }
 .tile .tile__lead { font-size: var(--fs-13); line-height: 1.45; color: var(--t-muted); }
 .tile__actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
@@ -341,7 +339,7 @@ button { cursor: pointer; }
 .flow-map__steps { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; align-items: stretch; gap: var(--sp-2); }
 .flow-map__steps li { display: grid; gap: 2px; max-width: 220px; padding: var(--sp-2) var(--sp-3); border: 1px solid var(--border); border-radius: var(--control-r); background: var(--surface); position: relative; }
 .flow-map__steps li + li { margin-left: var(--sp-4); }
-.flow-map__steps li + li::before { content: "→"; position: absolute; left: calc(-1 * var(--sp-4)); top: 50%; transform: translate(-25%, -50%); color: var(--text-faint); font-size: var(--fs-13); }
+.flow-map__steps li + li::before { content: ""; position: absolute; left: calc(-1 * var(--sp-4)); top: 50%; width: 12px; height: 12px; transform: translate(-25%, -50%); background: var(--text-faint); mask: var(--mask-arrow) center / contain no-repeat; }
 .flow-map__page { font-size: var(--fs-13); font-weight: 600; color: var(--text); }
 .flow-map__action { font-size: var(--fs-12); color: var(--text-muted); }
 .design-brief .flow-map__steps li { max-width: 180px; }

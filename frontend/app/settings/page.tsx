@@ -16,7 +16,6 @@ export default function SettingsPage() {
   return (
     <div className="page page--narrow">
       <header className="page-head">
-        <span className="eyebrow">Memory</span>
         <h1>What the agent has learned</h1>
         <p>It only remembers explicit signals: the sketches you pick and pass over, your notes, and recurring issues.</p>
       </header>

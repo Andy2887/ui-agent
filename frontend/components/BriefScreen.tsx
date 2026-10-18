@@ -46,7 +46,6 @@ export function BriefScreen() {
     <div className="brief">
       <div className="brief__main">
         <header className="page-head">
-          <span className="eyebrow">New brief</span>
           <h1>Brief the designer</h1>
           <p>Tell the designer what problem you're solving and what your users do, as you would at a kickoff. The designer works out
             who it&apos;s for, which pages that takes, and how they look, so you won't be asked about colors, fonts or layout.</p>
@@ -90,7 +89,7 @@ export function BriefScreen() {
 
       <aside className="brief__aside" aria-label="How it works and start">
         <div className="aside-card">
-          <span className="eyebrow">How it works</span>
+          <h2 className="h2">How it works</h2>
           <ol className="how">
             <li><strong>Kickoff.</strong> The designer reads your brief, works out the pages your flows need, and may ask a question or two.</li>
             <li><strong>Sketches.</strong> One direction for the whole site: a design system, and a low-fi sketch of every page.</li>

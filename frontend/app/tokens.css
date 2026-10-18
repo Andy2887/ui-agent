@@ -129,6 +129,10 @@
   --tag-r: var(--r-4);
   --frame-r: var(--r-6);
   --frame-bg: var(--zinc-0); /* a generated page's default canvas: white in both app themes */
+
+  /* Icon.tsx check and arrowRight, for CSS-only spots (pseudo-elements); paint with background + mask */
+  --mask-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  --mask-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
 }
 @media (max-width: 720px) {
   :root { --page-gutter: var(--sp-4); --card-pad: var(--sp-4); }

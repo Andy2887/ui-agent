@@ -84,7 +84,7 @@ function reduceEvent(s: RunState, e: RunEvent): RunState {
     case "style_locked": return { ...s, activity: "Locking the design system from the first page…" };
     case "render_started": return { ...s, activity: `${on}rendering v${e.version} at 375, 768 and 1440px…` };
     case "review_started": return { ...s, activity: `${on}reviewing v${e.version} against the rubric…` };
-    case "execute_started": return { ...s, activity: `${on}fixing ${e.issues.length} issue${e.issues.length === 1 ? "" : "s"} → v${e.version}…` };
+    case "execute_started": return { ...s, activity: `${on}fixing ${e.issues.length} issue${e.issues.length === 1 ? "" : "s"} for v${e.version}…` };
     case "iteration": {
       const pageId = e.page_id ?? e.snapshot.page_id;
       return { ...s, iterations: [...s.iterations.filter((i) => !(i.pageId === pageId && i.snapshot.version === e.snapshot.version)), { pageId, iteration: e.iteration, snapshot: e.snapshot }] };
@@ -139,13 +139,13 @@ export function RunView({ runId }: { runId: string }) {
     <div className="page">
       <header className="run-head">
         <div className="run-head__title">
-          <span className="eyebrow">Run <span className="num">{runId}</span></span>
           <h1>{brief?.product_name || state.productName || "Design run"}</h1>
           <p className="clamp">{brief?.problem ?? state.request?.prompt}</p>
+          <p className="run-head__id">Run <span className="num">{runId}</span></p>
         </div>
         <Steps phase={phase} />
       </header>
-      {state.mock && <p className="callout"><Icon name="sparkle" />Mock mode: sketches, designs, reviews and fixes come from offline stand-ins, not Claude.</p>}
+      {state.mock && <p className="callout"><Icon name="info" />Mock mode: sketches, designs, reviews and fixes come from offline stand-ins, not Claude.</p>}
       {lost && state.status !== "done" && <p className="callout callout--warn" role="status"><span className="spinner" />Connection lost. Reconnecting…</p>}
       {state.status === "error" && <div className="callout callout--error" role="alert"><Icon name="alert" /><div><strong>The run stopped with an error.</strong><pre>{state.error}</pre></div></div>}
       {state.status === "running" && phase !== 2 && <AgentGraph track={state.agent} caption={state.activity} />}
@@ -273,9 +273,9 @@ function StyleTile({ brief, action, headline }: { brief: Brief; action?: string;
   return (
     <figure className="tile" style={vars} aria-label={`Design system: ${brief.mood.join(", ")}`}>
       <div className="tile__hero">
-        <span className="tile__eyebrow">{brief.mood.join(" · ")}</span>
         <p className="tile__headline">{headline ?? brief.name}</p>
         <p className="tile__lead">{brief.description}</p>
+        <p className="tile__mood">{brief.mood.join(", ")}</p>
         <div className="tile__actions">
           <span className="tile__btn tile__btn--primary">{action || "Get started"}</span>
           <span className="tile__btn">Learn more</span>

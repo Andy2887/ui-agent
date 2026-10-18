@@ -17,8 +17,8 @@ export default function RunsPage() {
   return (
     <div className="page page--narrow">
       <header className="page-head">
-        <span className="eyebrow">{runs ? `${runs.length} run${runs.length === 1 ? "" : "s"}` : "History"}</span>
         <h1>Runs</h1>
+        {runs && <p>{runs.length} run{runs.length === 1 ? "" : "s"}</p>}
       </header>
       {err && <div className="callout callout--error" role="alert"><Icon name="alert" /><div>{err}</div></div>}
       {!runs && !err && <div className="skeleton" style={{ height: 216 }} aria-label="Loading runs" />}
