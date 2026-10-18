@@ -57,22 +57,24 @@ flowchart TD
     C -->|Send ×pages| D[sketch_page]
     D --> F{{sketch_review: interrupt — approve or revise}}
     F -->|revise + feedback| C
-    F -->|approve + notes| NP[next_page]
-    NP -->|next page| G[design_page — hi-fi from the sketch; key page first]
-    G --> S[lock_style — once, from the key page]
-    S --> H
+    F -->|approve + notes| NP[next_pages — batch 1: key page alone; batch 2: the rest]
+    NP -->|Send ×pages in the batch| G[design_page — hi-fi from the sketch]
+    NP -->|Send, page with a change request| L
 
-    subgraph R[refine loop subgraph, once per page]
-        H[render] --> I[audit — deterministic]
-        I --> J[review — vision LLM]
-        J --> K{gate}
-        K -->|continue| L[execute — targeted edits]
-        L --> H
+    subgraph BP[build_page — one per page, in parallel, private state]
+        G --> S[lock_style — StyleSpec once, from the key page]
+        S --> H
+        subgraph R[refine loop subgraph]
+            H[render] --> I[audit — deterministic]
+            I --> J[review — vision LLM]
+            J --> K{gate}
+            K -->|continue| L[execute — targeted edits]
+            L --> H
+        end
     end
 
-    K -->|pass / plateau / max iters| FP[finish_page — best version to site/]
-    FP --> NP
-    NP -->|change requested on a page| L
+    K -->|pass / plateau / max iters: best version to site/| CP[collect_pages — lock key page tokens]
+    CP --> NP
     NP -->|all pages done| M{{final approval: optional interrupt}}
     M -->|change requests: one page or all| NP
     M -->|approve| N[build_handoff]
@@ -190,19 +192,21 @@ Each sketcher gets the PM brief, the design brief, kickoff answers, the directio
 - `approve(notes?)`, e.g. "keep the sign-up form to one field". Records the direction in taste memory, with any directions sent back earlier as rejected.
 - `revise(feedback)`: back to `plan_direction`, then every page is sketched again with the feedback.
 
-### 4.7 `next_page` and `design_page`
-`next_page` takes the next page off the queue (every page in site-map order after approval; the pages a change request names after final review). A page not yet designed goes to `design_page`; a finished page with a change request goes back into its own refine loop at the executor, restored from its saved state.
+### 4.7 `next_pages`, `build_page` and `design_page`
+`next_pages` runs the queued pages (every page after approval; the pages a change request names after final review) in at most two batches. The **key page** goes alone, because every other page is designed against its final HTML and tokens; then all the remaining pages go at once, one `build_page` branch each (`Send`). Each branch works in a **private copy of the state**: it designs the page (or, for a finished page with a change request, restores its saved refine state and goes back in at the executor), runs the refine loop, publishes the best version to `site/<file>`, and returns only the page's record, its history and its usage, which merge through reducers. `collect_pages` then takes the batch off the queue.
 
-`design_page` turns one page's sketch into its **first full design** (`pages/<id>/v1.html`): it keeps the sketch's section order, structure, hierarchy and content, applies the PM's notes, makes real links to the pages in `links_to`, and follows the **HTML contract** (§7) and the lessons-learned checklist. The **key page** (the entry page of flow 1) comes first and makes every visual decision within the direction. Every later page also gets the key page's final HTML and must copy its `:root` tokens, header, footer and shared component CSS; code then copies the key page's token values into it. When the run is over budget the page is skipped and listed at final review.
+**Budget across branches:** a branch can't see its siblings' usage in state, so every LLM call made inside a branch also adds its cost to one in-memory counter per run (`llm.start_branch`, keyed by run id and carried by a context variable). Inside a branch, the budget check is the run's cost when the batch started plus that counter.
 
-### 4.8 `lock_style` and `finish_page`
+`design_page` turns one page's sketch into its **first full design** (`pages/<id>/v1.html`): it keeps the sketch's section order, structure, hierarchy and content, applies the PM's notes, makes real links to the pages in `links_to`, and follows the **HTML contract** (§7) and the lessons-learned checklist. The key page (the entry page of flow 1) makes every visual decision within the direction. Every later page also gets the key page's final HTML and must copy its `:root` tokens, header, footer and shared component CSS; code then copies the key page's token values into it. When the run is over budget the page is skipped and listed at final review.
+
+### 4.8 `lock_style` and `collect_pages`
 `lock_style` builds a `StyleSpec` once, in code (no LLM call):
 - **Tokens:** the `:root` custom properties of the key page's first design (colors, fonts, spacing scale, radii, shadows).
 - **Character, signature element, must-keep list:** from the approved direction (mood, reference style, theme, density, shape, motion, imagery, layout, fonts, signature element, avoid list), plus the PM's notes. Taking these from the direction rather than from a reading of v1 holds every page to what the PM approved, and keeps an unreviewed detail of v1 (a label above the headline, say) from becoming a rule the reviewer must protect.
 
 For every page it then resets the refine state (versions, issues, iteration cap: `max_iterations` for the key page, `max_iterations_secondary` for the others). The PM's notes become a high-severity issue that the reviewer verifies on each page (resolved where they don't apply).
 
-`finish_page` saves the page's refine state and copies its best version to `site/<file>`, where the pages link to each other. After the key page it updates the StyleSpec's tokens to the key page's final values, and re-syncs any finished page whose tokens moved.
+`build_page` saves each page's refine state and copies its best version to `site/<file>`, where the pages link to each other. After the key page's batch, `collect_pages` updates the StyleSpec's tokens to the key page's final values, and re-syncs any finished page whose tokens moved.
 
 ### 4.9 Refine loop (subgraph)
 

@@ -27,13 +27,23 @@ type RunState = {
   gates: Record<string, { decision: string; note?: string }>; // `${page}:${iteration}`
   activity: string;
   agent: AgentTrack;
+  pageAgents: Record<string, AgentTrack>; // design stage: one pipeline track per page, since pages run in parallel
+  pageActivity: Record<string, string>;
   done?: any;
 };
 
-const initial: RunState = { status: "connecting", repairs: [], sketches: {}, approved: false, progress: {}, iterations: [], gates: {}, activity: "", agent: initialTrack };
+const initial: RunState = { status: "connecting", repairs: [], sketches: {}, approved: false, progress: {}, iterations: [], gates: {}, activity: "", agent: initialTrack, pageAgents: {}, pageActivity: {} };
+const pageStart: AgentTrack = { visited: ["intake", "planner", "sketch"] };
 
 function reduce(s: RunState, e: RunEvent): RunState {
   const next = reduceEvent(s, e);
+  // Once the sketches are approved, a page's events move only that page's graph, so parallel pages don't fight over one.
+  const pid: string | undefined = s.approved ? e.page_id : undefined;
+  if (pid) {
+    const track = trackAgent(e.type === "page_started" ? pageStart : s.pageAgents[pid] ?? pageStart, e);
+    return { ...next, pageAgents: { ...next.pageAgents, [pid]: track },
+             pageActivity: next.activity === s.activity ? next.pageActivity : { ...next.pageActivity, [pid]: next.activity } };
+  }
   const agent = trackAgent(s.agent, e);
   return agent === next.agent ? next : { ...next, agent };
 }
@@ -65,7 +75,7 @@ function reduceEvent(s: RunState, e: RunEvent): RunState {
     case "sketches_approved": {
       const progress: RunState["progress"] = {};
       for (const id of e.pages as string[]) progress[id] = { status: "queued" };
-      return { ...s, approved: true, progress, iterations: [], gates: {}, activity: "Designing the first page…" };
+      return { ...s, approved: true, progress, iterations: [], gates: {}, pageAgents: {}, pageActivity: {}, activity: "Designing the first page…" };
     }
     case "page_started": return { ...s, currentPage: e.page_id, progress: { ...s.progress, [e.page_id]: { ...s.progress[e.page_id], status: e.revisit ? "refining" : "designing" } },
                                   activity: `Page ${e.index} of ${e.total}: ${e.revisit ? "applying your changes to" : "designing"} ${e.name}…` };
@@ -137,7 +147,7 @@ export function RunView({ runId }: { runId: string }) {
       {state.mock && <p className="callout"><Icon name="sparkle" />Mock mode: sketches, designs, reviews and fixes come from offline stand-ins, not Claude.</p>}
       {lost && state.status !== "done" && <p className="callout callout--warn" role="status"><span className="spinner" />Connection lost. Reconnecting…</p>}
       {state.status === "error" && <div className="callout callout--error" role="alert"><Icon name="alert" /><div><strong>The run stopped with an error.</strong><pre>{state.error}</pre></div></div>}
-      {state.status === "running" && <AgentGraph track={state.agent} caption={state.activity} />}
+      {state.status === "running" && phase !== 2 && <AgentGraph track={state.agent} caption={state.activity} />}
 
       {phase === 0 && state.status === "waiting_kickoff" && state.kickoff && <Kickoff runId={runId} kickoff={state.kickoff} />}
       {phase === 1 && state.status === "waiting_sketches" && state.review && <ReviewSketches runId={runId} review={state.review} />}
@@ -478,16 +488,20 @@ function PageProgressList({ state, selected, onSelect }: { state: RunState; sele
 
 function Refining({ state, runId }: { state: RunState; runId: string }) {
   const [picked, setPicked] = useState<string | null>(null);
-  const pageId = picked ?? state.currentPage ?? state.intake?.pages[0]?.id ?? "";
+  // Several pages refine at once after the key page; follow the first busy one unless the PM picked a page.
+  const busy = state.intake?.pages.find((p) => ["designing", "refining"].includes(state.progress[p.id]?.status ?? ""))?.id;
+  const pageId = picked ?? busy ?? state.currentPage ?? state.intake?.pages[0]?.id ?? "";
   const points = state.iterations.filter((i) => i.pageId === pageId).map((i) => ({ version: i.snapshot.version, score: i.snapshot.score }));
   return (
     <section>
       <div className="section-bar">
         <h2 className="h2">Designing {state.intake?.pages.length ?? ""} pages{state.direction ? ` in ${state.direction.name}` : ""}</h2>
-        <p className="muted">The first page sets the design system. Every other page reuses its tokens, header, footer and components. For each page, a reviewer checks every version against the rubric, a fixer makes targeted edits, and the best version is kept.</p>
+        <p className="muted">The first page sets the design system, so it goes first. Then every other page is designed at the same time, reusing its tokens, header, footer and components. For each page, a reviewer checks every version against the rubric, a fixer makes targeted edits, and the best version is kept. Pick a page to follow it.</p>
       </div>
       <PageProgressList state={state} selected={pageId} onSelect={setPicked} />
       <h3 className="h3 choice-head">{pageName(state, pageId)}</h3>
+      {["designing", "refining"].includes(state.progress[pageId]?.status ?? "") &&
+        <AgentGraph track={state.pageAgents[pageId] ?? pageStart} caption={state.pageActivity[pageId] ?? ""} />}
       <ScoreChart points={points} />
       <Timeline state={state} runId={runId} pageId={pageId} />
     </section>

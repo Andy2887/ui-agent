@@ -5,9 +5,6 @@ designed against the key page's final HTML, and code copies the key page's token
 from __future__ import annotations
 
 import json
-from typing import Literal
-
-from langgraph.types import Command
 
 from .. import mock, settings
 from ..library import style_recipe
@@ -48,14 +45,15 @@ def designer_content(state: AgentState, page: dict, sketch: dict, notes: str, ke
     return [{"type": "text", "text": "\n\n".join(parts)}]
 
 
-async def design_page(state: AgentState) -> Command[Literal["lock_style", "next_page"]]:
+async def design_page(state: AgentState) -> dict | None:
+    """One step of a page branch (pages.build_page): the page's v1 as {"design", "usage"}, or None when the run
+    is over budget and the page is skipped."""
     pid = state["page_id"]
     page = page_spec(state, pid)
-    pages = dict(state.get("pages") or {})
+    pages = state.get("pages") or {}
     if over_budget(state.get("usage")):
         emit("page_skipped", page_id=pid, reason="budget")
-        pages[pid] = {"page_id": pid, "skipped": "budget"}
-        return Command(goto="next_page", update={"pages": pages})
+        return None
 
     key = key_page_id(state)
     key_done = pages.get(key) or {}
@@ -83,4 +81,4 @@ async def design_page(state: AgentState) -> Command[Literal["lock_style", "next_
     first, _ = await render_design(state["run_id"], {"direction_id": direction.id, "page_id": pid, "version": 1,
                                                      "html_path": rel_path}, shots_dir(rel_path), page_links(state, pid))
     emit("design_ready", page_id=pid, design=first)
-    return Command(goto="lock_style", update={"design": first, "usage": usage})
+    return {"design": first, "usage": usage}

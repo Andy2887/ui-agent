@@ -67,6 +67,23 @@ def test_style_spec_comes_from_the_direction_not_the_render():
     assert "Avoid: stock photos" in spec["must_keep"] and direction["heading_font"] in spec["character"]
 
 
+def test_parallel_pages_share_one_budget():
+    from ui_agent import llm
+    limit = float(settings.config()["budget_usd_per_run"])
+    assert not llm.over_budget({"cost_usd": limit - 1})
+    token = llm.start_branch("run-x", base_cost=limit - 1)
+    try:
+        assert not llm.over_budget({})  # a branch's own usage starts at zero; the shared counter is what counts
+        llm._live_spend["run-x"] = 0.6  # spent by sibling pages
+        assert not llm.over_budget({})
+        llm._live_spend["run-x"] += 0.5
+        assert llm.over_budget({})
+    finally:
+        llm.end_branch(token)
+        llm.reset_live_spend("run-x")
+    assert not llm.over_budget({"cost_usd": limit - 1})
+
+
 def test_flow_links_check():
     links = {"required": ["post.html", "sign-up.html"], "known": ["index.html", "post.html", "sign-up.html"]}
     html = '<a href="./post.html">Read</a> <a href="https://x.com/a.html">x</a> <a href="#faq">FAQ</a> <a href="pricing.html">P</a>'

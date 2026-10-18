@@ -1,13 +1,13 @@
 """Eval harness (plan §13): run the full pipeline headless on the fixed briefs and record quality, cost and time.
 
-    python scripts/eval.py run --label baseline [--only clinic-booking,vague-shop] [--max-usd 4] [--stop-after design]
+    python scripts/eval.py run --label baseline [--only clinic-booking,vague-shop] [--max-usd 4] [--stop-after key-page]
     python scripts/eval.py compare evals/results/<a> evals/results/<b>
 
 The PM is simulated: kickoff questions get their first suggested answer, the sketches are approved with no
 notes, and the final site is approved. Memory is in-process, so eval runs neither read nor change the real
 taste profile or lessons. Each run's artifacts and events.jsonl go to evals/results/<stamp>-<label>/<brief id>/,
-and the per-brief metrics go to results.json in that folder. `--stop-after design` ends each run at the key page's first
-full design (about $0.15 a brief), for changes that only affect v1. Scores are per site: the mean of the pages' best
+and the per-brief metrics go to results.json in that folder. `--stop-after key-page` ends each run once the key page is
+designed and refined, before the other pages start, for changes that only affect the first page. Scores are per site: the mean of the pages' best
 scores; "v1" is the key page's first design, so it stays comparable with single-page results. Set UI_AGENT_MOCK=1 for a free smoke test."""
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 ROLES = ("intake", "planner", "sketcher", "generator", "reviewer", "executor", "handoff")
-STOP_NODES = {"design": "design_page"}
+STOP_NODES = {"key-page": "collect_pages"}  # the first batch is the key page alone
 
 
 def git_rev() -> str:
@@ -226,7 +226,7 @@ def main() -> None:
     r.add_argument("--label", required=True)
     r.add_argument("--only", help="comma-separated brief ids")
     r.add_argument("--max-usd", type=float, default=5.0, help="stop starting new briefs once this much is spent")
-    r.add_argument("--stop-after", choices=["design"], help="end each run after this node")
+    r.add_argument("--stop-after", choices=list(STOP_NODES), help="end each run at this point")
     c = sub.add_parser("compare")
     c.add_argument("a")
     c.add_argument("b")

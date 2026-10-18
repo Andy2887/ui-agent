@@ -15,6 +15,7 @@ from __future__ import annotations
 import inspect
 import json
 import logging
+from contextvars import ContextVar, Token
 from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, TypeVar
 
@@ -66,8 +67,36 @@ def cost_usd(model: str, usage: dict) -> float:
     ) / 1_000_000
 
 
+@dataclass
+class _Branch:
+    run_id: str
+    base: float  # the run's cost when its parallel batch of pages started
+
+
+# Pages designed in parallel can't see each other's usage in state, so every LLM call made inside a page branch
+# also adds its cost to one counter per run, and the budget check reads that counter.
+_branch: ContextVar[_Branch | None] = ContextVar("page_branch", default=None)
+_live_spend: dict[str, float] = {}  # run_id -> spent by its page branches since the batch started
+
+
+def start_branch(run_id: str, base_cost: float) -> Token:
+    """Mark the current task (and the tasks it starts) as one page of a parallel batch."""
+    return _branch.set(_Branch(run_id, base_cost))
+
+
+def end_branch(token: Token) -> None:
+    _branch.reset(token)
+
+
+def reset_live_spend(run_id: str) -> None:
+    """Call when a batch starts and once its usage has been merged into state."""
+    _live_spend.pop(run_id, None)
+
+
 def over_budget(usage: dict | None) -> bool:
-    return (usage or {}).get("cost_usd", 0.0) >= float(settings.config()["budget_usd_per_run"])
+    b = _branch.get()
+    spent = b.base + _live_spend.get(b.run_id, 0.0) if b else (usage or {}).get("cost_usd", 0.0)
+    return spent >= float(settings.config()["budget_usd_per_run"])
 
 
 def _usage_of(role: str, msg: Any) -> dict:
@@ -79,6 +108,8 @@ def _usage_of(role: str, msg: Any) -> dict:
         "cache_creation_input_tokens": getattr(u, "cache_creation_input_tokens", 0) or 0,
     }
     d["cost_usd"] = cost_usd(getattr(msg, "model", "") or role_config(role).model, d)
+    if b := _branch.get():
+        _live_spend[b.run_id] = _live_spend.get(b.run_id, 0.0) + d["cost_usd"]
     out = {f"{role}.{k}": v for k, v in d.items()}
     out.update(d)  # run totals
     out["calls"] = 1

@@ -1,6 +1,6 @@
 # UI Agent — prototype
 
-You brief it like a PM briefs a UI/UX designer: the problem and at least one user flow (a paragraph on what a user does, start to finish), never the pages, colors, fonts or layout. The designer agent works out the users and the pages the flows need (up to 6), may ask a few kickoff questions, then proposes one direction for the whole site (a design system) with a low-fidelity sketch of every page. You approve it or ask for changes. The first page of flow 1 is designed in full and sets the design system; every other page is designed against it with the same tokens, header and footer, and each page goes through a reviewer/executor loop against a rubric. Pages link to each other, so the result is a clickable prototype, and you get a handoff package (one HTML file per page, `tokens.json`, `FLOWS.md`, `HANDOFF.md`, screenshots, PDFs) for a coding agent. See `plan.md` for the full design.
+You brief it like a PM briefs a UI/UX designer: the problem and at least one user flow (a paragraph on what a user does, start to finish), never the pages, colors, fonts or layout. The designer agent works out the users and the pages the flows need (up to 6), may ask a few kickoff questions, then proposes one direction for the whole site (a design system) with a low-fidelity sketch of every page. You approve it or ask for changes. The first page of flow 1 is designed in full and sets the design system; then every other page is designed at the same time against it, with the same tokens, header and footer. Each page goes through its own reviewer/executor loop against a rubric. Pages link to each other, so the result is a clickable prototype, and you get a handoff package (one HTML file per page, `tokens.json`, `FLOWS.md`, `HANDOFF.md`, screenshots, PDFs) for a coding agent. See `plan.md` for the full design.
 
 ## How the agents work together
 
@@ -16,10 +16,10 @@ flowchart TD
     planner("<b>Planner</b><br/>Haiku · one direction + design system<br/>for the whole site")
     sketcher("<b>Sketcher</b> ×pages, in parallel<br/>Haiku · text wireframe per page")
     review{{"<b>Sketch review</b><br/>PM approves (+ notes) or asks for changes"}}
-    nextpage["next_page<br/>key page first, then the rest"]
+    nextpage["next_pages<br/>batch 1: the key page alone<br/>batch 2: every other page"]
     generator("<b>Generator</b><br/>Sonnet · designs one page (v1);<br/>later pages copy the key page's tokens")
     stylelock["lock_style<br/>StyleSpec from the direction + key page tokens, once"]
-    finish["finish_page<br/>save the best version to site/"]
+    collect["collect_pages<br/>lock the key page's final tokens;<br/>next batch"]
     approval{{"<b>Final approval</b><br/>PM approves or requests changes"}}
     handoff("<b>Handoff</b><br/>Haiku · HANDOFF.md, tokens.json")
     export["export + update_memory<br/>screenshots, PDF, zip; save lessons"]
@@ -32,7 +32,8 @@ flowchart TD
     sketcher --> review
     review -- revise with feedback --> planner
     review -- approve --> nextpage
-    nextpage -- next page --> generator
+    subgraph branch ["build_page ×pages in the batch, in parallel, each in its own private state"]
+    direction TB
     generator --> stylelock
     subgraph refine ["Refine loop (refine_graph.py)"]
         direction TB
@@ -45,11 +46,13 @@ flowchart TD
         gate -- continue / revert --> executor
         executor --> render
     end
-
     stylelock --> render
-    gate -- "done (best version)" --> finish
-    finish --> nextpage
-    nextpage -- change requested on a page --> executor
+    end
+
+    nextpage -- "Send per page" --> generator
+    nextpage -- "Send per page with a change request" --> executor
+    gate -- "done: best version to site/" --> collect
+    collect --> nextpage
     nextpage -- all pages done --> approval
     approval -- "request changes (one page or all)" --> nextpage
     approval -- approve --> handoff
@@ -57,7 +60,7 @@ flowchart TD
     export --> done([handoff.zip])
 ```
 
-The fan-out runs at most `max_parallel_generations` sketchers at once. The refine loop runs once per page, with its own issues and versions under `pages/<id>/`; the key page gets `max_iterations` rounds and the others `max_iterations_secondary`. The gate always carries forward the best-scoring version, so a revert or a stop never loses ground. Change requests from final approval go back to the chosen pages' refine loops at the executor, then through review again. A page past the cost budget is skipped and listed at final review.
+The fan-out runs at most `max_parallel_generations` sketchers at once. Pages run in two batches. The key page goes alone, because every other page copies its final tokens, header, footer and components. Then all the other pages run at once, each in a `build_page` branch with its own private refine state, versions and issues under `pages/<id>/`. The key page gets `max_iterations` rounds and the others `max_iterations_secondary`. Parallel pages can't see each other's usage in state, so every LLM call in a branch also adds its cost to one shared counter per run, and the budget check reads that. The gate always carries forward the best-scoring version, so a revert or a stop never loses ground. Change requests from final approval go back to the chosen pages' refine loops at the executor, then through review again. A page past the cost budget is skipped and listed at final review.
 
 ## Why not just use Claude Design?
 

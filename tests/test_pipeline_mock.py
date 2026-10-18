@@ -70,10 +70,14 @@ def test_flow_becomes_linked_pages_with_one_design_system():
             assert "-> sign-up" in review["pages"][1]["sketch"]
             assert (run_dir(run_id) / "sketches" / "post.txt").exists()
 
-            # Key page first, then the others; every page refined until it passes.
+            # Key page first and alone; then the other pages run at the same time; every page refined until it passes.
             types = [e["type"] for e in events]
             assert types.count("style_locked") == 1
-            assert [e["page_id"] for e in events if e["type"] == "design_started"] == ["home", "post", "sign-up"]
+            started = [e["page_id"] for e in events if e["type"] == "design_started"]
+            assert started[0] == "home" and set(started[1:]) == {"post", "sign-up"}
+            order = [(e["type"], e["page_id"]) for e in events if e["type"] in ("page_started", "page_done")]
+            assert order[:2] == [("page_started", "home"), ("page_done", "home")]
+            assert {t for t, _ in order[2:4]} == {"page_started"}, order  # both start before either finishes
             assert all(state["pages"][p["id"]]["stop_reason"] == "pass" for p in pages), \
                 {k: v["stop_reason"] for k, v in state["pages"].items()}
             fin = interrupts[-1]

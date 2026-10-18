@@ -21,7 +21,7 @@ pricing:
   claude-opus-5-5:   {input: 4.0, output: 20.0, cache_read: 0.20, cache_write: 5.0}
 
 budget_usd_per_run: 20
-max_parallel_generations: 5
+max_parallel_generations: 5   # sketchers at once
 executor_max_tool_calls: 30
 
 viewports:

@@ -35,7 +35,7 @@ async def lock_style(state: AgentState) -> dict:
     if spec is None:
         tokens = root_tokens((run_dir(state["run_id"]) / first["html_path"]).read_text())
         spec = style_spec(direction, tokens, notes)
-        emit("style_locked", spec=spec)
+        emit("style_locked", page_id=pid, spec=spec)
 
     current = {"direction_id": direction["id"], "page_id": pid, "version": 1, "html_path": first["html_path"]}
     # The designer already applied the PM's notes; the reviewer verifies them like any other issue.

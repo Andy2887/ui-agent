@@ -312,7 +312,7 @@ button { cursor: pointer; }
 .page-view { display: grid; gap: var(--sp-4); }
 .page-view__head { display: grid; gap: var(--sp-2); }
 .page-view__head p { font-size: var(--fs-14); color: var(--text-muted); }
-.page-view .wire { max-height: 70vh; }
+.page-view .wire { overflow: hidden; } /* show the whole sketch, no inner scroll; font already scales to fit the widest line */
 .page-progress { list-style: none; padding: 0; margin: 0 0 var(--sp-2); display: grid; gap: var(--sp-2); grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 .page-progress button { width: 100%; min-height: 48px; display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); text-align: left;
   border: 1px solid var(--border); border-radius: var(--control-r); background: var(--surface); color: var(--text); transition: border-color var(--dur-1), box-shadow var(--dur-1); }
@@ -379,8 +379,8 @@ button { cursor: pointer; }
 .mobile-frame { max-width: 300px; }
 
 /* ----------------------------------------------------------- decision bar */
-.decision { position: sticky; bottom: var(--sp-4); z-index: 5; display: grid; grid-template-columns: 1fr auto; gap: var(--sp-4) var(--sp-8); align-items: end;
-  margin-top: var(--sp-8); padding: var(--sp-5); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-12); box-shadow: var(--shadow-lg); }
+.decision { display: grid; grid-template-columns: 1fr auto; gap: var(--sp-4) var(--sp-8); align-items: end;
+  margin-top: var(--sp-8); padding: var(--sp-5); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-12); }
 .decision__pick { display: grid; gap: var(--sp-2); }
 .decision__pick .field { margin: var(--sp-2) 0; max-width: 560px; }
 .decision__pick .btn { justify-self: start; }
@@ -467,7 +467,6 @@ button { cursor: pointer; }
   .brief { padding-top: var(--sp-6); gap: var(--sp-6); }
   .grid--cards { grid-template-columns: 1fr; }
   .timeline__item, .compare, .before-after, .decision { grid-template-columns: 1fr; }
-  .decision { bottom: 0; border-radius: var(--r-12) var(--r-12) 0 0; margin-inline: calc(-1 * var(--page-gutter)); }
   .decision__regen { text-align: left; }
   .regen { min-width: 0; }
   .design-brief dl { grid-template-columns: 1fr; gap: 2px; }

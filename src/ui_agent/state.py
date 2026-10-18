@@ -227,6 +227,11 @@ def sketches_reducer(left: list | None, right: list | None) -> list:
     return left + (right or [])
 
 
+def pages_reducer(left: dict | None, right: dict | None) -> dict:
+    """Pages designed in parallel each return {page_id: record}; merge them."""
+    return {**(left or {}), **(right or {})}
+
+
 def usage_reducer(left: dict | None, right: dict | None) -> dict:
     out = dict(left or {})
     for k, v in (right or {}).items():
@@ -248,9 +253,10 @@ class AgentState(TypedDict, total=False):
     sketch_notes: str  # the PM's notes when approving the sketches
     style_lock: Optional[dict]  # from the key page (the first one designed); its tokens bind every page
     page_queue: list[str]  # page ids still to design, or to revisit with change requests
-    pages: dict  # page id -> finished page: design (v1), best, issues, history state, stop_reason
+    pages: Annotated[dict, pages_reducer]  # page id -> finished page: design (v1), best, issues, stop_reason
     pending_changes: dict  # page id -> change requests from final review
-    # The page in the refine loop right now. These keys are saved into `pages` when it finishes.
+    # One page's refine state. Only a page branch (nodes/pages.build_page) holds these, in its private copy of the
+    # state; they are saved into `pages` when the page finishes.
     page_id: Optional[str]
     design: Optional[dict]  # first full design of this page (refine v1)
     current: Optional[dict]

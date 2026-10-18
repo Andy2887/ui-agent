@@ -35,7 +35,7 @@ def page_summaries(state: AgentState) -> list[dict]:
     return out
 
 
-async def final_approval(state: AgentState) -> Command[Literal["build_handoff", "next_page"]]:
+async def final_approval(state: AgentState) -> Command[Literal["build_handoff", "next_pages"]]:
     if not settings.config().get("final_approval", True):
         return Command(goto="build_handoff", update={"approved": True})
     payload = {
@@ -60,6 +60,6 @@ async def final_approval(state: AgentState) -> Command[Literal["build_handoff", 
                           "explanation": "You asked for this change at final review.", "status": "open"}]
                    for pid in targets}
         emit("changes_requested", request=feedback, pages=targets)
-        return Command(goto="next_page", update={"pending_changes": pending, "page_queue": targets})
+        return Command(goto="next_pages", update={"pending_changes": pending, "page_queue": targets})
     emit("approved")
     return Command(goto="build_handoff", update={"approved": True})

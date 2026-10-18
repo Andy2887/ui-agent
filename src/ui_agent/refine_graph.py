@@ -36,11 +36,10 @@ _app = None
 
 
 async def refine(state: AgentState, config) -> dict:
-    """Run the subgraph and return only its *changes*.
+    """Run the subgraph on one page's state and return only its *changes*.
 
-    A compiled subgraph used directly as a node writes its whole output back through the
-    parent's reducers, which would double-count list/usage channels (history, usage,
-    sketches). Returning a delta keeps the parent state exact."""
+    The caller (nodes/pages.build_page) applies them with the run state's reducers; returning the whole output
+    would double-count list/usage channels (history, usage, sketches)."""
     global _app
     if _app is None:
         _app = build_refine_graph()
